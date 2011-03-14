@@ -1,0 +1,12 @@
+# files generated during make
+*.o
+char-server
+ladmin
+login-server
+map-server
+GNUmakefile
+eathena-monitor
+magic-interpreter-parser.h
+magic-interpreter-parser.c
+magic-interpreter-lexer.c
+
