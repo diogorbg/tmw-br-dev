@@ -1,0 +1,4577 @@
+Estado 106 conflitos: 1 de deslocamento/redução
+Estado 154 conflitos: 2 de deslocamento/redução
+Estado 162 conflitos: 1 de deslocamento/redução
+Estado 202 conflitos: 1 de deslocamento/redução
+Estado 213 conflitos: 1 de deslocamento/redução
+Estado 236 conflitos: 1 de deslocamento/redução
+
+
+Gramática
+
+    0 $accept: spellconf $end
+
+    1 spellconf: /* vazio */
+    2          | spellconf_option semicolons spellconf
+
+    3 semicolons: /* vazio */
+    4           | semicolons ';'
+
+    5 proc_formals_list: /* vazio */
+    6                  | proc_formals_list_ne
+
+    7 proc_formals_list_ne: ID
+    8                     | proc_formals_list_ne ',' ID
+
+    9 spellconf_option: ID '=' expr
+   10                 | CONST ID '=' expr
+   11                 | TELEPORT_ANCHOR ID ':' expr '=' expr
+   12                 | PROCEDURE ID '(' proc_formals_list ')' '=' effect_list
+   13                 | spell_flags SPELL ID argopt ':' expr '=' spelldef
+
+   14 spell_flags: /* vazio */
+   15            | LOCAL spell_flags
+   16            | NONMAGIC spell_flags
+   17            | SILENT spell_flags
+
+   18 argopt: /* vazio */
+   19       | '(' ID ':' arg_ty ')'
+
+   20 arg_ty: PC_F
+   21       | STRING_TY
+
+   22 value: DIR
+   23      | INT
+   24      | STRING
+
+   25 expr: value
+   26     | ID
+   27     | area
+   28     | expr '+' expr
+   29     | expr '-' expr
+   30     | expr '*' expr
+   31     | expr '%' expr
+   32     | expr '/' expr
+   33     | expr '<' expr
+   34     | expr '>' expr
+   35     | expr '&' expr
+   36     | expr '^' expr
+   37     | expr '|' expr
+   38     | expr SHL expr
+   39     | expr SHR expr
+   40     | expr LTE expr
+   41     | expr GTE expr
+   42     | expr ANDAND expr
+   43     | expr OROR expr
+   44     | expr EQ expr
+   45     | expr '=' expr
+   46     | expr NEQ expr
+   47     | ID '(' arg_list ')'
+   48     | '(' expr ')'
+   49     | expr '.' ID
+
+   50 arg_list: /* vazio */
+   51         | arg_list_ne
+
+   52 arg_list_ne: expr
+   53            | arg_list_ne ',' expr
+
+   54 location: '@' '(' expr ',' expr ',' expr ')'
+
+   55 area: location
+   56     | location '@' '+' '(' expr ',' expr ')'
+   57     | location TOWARDS expr ':' '(' expr ',' expr ')'
+
+   58 spelldef: spellbody_list
+   59         | LET defs IN spellbody_list
+
+   60 defs: semicolons
+   61     | defs def semicolons
+
+   62 def: ID '=' expr
+
+   63 spellbody_list: spellbody
+   64               | spellbody '|' spellbody_list
+
+   65 spellbody: spellguard DARROW spellbody
+   66          | '(' spellbody_list ')'
+   67          | EFFECT effect_list maybe_trigger maybe_end
+
+   68 maybe_trigger: /* vazio */
+   69              | ATTRIGGER effect_list
+
+   70 maybe_end: /* vazio */
+   71          | ATEND effect_list
+
+   72 spellguard: prereq
+   73           | spellguard OR spellguard
+   74           | '(' spellguard_list ')'
+
+   75 spellguard_list: spellguard
+   76                | spellguard ',' spellguard_list
+
+   77 prereq: REQUIRE expr
+   78       | CATALYSTS items
+   79       | COMPONENTS items
+   80       | MANA expr
+   81       | CASTTIME expr
+
+   82 items: '[' item_list ']'
+
+   83 item_list: item
+   84          | item_list ',' item
+
+   85 item: INT '*' item_name
+   86     | item_name
+
+   87 item_name: STRING
+   88          | INT
+
+   89 selection: PC_F
+   90          | MOB_F
+   91          | ENTITY_F
+   92          | SPELL
+   93          | TARGET_F
+   94          | NPC_F
+
+   95 effect: '(' effect_list ')'
+   96       | SKIP ';'
+   97       | ABORT ';'
+   98       | END ';'
+   99       | BREAK ';'
+  100       | ID '=' expr ';'
+  101       | FOREACH selection ID IN expr DO effect
+  102       | FOR ID '=' expr TO expr DO effect
+  103       | IF expr THEN effect ELSE effect
+  104       | IF expr THEN effect
+  105       | SLEEP expr ';'
+  106       | ID '(' arg_list ')' ';'
+  107       | SCRIPT_DATA
+  108       | CALL ID '(' arg_list ')' ';'
+
+  109 effect_list: /* vazio */
+  110            | effect semicolons effect_list
+
+
+Terminais, com as regras onde eles aparecem
+
+$end (0) 0
+'%' (37) 31
+'&' (38) 35
+'(' (40) 12 19 47 48 54 56 57 66 74 95 106 108
+')' (41) 12 19 47 48 54 56 57 66 74 95 106 108
+'*' (42) 30 85
+'+' (43) 28 56
+',' (44) 8 53 54 56 57 76 84
+'-' (45) 29
+'.' (46) 49
+'/' (47) 32
+':' (58) 11 13 19 57
+';' (59) 4 96 97 98 99 100 105 106 108
+'<' (60) 33
+'=' (61) 9 10 11 12 13 45 62 100 102
+'>' (62) 34
+'@' (64) 54 56
+'[' (91) 82
+']' (93) 82
+'^' (94) 36
+'|' (124) 37 64
+error (256)
+INT (258) 23 85 88
+STRING (259) 24 87
+ID (260) 7 8 9 10 11 12 13 19 26 47 49 62 100 101 102 106 108
+DIR (261) 22
+CONST (262) 10
+PROCEDURE (263) 12
+CALL (264) 108
+SILENT (265) 17
+LOCAL (266) 15
+NONMAGIC (267) 16
+SHL (268) 38
+SHR (269) 39
+EQ (270) 44
+NEQ (271) 46
+GTE (272) 41
+LTE (273) 40
+ANDAND (274) 42
+OROR (275) 43
+SCRIPT_DATA (276) 107
+TO (277) 102
+TOWARDS (278) 57
+TELEPORT_ANCHOR (279) 11
+SPELL (280) 13 92
+LET (281) 59
+IN (282) 59 101
+END (283) 98
+DARROW (284) 65
+STRING_TY (285) 21
+REQUIRE (286) 77
+CATALYSTS (287) 78
+COMPONENTS (288) 79
+MANA (289) 80
+CASTTIME (290) 81
+SKIP (291) 96
+ABORT (292) 97
+BREAK (293) 99
+EFFECT (294) 67
+ATEND (295) 71
+ATTRIGGER (296) 69
+PC_F (297) 20 89
+NPC_F (298) 94
+MOB_F (299) 90
+ENTITY_F (300) 91
+TARGET_F (301) 93
+IF (302) 103 104
+THEN (303) 103 104
+ELSE (304) 103
+FOREACH (305) 101
+FOR (306) 102
+DO (307) 101 102
+SLEEP (308) 105
+OR (309) 73
+
+
+Não-terminais com as regras onde eles aparecem
+
+$accept (75)
+    à esquerda: 0
+spellconf (76)
+    à esquerda: 1 2, à direita: 0 2
+semicolons (77)
+    à esquerda: 3 4, à direita: 2 4 60 61 110
+proc_formals_list (78)
+    à esquerda: 5 6, à direita: 12
+proc_formals_list_ne (79)
+    à esquerda: 7 8, à direita: 6 8
+spellconf_option (80)
+    à esquerda: 9 10 11 12 13, à direita: 2
+spell_flags (81)
+    à esquerda: 14 15 16 17, à direita: 13 15 16 17
+argopt (82)
+    à esquerda: 18 19, à direita: 13
+arg_ty (83)
+    à esquerda: 20 21, à direita: 19
+value (84)
+    à esquerda: 22 23 24, à direita: 25
+expr (85)
+    à esquerda: 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41
+    42 43 44 45 46 47 48 49, à direita: 9 10 11 13 28 29 30 31 32
+    33 34 35 36 37 38 39 40 41 42 43 44 45 46 48 49 52 53 54 56 57
+    62 77 80 81 100 101 102 103 104 105
+arg_list (86)
+    à esquerda: 50 51, à direita: 47 106 108
+arg_list_ne (87)
+    à esquerda: 52 53, à direita: 51 53
+location (88)
+    à esquerda: 54, à direita: 55 56 57
+area (89)
+    à esquerda: 55 56 57, à direita: 27
+spelldef (90)
+    à esquerda: 58 59, à direita: 13
+defs (91)
+    à esquerda: 60 61, à direita: 59 61
+def (92)
+    à esquerda: 62, à direita: 61
+spellbody_list (93)
+    à esquerda: 63 64, à direita: 58 59 64 66
+spellbody (94)
+    à esquerda: 65 66 67, à direita: 63 64 65
+maybe_trigger (95)
+    à esquerda: 68 69, à direita: 67
+maybe_end (96)
+    à esquerda: 70 71, à direita: 67
+spellguard (97)
+    à esquerda: 72 73 74, à direita: 65 73 75 76
+spellguard_list (98)
+    à esquerda: 75 76, à direita: 74 76
+prereq (99)
+    à esquerda: 77 78 79 80 81, à direita: 72
+items (100)
+    à esquerda: 82, à direita: 78 79
+item_list (101)
+    à esquerda: 83 84, à direita: 82 84
+item (102)
+    à esquerda: 85 86, à direita: 83 84
+item_name (103)
+    à esquerda: 87 88, à direita: 85 86
+selection (104)
+    à esquerda: 89 90 91 92 93 94, à direita: 101
+effect (105)
+    à esquerda: 95 96 97 98 99 100 101 102 103 104 105 106 107 108,
+    à direita: 101 102 103 104 110
+effect_list (106)
+    à esquerda: 109 110, à direita: 12 67 69 71 95 110
+
+
+estado 0
+
+    0 $accept: . spellconf $end
+
+    ID               deslocar, e ir ao estado 1
+    CONST            deslocar, e ir ao estado 2
+    PROCEDURE        deslocar, e ir ao estado 3
+    SILENT           deslocar, e ir ao estado 4
+    LOCAL            deslocar, e ir ao estado 5
+    NONMAGIC         deslocar, e ir ao estado 6
+    TELEPORT_ANCHOR  deslocar, e ir ao estado 7
+
+    SPELL     reduzir usando a regra 14 (spell_flags)
+    $padrão  reduzir usando a regra 1 (spellconf)
+
+    spellconf         ir ao estado 8
+    spellconf_option  ir ao estado 9
+    spell_flags       ir ao estado 10
+
+
+estado 1
+
+    9 spellconf_option: ID . '=' expr
+
+    '='  deslocar, e ir ao estado 11
+
+
+estado 2
+
+   10 spellconf_option: CONST . ID '=' expr
+
+    ID  deslocar, e ir ao estado 12
+
+
+estado 3
+
+   12 spellconf_option: PROCEDURE . ID '(' proc_formals_list ')' '=' effect_list
+
+    ID  deslocar, e ir ao estado 13
+
+
+estado 4
+
+   17 spell_flags: SILENT . spell_flags
+
+    SILENT    deslocar, e ir ao estado 4
+    LOCAL     deslocar, e ir ao estado 5
+    NONMAGIC  deslocar, e ir ao estado 6
+
+    $padrão  reduzir usando a regra 14 (spell_flags)
+
+    spell_flags  ir ao estado 14
+
+
+estado 5
+
+   15 spell_flags: LOCAL . spell_flags
+
+    SILENT    deslocar, e ir ao estado 4
+    LOCAL     deslocar, e ir ao estado 5
+    NONMAGIC  deslocar, e ir ao estado 6
+
+    $padrão  reduzir usando a regra 14 (spell_flags)
+
+    spell_flags  ir ao estado 15
+
+
+estado 6
+
+   16 spell_flags: NONMAGIC . spell_flags
+
+    SILENT    deslocar, e ir ao estado 4
+    LOCAL     deslocar, e ir ao estado 5
+    NONMAGIC  deslocar, e ir ao estado 6
+
+    $padrão  reduzir usando a regra 14 (spell_flags)
+
+    spell_flags  ir ao estado 16
+
+
+estado 7
+
+   11 spellconf_option: TELEPORT_ANCHOR . ID ':' expr '=' expr
+
+    ID  deslocar, e ir ao estado 17
+
+
+estado 8
+
+    0 $accept: spellconf . $end
+
+    $end  deslocar, e ir ao estado 18
+
+
+estado 9
+
+    2 spellconf: spellconf_option . semicolons spellconf
+
+    $padrão  reduzir usando a regra 3 (semicolons)
+
+    semicolons  ir ao estado 19
+
+
+estado 10
+
+   13 spellconf_option: spell_flags . SPELL ID argopt ':' expr '=' spelldef
+
+    SPELL  deslocar, e ir ao estado 20
+
+
+estado 11
+
+    9 spellconf_option: ID '=' . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 28
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 12
+
+   10 spellconf_option: CONST ID . '=' expr
+
+    '='  deslocar, e ir ao estado 31
+
+
+estado 13
+
+   12 spellconf_option: PROCEDURE ID . '(' proc_formals_list ')' '=' effect_list
+
+    '('  deslocar, e ir ao estado 32
+
+
+estado 14
+
+   17 spell_flags: SILENT spell_flags .
+
+    $padrão  reduzir usando a regra 17 (spell_flags)
+
+
+estado 15
+
+   15 spell_flags: LOCAL spell_flags .
+
+    $padrão  reduzir usando a regra 15 (spell_flags)
+
+
+estado 16
+
+   16 spell_flags: NONMAGIC spell_flags .
+
+    $padrão  reduzir usando a regra 16 (spell_flags)
+
+
+estado 17
+
+   11 spellconf_option: TELEPORT_ANCHOR ID . ':' expr '=' expr
+
+    ':'  deslocar, e ir ao estado 33
+
+
+estado 18
+
+    0 $accept: spellconf $end .
+
+    $padrão  aceitar
+
+
+estado 19
+
+    2 spellconf: spellconf_option semicolons . spellconf
+    4 semicolons: semicolons . ';'
+
+    ID               deslocar, e ir ao estado 1
+    ';'              deslocar, e ir ao estado 34
+    CONST            deslocar, e ir ao estado 2
+    PROCEDURE        deslocar, e ir ao estado 3
+    SILENT           deslocar, e ir ao estado 4
+    LOCAL            deslocar, e ir ao estado 5
+    NONMAGIC         deslocar, e ir ao estado 6
+    TELEPORT_ANCHOR  deslocar, e ir ao estado 7
+
+    SPELL     reduzir usando a regra 14 (spell_flags)
+    $padrão  reduzir usando a regra 1 (spellconf)
+
+    spellconf         ir ao estado 35
+    spellconf_option  ir ao estado 9
+    spell_flags       ir ao estado 10
+
+
+estado 20
+
+   13 spellconf_option: spell_flags SPELL . ID argopt ':' expr '=' spelldef
+
+    ID  deslocar, e ir ao estado 36
+
+
+estado 21
+
+   23 value: INT .
+
+    $padrão  reduzir usando a regra 23 (value)
+
+
+estado 22
+
+   24 value: STRING .
+
+    $padrão  reduzir usando a regra 24 (value)
+
+
+estado 23
+
+   26 expr: ID .
+   47     | ID . '(' arg_list ')'
+
+    '('  deslocar, e ir ao estado 37
+
+    $padrão  reduzir usando a regra 26 (expr)
+
+
+estado 24
+
+   22 value: DIR .
+
+    $padrão  reduzir usando a regra 22 (value)
+
+
+estado 25
+
+   54 location: '@' . '(' expr ',' expr ',' expr ')'
+
+    '('  deslocar, e ir ao estado 38
+
+
+estado 26
+
+   48 expr: '(' . expr ')'
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 39
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 27
+
+   25 expr: value .
+
+    $padrão  reduzir usando a regra 25 (expr)
+
+
+estado 28
+
+    9 spellconf_option: ID '=' expr .
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+
+    $padrão  reduzir usando a regra 9 (spellconf_option)
+
+
+estado 29
+
+   55 area: location .
+   56     | location . '@' '+' '(' expr ',' expr ')'
+   57     | location . TOWARDS expr ':' '(' expr ',' expr ')'
+
+    '@'      deslocar, e ir ao estado 60
+    TOWARDS  deslocar, e ir ao estado 61
+
+    $padrão  reduzir usando a regra 55 (area)
+
+
+estado 30
+
+   27 expr: area .
+
+    $padrão  reduzir usando a regra 27 (expr)
+
+
+estado 31
+
+   10 spellconf_option: CONST ID '=' . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 62
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 32
+
+   12 spellconf_option: PROCEDURE ID '(' . proc_formals_list ')' '=' effect_list
+
+    ID  deslocar, e ir ao estado 63
+
+    $padrão  reduzir usando a regra 5 (proc_formals_list)
+
+    proc_formals_list     ir ao estado 64
+    proc_formals_list_ne  ir ao estado 65
+
+
+estado 33
+
+   11 spellconf_option: TELEPORT_ANCHOR ID ':' . expr '=' expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 66
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 34
+
+    4 semicolons: semicolons ';' .
+
+    $padrão  reduzir usando a regra 4 (semicolons)
+
+
+estado 35
+
+    2 spellconf: spellconf_option semicolons spellconf .
+
+    $padrão  reduzir usando a regra 2 (spellconf)
+
+
+estado 36
+
+   13 spellconf_option: spell_flags SPELL ID . argopt ':' expr '=' spelldef
+
+    '('  deslocar, e ir ao estado 67
+
+    $padrão  reduzir usando a regra 18 (argopt)
+
+    argopt  ir ao estado 68
+
+
+estado 37
+
+   47 expr: ID '(' . arg_list ')'
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    $padrão  reduzir usando a regra 50 (arg_list)
+
+    value        ir ao estado 27
+    expr         ir ao estado 69
+    arg_list     ir ao estado 70
+    arg_list_ne  ir ao estado 71
+    location     ir ao estado 29
+    area         ir ao estado 30
+
+
+estado 38
+
+   54 location: '@' '(' . expr ',' expr ',' expr ')'
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 72
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 39
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   48     | '(' expr . ')'
+   49     | expr . '.' ID
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+    ')'     deslocar, e ir ao estado 73
+
+
+estado 40
+
+   45 expr: expr '=' . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 74
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 41
+
+   33 expr: expr '<' . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 75
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 42
+
+   34 expr: expr '>' . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 76
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 43
+
+   28 expr: expr '+' . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 77
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 44
+
+   29 expr: expr '-' . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 78
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 45
+
+   30 expr: expr '*' . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 79
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 46
+
+   32 expr: expr '/' . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 80
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 47
+
+   31 expr: expr '%' . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 81
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 48
+
+   49 expr: expr '.' . ID
+
+    ID  deslocar, e ir ao estado 82
+
+
+estado 49
+
+   37 expr: expr '|' . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 83
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 50
+
+   35 expr: expr '&' . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 84
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 51
+
+   36 expr: expr '^' . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 85
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 52
+
+   38 expr: expr SHL . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 86
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 53
+
+   39 expr: expr SHR . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 87
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 54
+
+   44 expr: expr EQ . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 88
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 55
+
+   46 expr: expr NEQ . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 89
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 56
+
+   41 expr: expr GTE . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 90
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 57
+
+   40 expr: expr LTE . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 91
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 58
+
+   42 expr: expr ANDAND . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 92
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 59
+
+   43 expr: expr OROR . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 93
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 60
+
+   56 area: location '@' . '+' '(' expr ',' expr ')'
+
+    '+'  deslocar, e ir ao estado 94
+
+
+estado 61
+
+   57 area: location TOWARDS . expr ':' '(' expr ',' expr ')'
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 95
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 62
+
+   10 spellconf_option: CONST ID '=' expr .
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+
+    $padrão  reduzir usando a regra 10 (spellconf_option)
+
+
+estado 63
+
+    7 proc_formals_list_ne: ID .
+
+    $padrão  reduzir usando a regra 7 (proc_formals_list_ne)
+
+
+estado 64
+
+   12 spellconf_option: PROCEDURE ID '(' proc_formals_list . ')' '=' effect_list
+
+    ')'  deslocar, e ir ao estado 96
+
+
+estado 65
+
+    6 proc_formals_list: proc_formals_list_ne .
+    8 proc_formals_list_ne: proc_formals_list_ne . ',' ID
+
+    ','  deslocar, e ir ao estado 97
+
+    $padrão  reduzir usando a regra 6 (proc_formals_list)
+
+
+estado 66
+
+   11 spellconf_option: TELEPORT_ANCHOR ID ':' expr . '=' expr
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='     deslocar, e ir ao estado 98
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+
+
+estado 67
+
+   19 argopt: '(' . ID ':' arg_ty ')'
+
+    ID  deslocar, e ir ao estado 99
+
+
+estado 68
+
+   13 spellconf_option: spell_flags SPELL ID argopt . ':' expr '=' spelldef
+
+    ':'  deslocar, e ir ao estado 100
+
+
+estado 69
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+   52 arg_list_ne: expr .
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+
+    $padrão  reduzir usando a regra 52 (arg_list_ne)
+
+
+estado 70
+
+   47 expr: ID '(' arg_list . ')'
+
+    ')'  deslocar, e ir ao estado 101
+
+
+estado 71
+
+   51 arg_list: arg_list_ne .
+   53 arg_list_ne: arg_list_ne . ',' expr
+
+    ','  deslocar, e ir ao estado 102
+
+    $padrão  reduzir usando a regra 51 (arg_list)
+
+
+estado 72
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+   54 location: '@' '(' expr . ',' expr ',' expr ')'
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    ','     deslocar, e ir ao estado 103
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+
+
+estado 73
+
+   48 expr: '(' expr ')' .
+
+    $padrão  reduzir usando a regra 48 (expr)
+
+
+estado 74
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   45     | expr '=' expr .
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='  deslocar, e ir ao estado 40
+    '.'  deslocar, e ir ao estado 48
+
+    $padrão  reduzir usando a regra 45 (expr)
+
+
+estado 75
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   33     | expr '<' expr .
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='  deslocar, e ir ao estado 40
+    '+'  deslocar, e ir ao estado 43
+    '-'  deslocar, e ir ao estado 44
+    '*'  deslocar, e ir ao estado 45
+    '/'  deslocar, e ir ao estado 46
+    '%'  deslocar, e ir ao estado 47
+    '.'  deslocar, e ir ao estado 48
+    '|'  deslocar, e ir ao estado 49
+    '&'  deslocar, e ir ao estado 50
+    '^'  deslocar, e ir ao estado 51
+    SHL  deslocar, e ir ao estado 52
+    SHR  deslocar, e ir ao estado 53
+
+    $padrão  reduzir usando a regra 33 (expr)
+
+
+estado 76
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   34     | expr '>' expr .
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='  deslocar, e ir ao estado 40
+    '+'  deslocar, e ir ao estado 43
+    '-'  deslocar, e ir ao estado 44
+    '*'  deslocar, e ir ao estado 45
+    '/'  deslocar, e ir ao estado 46
+    '%'  deslocar, e ir ao estado 47
+    '.'  deslocar, e ir ao estado 48
+    '|'  deslocar, e ir ao estado 49
+    '&'  deslocar, e ir ao estado 50
+    '^'  deslocar, e ir ao estado 51
+    SHL  deslocar, e ir ao estado 52
+    SHR  deslocar, e ir ao estado 53
+
+    $padrão  reduzir usando a regra 34 (expr)
+
+
+estado 77
+
+   28 expr: expr . '+' expr
+   28     | expr '+' expr .
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='  deslocar, e ir ao estado 40
+    '*'  deslocar, e ir ao estado 45
+    '/'  deslocar, e ir ao estado 46
+    '%'  deslocar, e ir ao estado 47
+    '.'  deslocar, e ir ao estado 48
+    '|'  deslocar, e ir ao estado 49
+    '&'  deslocar, e ir ao estado 50
+    '^'  deslocar, e ir ao estado 51
+    SHL  deslocar, e ir ao estado 52
+    SHR  deslocar, e ir ao estado 53
+
+    $padrão  reduzir usando a regra 28 (expr)
+
+
+estado 78
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   29     | expr '-' expr .
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='  deslocar, e ir ao estado 40
+    '*'  deslocar, e ir ao estado 45
+    '/'  deslocar, e ir ao estado 46
+    '%'  deslocar, e ir ao estado 47
+    '.'  deslocar, e ir ao estado 48
+    '|'  deslocar, e ir ao estado 49
+    '&'  deslocar, e ir ao estado 50
+    '^'  deslocar, e ir ao estado 51
+    SHL  deslocar, e ir ao estado 52
+    SHR  deslocar, e ir ao estado 53
+
+    $padrão  reduzir usando a regra 29 (expr)
+
+
+estado 79
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   30     | expr '*' expr .
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='  deslocar, e ir ao estado 40
+    '.'  deslocar, e ir ao estado 48
+    '|'  deslocar, e ir ao estado 49
+    '&'  deslocar, e ir ao estado 50
+    '^'  deslocar, e ir ao estado 51
+    SHL  deslocar, e ir ao estado 52
+    SHR  deslocar, e ir ao estado 53
+
+    $padrão  reduzir usando a regra 30 (expr)
+
+
+estado 80
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   32     | expr '/' expr .
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='  deslocar, e ir ao estado 40
+    '.'  deslocar, e ir ao estado 48
+    '|'  deslocar, e ir ao estado 49
+    '&'  deslocar, e ir ao estado 50
+    '^'  deslocar, e ir ao estado 51
+    SHL  deslocar, e ir ao estado 52
+    SHR  deslocar, e ir ao estado 53
+
+    $padrão  reduzir usando a regra 32 (expr)
+
+
+estado 81
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   31     | expr '%' expr .
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='  deslocar, e ir ao estado 40
+    '.'  deslocar, e ir ao estado 48
+    '|'  deslocar, e ir ao estado 49
+    '&'  deslocar, e ir ao estado 50
+    '^'  deslocar, e ir ao estado 51
+    SHL  deslocar, e ir ao estado 52
+    SHR  deslocar, e ir ao estado 53
+
+    $padrão  reduzir usando a regra 31 (expr)
+
+
+estado 82
+
+   49 expr: expr '.' ID .
+
+    $padrão  reduzir usando a regra 49 (expr)
+
+
+estado 83
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   37     | expr '|' expr .
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='  deslocar, e ir ao estado 40
+    '.'  deslocar, e ir ao estado 48
+
+    $padrão  reduzir usando a regra 37 (expr)
+
+
+estado 84
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   35     | expr '&' expr .
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='  deslocar, e ir ao estado 40
+    '.'  deslocar, e ir ao estado 48
+
+    $padrão  reduzir usando a regra 35 (expr)
+
+
+estado 85
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   36     | expr '^' expr .
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='  deslocar, e ir ao estado 40
+    '.'  deslocar, e ir ao estado 48
+
+    $padrão  reduzir usando a regra 36 (expr)
+
+
+estado 86
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   38     | expr SHL expr .
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='  deslocar, e ir ao estado 40
+    '.'  deslocar, e ir ao estado 48
+
+    $padrão  reduzir usando a regra 38 (expr)
+
+
+estado 87
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   39     | expr SHR expr .
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='  deslocar, e ir ao estado 40
+    '.'  deslocar, e ir ao estado 48
+
+    $padrão  reduzir usando a regra 39 (expr)
+
+
+estado 88
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   44     | expr EQ expr .
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='  deslocar, e ir ao estado 40
+    '+'  deslocar, e ir ao estado 43
+    '-'  deslocar, e ir ao estado 44
+    '*'  deslocar, e ir ao estado 45
+    '/'  deslocar, e ir ao estado 46
+    '%'  deslocar, e ir ao estado 47
+    '.'  deslocar, e ir ao estado 48
+    '|'  deslocar, e ir ao estado 49
+    '&'  deslocar, e ir ao estado 50
+    '^'  deslocar, e ir ao estado 51
+    SHL  deslocar, e ir ao estado 52
+    SHR  deslocar, e ir ao estado 53
+
+    $padrão  reduzir usando a regra 44 (expr)
+
+
+estado 89
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   46     | expr NEQ expr .
+   49     | expr . '.' ID
+
+    '='  deslocar, e ir ao estado 40
+    '+'  deslocar, e ir ao estado 43
+    '-'  deslocar, e ir ao estado 44
+    '*'  deslocar, e ir ao estado 45
+    '/'  deslocar, e ir ao estado 46
+    '%'  deslocar, e ir ao estado 47
+    '.'  deslocar, e ir ao estado 48
+    '|'  deslocar, e ir ao estado 49
+    '&'  deslocar, e ir ao estado 50
+    '^'  deslocar, e ir ao estado 51
+    SHL  deslocar, e ir ao estado 52
+    SHR  deslocar, e ir ao estado 53
+
+    $padrão  reduzir usando a regra 46 (expr)
+
+
+estado 90
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   41     | expr GTE expr .
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='  deslocar, e ir ao estado 40
+    '+'  deslocar, e ir ao estado 43
+    '-'  deslocar, e ir ao estado 44
+    '*'  deslocar, e ir ao estado 45
+    '/'  deslocar, e ir ao estado 46
+    '%'  deslocar, e ir ao estado 47
+    '.'  deslocar, e ir ao estado 48
+    '|'  deslocar, e ir ao estado 49
+    '&'  deslocar, e ir ao estado 50
+    '^'  deslocar, e ir ao estado 51
+    SHL  deslocar, e ir ao estado 52
+    SHR  deslocar, e ir ao estado 53
+
+    $padrão  reduzir usando a regra 41 (expr)
+
+
+estado 91
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   40     | expr LTE expr .
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='  deslocar, e ir ao estado 40
+    '+'  deslocar, e ir ao estado 43
+    '-'  deslocar, e ir ao estado 44
+    '*'  deslocar, e ir ao estado 45
+    '/'  deslocar, e ir ao estado 46
+    '%'  deslocar, e ir ao estado 47
+    '.'  deslocar, e ir ao estado 48
+    '|'  deslocar, e ir ao estado 49
+    '&'  deslocar, e ir ao estado 50
+    '^'  deslocar, e ir ao estado 51
+    SHL  deslocar, e ir ao estado 52
+    SHR  deslocar, e ir ao estado 53
+
+    $padrão  reduzir usando a regra 40 (expr)
+
+
+estado 92
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   42     | expr ANDAND expr .
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='  deslocar, e ir ao estado 40
+    '<'  deslocar, e ir ao estado 41
+    '>'  deslocar, e ir ao estado 42
+    '+'  deslocar, e ir ao estado 43
+    '-'  deslocar, e ir ao estado 44
+    '*'  deslocar, e ir ao estado 45
+    '/'  deslocar, e ir ao estado 46
+    '%'  deslocar, e ir ao estado 47
+    '.'  deslocar, e ir ao estado 48
+    '|'  deslocar, e ir ao estado 49
+    '&'  deslocar, e ir ao estado 50
+    '^'  deslocar, e ir ao estado 51
+    SHL  deslocar, e ir ao estado 52
+    SHR  deslocar, e ir ao estado 53
+    EQ   deslocar, e ir ao estado 54
+    NEQ  deslocar, e ir ao estado 55
+    GTE  deslocar, e ir ao estado 56
+    LTE  deslocar, e ir ao estado 57
+
+    $padrão  reduzir usando a regra 42 (expr)
+
+
+estado 93
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   43     | expr OROR expr .
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+
+    $padrão  reduzir usando a regra 43 (expr)
+
+
+estado 94
+
+   56 area: location '@' '+' . '(' expr ',' expr ')'
+
+    '('  deslocar, e ir ao estado 104
+
+
+estado 95
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+   57 area: location TOWARDS expr . ':' '(' expr ',' expr ')'
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    ':'     deslocar, e ir ao estado 105
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+
+
+estado 96
+
+   12 spellconf_option: PROCEDURE ID '(' proc_formals_list ')' . '=' effect_list
+
+    '='  deslocar, e ir ao estado 106
+
+
+estado 97
+
+    8 proc_formals_list_ne: proc_formals_list_ne ',' . ID
+
+    ID  deslocar, e ir ao estado 107
+
+
+estado 98
+
+   11 spellconf_option: TELEPORT_ANCHOR ID ':' expr '=' . expr
+   45 expr: expr '=' . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 108
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 99
+
+   19 argopt: '(' ID . ':' arg_ty ')'
+
+    ':'  deslocar, e ir ao estado 109
+
+
+estado 100
+
+   13 spellconf_option: spell_flags SPELL ID argopt ':' . expr '=' spelldef
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 110
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 101
+
+   47 expr: ID '(' arg_list ')' .
+
+    $padrão  reduzir usando a regra 47 (expr)
+
+
+estado 102
+
+   53 arg_list_ne: arg_list_ne ',' . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 111
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 103
+
+   54 location: '@' '(' expr ',' . expr ',' expr ')'
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 112
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 104
+
+   56 area: location '@' '+' '(' . expr ',' expr ')'
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 113
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 105
+
+   57 area: location TOWARDS expr ':' . '(' expr ',' expr ')'
+
+    '('  deslocar, e ir ao estado 114
+
+
+estado 106
+
+   12 spellconf_option: PROCEDURE ID '(' proc_formals_list ')' '=' . effect_list
+
+    ID           deslocar, e ir ao estado 115
+    CALL         deslocar, e ir ao estado 116
+    SCRIPT_DATA  deslocar, e ir ao estado 117
+    END          deslocar, e ir ao estado 118
+    SKIP         deslocar, e ir ao estado 119
+    ABORT        deslocar, e ir ao estado 120
+    BREAK        deslocar, e ir ao estado 121
+    IF           deslocar, e ir ao estado 122
+    FOREACH      deslocar, e ir ao estado 123
+    FOR          deslocar, e ir ao estado 124
+    SLEEP        deslocar, e ir ao estado 125
+    '('          deslocar, e ir ao estado 126
+
+    ID        [reduzir usando a regra 109 (effect_list)]
+    $padrão  reduzir usando a regra 109 (effect_list)
+
+    effect       ir ao estado 127
+    effect_list  ir ao estado 128
+
+
+estado 107
+
+    8 proc_formals_list_ne: proc_formals_list_ne ',' ID .
+
+    $padrão  reduzir usando a regra 8 (proc_formals_list_ne)
+
+
+estado 108
+
+   11 spellconf_option: TELEPORT_ANCHOR ID ':' expr '=' expr .
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   45     | expr '=' expr .
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='  deslocar, e ir ao estado 40
+    '.'  deslocar, e ir ao estado 48
+
+    $end             reduzir usando a regra 11 (spellconf_option)
+    ID               reduzir usando a regra 11 (spellconf_option)
+    ';'              reduzir usando a regra 11 (spellconf_option)
+    CONST            reduzir usando a regra 11 (spellconf_option)
+    PROCEDURE        reduzir usando a regra 11 (spellconf_option)
+    SILENT           reduzir usando a regra 11 (spellconf_option)
+    LOCAL            reduzir usando a regra 11 (spellconf_option)
+    NONMAGIC         reduzir usando a regra 11 (spellconf_option)
+    TELEPORT_ANCHOR  reduzir usando a regra 11 (spellconf_option)
+    SPELL            reduzir usando a regra 11 (spellconf_option)
+    $padrão         reduzir usando a regra 45 (expr)
+
+
+estado 109
+
+   19 argopt: '(' ID ':' . arg_ty ')'
+
+    STRING_TY  deslocar, e ir ao estado 129
+    PC_F       deslocar, e ir ao estado 130
+
+    arg_ty  ir ao estado 131
+
+
+estado 110
+
+   13 spellconf_option: spell_flags SPELL ID argopt ':' expr . '=' spelldef
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+
+    '='     deslocar, e ir ao estado 132
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+
+
+estado 111
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+   53 arg_list_ne: arg_list_ne ',' expr .
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+
+    $padrão  reduzir usando a regra 53 (arg_list_ne)
+
+
+estado 112
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+   54 location: '@' '(' expr ',' expr . ',' expr ')'
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    ','     deslocar, e ir ao estado 133
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+
+
+estado 113
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+   56 area: location '@' '+' '(' expr . ',' expr ')'
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    ','     deslocar, e ir ao estado 134
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+
+
+estado 114
+
+   57 area: location TOWARDS expr ':' '(' . expr ',' expr ')'
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 135
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 115
+
+  100 effect: ID . '=' expr ';'
+  106       | ID . '(' arg_list ')' ';'
+
+    '='  deslocar, e ir ao estado 136
+    '('  deslocar, e ir ao estado 137
+
+
+estado 116
+
+  108 effect: CALL . ID '(' arg_list ')' ';'
+
+    ID  deslocar, e ir ao estado 138
+
+
+estado 117
+
+  107 effect: SCRIPT_DATA .
+
+    $padrão  reduzir usando a regra 107 (effect)
+
+
+estado 118
+
+   98 effect: END . ';'
+
+    ';'  deslocar, e ir ao estado 139
+
+
+estado 119
+
+   96 effect: SKIP . ';'
+
+    ';'  deslocar, e ir ao estado 140
+
+
+estado 120
+
+   97 effect: ABORT . ';'
+
+    ';'  deslocar, e ir ao estado 141
+
+
+estado 121
+
+   99 effect: BREAK . ';'
+
+    ';'  deslocar, e ir ao estado 142
+
+
+estado 122
+
+  103 effect: IF . expr THEN effect ELSE effect
+  104       | IF . expr THEN effect
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 143
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 123
+
+  101 effect: FOREACH . selection ID IN expr DO effect
+
+    SPELL     deslocar, e ir ao estado 144
+    PC_F      deslocar, e ir ao estado 145
+    NPC_F     deslocar, e ir ao estado 146
+    MOB_F     deslocar, e ir ao estado 147
+    ENTITY_F  deslocar, e ir ao estado 148
+    TARGET_F  deslocar, e ir ao estado 149
+
+    selection  ir ao estado 150
+
+
+estado 124
+
+  102 effect: FOR . ID '=' expr TO expr DO effect
+
+    ID  deslocar, e ir ao estado 151
+
+
+estado 125
+
+  105 effect: SLEEP . expr ';'
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 152
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 126
+
+   95 effect: '(' . effect_list ')'
+
+    ID           deslocar, e ir ao estado 115
+    CALL         deslocar, e ir ao estado 116
+    SCRIPT_DATA  deslocar, e ir ao estado 117
+    END          deslocar, e ir ao estado 118
+    SKIP         deslocar, e ir ao estado 119
+    ABORT        deslocar, e ir ao estado 120
+    BREAK        deslocar, e ir ao estado 121
+    IF           deslocar, e ir ao estado 122
+    FOREACH      deslocar, e ir ao estado 123
+    FOR          deslocar, e ir ao estado 124
+    SLEEP        deslocar, e ir ao estado 125
+    '('          deslocar, e ir ao estado 126
+
+    $padrão  reduzir usando a regra 109 (effect_list)
+
+    effect       ir ao estado 127
+    effect_list  ir ao estado 153
+
+
+estado 127
+
+  110 effect_list: effect . semicolons effect_list
+
+    $padrão  reduzir usando a regra 3 (semicolons)
+
+    semicolons  ir ao estado 154
+
+
+estado 128
+
+   12 spellconf_option: PROCEDURE ID '(' proc_formals_list ')' '=' effect_list .
+
+    $padrão  reduzir usando a regra 12 (spellconf_option)
+
+
+estado 129
+
+   21 arg_ty: STRING_TY .
+
+    $padrão  reduzir usando a regra 21 (arg_ty)
+
+
+estado 130
+
+   20 arg_ty: PC_F .
+
+    $padrão  reduzir usando a regra 20 (arg_ty)
+
+
+estado 131
+
+   19 argopt: '(' ID ':' arg_ty . ')'
+
+    ')'  deslocar, e ir ao estado 155
+
+
+estado 132
+
+   13 spellconf_option: spell_flags SPELL ID argopt ':' expr '=' . spelldef
+   45 expr: expr '=' . expr
+
+    INT         deslocar, e ir ao estado 21
+    STRING      deslocar, e ir ao estado 22
+    ID          deslocar, e ir ao estado 23
+    DIR         deslocar, e ir ao estado 24
+    '@'         deslocar, e ir ao estado 25
+    LET         deslocar, e ir ao estado 156
+    REQUIRE     deslocar, e ir ao estado 157
+    CATALYSTS   deslocar, e ir ao estado 158
+    COMPONENTS  deslocar, e ir ao estado 159
+    MANA        deslocar, e ir ao estado 160
+    CASTTIME    deslocar, e ir ao estado 161
+    EFFECT      deslocar, e ir ao estado 162
+    '('         deslocar, e ir ao estado 163
+
+    value           ir ao estado 27
+    expr            ir ao estado 74
+    location        ir ao estado 29
+    area            ir ao estado 30
+    spelldef        ir ao estado 164
+    spellbody_list  ir ao estado 165
+    spellbody       ir ao estado 166
+    spellguard      ir ao estado 167
+    prereq          ir ao estado 168
+
+
+estado 133
+
+   54 location: '@' '(' expr ',' expr ',' . expr ')'
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 169
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 134
+
+   56 area: location '@' '+' '(' expr ',' . expr ')'
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 170
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 135
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+   57 area: location TOWARDS expr ':' '(' expr . ',' expr ')'
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    ','     deslocar, e ir ao estado 171
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+
+
+estado 136
+
+  100 effect: ID '=' . expr ';'
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 172
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 137
+
+  106 effect: ID '(' . arg_list ')' ';'
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    $padrão  reduzir usando a regra 50 (arg_list)
+
+    value        ir ao estado 27
+    expr         ir ao estado 69
+    arg_list     ir ao estado 173
+    arg_list_ne  ir ao estado 71
+    location     ir ao estado 29
+    area         ir ao estado 30
+
+
+estado 138
+
+  108 effect: CALL ID . '(' arg_list ')' ';'
+
+    '('  deslocar, e ir ao estado 174
+
+
+estado 139
+
+   98 effect: END ';' .
+
+    $padrão  reduzir usando a regra 98 (effect)
+
+
+estado 140
+
+   96 effect: SKIP ';' .
+
+    $padrão  reduzir usando a regra 96 (effect)
+
+
+estado 141
+
+   97 effect: ABORT ';' .
+
+    $padrão  reduzir usando a regra 97 (effect)
+
+
+estado 142
+
+   99 effect: BREAK ';' .
+
+    $padrão  reduzir usando a regra 99 (effect)
+
+
+estado 143
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+  103 effect: IF expr . THEN effect ELSE effect
+  104       | IF expr . THEN effect
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+    THEN    deslocar, e ir ao estado 175
+
+
+estado 144
+
+   92 selection: SPELL .
+
+    $padrão  reduzir usando a regra 92 (selection)
+
+
+estado 145
+
+   89 selection: PC_F .
+
+    $padrão  reduzir usando a regra 89 (selection)
+
+
+estado 146
+
+   94 selection: NPC_F .
+
+    $padrão  reduzir usando a regra 94 (selection)
+
+
+estado 147
+
+   90 selection: MOB_F .
+
+    $padrão  reduzir usando a regra 90 (selection)
+
+
+estado 148
+
+   91 selection: ENTITY_F .
+
+    $padrão  reduzir usando a regra 91 (selection)
+
+
+estado 149
+
+   93 selection: TARGET_F .
+
+    $padrão  reduzir usando a regra 93 (selection)
+
+
+estado 150
+
+  101 effect: FOREACH selection . ID IN expr DO effect
+
+    ID  deslocar, e ir ao estado 176
+
+
+estado 151
+
+  102 effect: FOR ID . '=' expr TO expr DO effect
+
+    '='  deslocar, e ir ao estado 177
+
+
+estado 152
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+  105 effect: SLEEP expr . ';'
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    ';'     deslocar, e ir ao estado 178
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+
+
+estado 153
+
+   95 effect: '(' effect_list . ')'
+
+    ')'  deslocar, e ir ao estado 179
+
+
+estado 154
+
+    4 semicolons: semicolons . ';'
+  110 effect_list: effect semicolons . effect_list
+
+    ID           deslocar, e ir ao estado 115
+    ';'          deslocar, e ir ao estado 34
+    CALL         deslocar, e ir ao estado 116
+    SCRIPT_DATA  deslocar, e ir ao estado 117
+    END          deslocar, e ir ao estado 118
+    SKIP         deslocar, e ir ao estado 119
+    ABORT        deslocar, e ir ao estado 120
+    BREAK        deslocar, e ir ao estado 121
+    IF           deslocar, e ir ao estado 122
+    FOREACH      deslocar, e ir ao estado 123
+    FOR          deslocar, e ir ao estado 124
+    SLEEP        deslocar, e ir ao estado 125
+    '('          deslocar, e ir ao estado 126
+
+    ID        [reduzir usando a regra 109 (effect_list)]
+    ';'       [reduzir usando a regra 109 (effect_list)]
+    $padrão  reduzir usando a regra 109 (effect_list)
+
+    effect       ir ao estado 127
+    effect_list  ir ao estado 180
+
+
+estado 155
+
+   19 argopt: '(' ID ':' arg_ty ')' .
+
+    $padrão  reduzir usando a regra 19 (argopt)
+
+
+estado 156
+
+   59 spelldef: LET . defs IN spellbody_list
+
+    $padrão  reduzir usando a regra 3 (semicolons)
+
+    semicolons  ir ao estado 181
+    defs        ir ao estado 182
+
+
+estado 157
+
+   77 prereq: REQUIRE . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 183
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 158
+
+   78 prereq: CATALYSTS . items
+
+    '['  deslocar, e ir ao estado 184
+
+    items  ir ao estado 185
+
+
+estado 159
+
+   79 prereq: COMPONENTS . items
+
+    '['  deslocar, e ir ao estado 184
+
+    items  ir ao estado 186
+
+
+estado 160
+
+   80 prereq: MANA . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 187
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 161
+
+   81 prereq: CASTTIME . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 188
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 162
+
+   67 spellbody: EFFECT . effect_list maybe_trigger maybe_end
+
+    ID           deslocar, e ir ao estado 115
+    CALL         deslocar, e ir ao estado 116
+    SCRIPT_DATA  deslocar, e ir ao estado 117
+    END          deslocar, e ir ao estado 118
+    SKIP         deslocar, e ir ao estado 119
+    ABORT        deslocar, e ir ao estado 120
+    BREAK        deslocar, e ir ao estado 121
+    IF           deslocar, e ir ao estado 122
+    FOREACH      deslocar, e ir ao estado 123
+    FOR          deslocar, e ir ao estado 124
+    SLEEP        deslocar, e ir ao estado 125
+    '('          deslocar, e ir ao estado 126
+
+    ID        [reduzir usando a regra 109 (effect_list)]
+    $padrão  reduzir usando a regra 109 (effect_list)
+
+    effect       ir ao estado 127
+    effect_list  ir ao estado 189
+
+
+estado 163
+
+   48 expr: '(' . expr ')'
+   66 spellbody: '(' . spellbody_list ')'
+   74 spellguard: '(' . spellguard_list ')'
+
+    INT         deslocar, e ir ao estado 21
+    STRING      deslocar, e ir ao estado 22
+    ID          deslocar, e ir ao estado 23
+    DIR         deslocar, e ir ao estado 24
+    '@'         deslocar, e ir ao estado 25
+    REQUIRE     deslocar, e ir ao estado 157
+    CATALYSTS   deslocar, e ir ao estado 158
+    COMPONENTS  deslocar, e ir ao estado 159
+    MANA        deslocar, e ir ao estado 160
+    CASTTIME    deslocar, e ir ao estado 161
+    EFFECT      deslocar, e ir ao estado 162
+    '('         deslocar, e ir ao estado 163
+
+    value            ir ao estado 27
+    expr             ir ao estado 39
+    location         ir ao estado 29
+    area             ir ao estado 30
+    spellbody_list   ir ao estado 190
+    spellbody        ir ao estado 166
+    spellguard       ir ao estado 191
+    spellguard_list  ir ao estado 192
+    prereq           ir ao estado 168
+
+
+estado 164
+
+   13 spellconf_option: spell_flags SPELL ID argopt ':' expr '=' spelldef .
+
+    $padrão  reduzir usando a regra 13 (spellconf_option)
+
+
+estado 165
+
+   58 spelldef: spellbody_list .
+
+    $padrão  reduzir usando a regra 58 (spelldef)
+
+
+estado 166
+
+   63 spellbody_list: spellbody .
+   64               | spellbody . '|' spellbody_list
+
+    '|'  deslocar, e ir ao estado 193
+
+    $padrão  reduzir usando a regra 63 (spellbody_list)
+
+
+estado 167
+
+   65 spellbody: spellguard . DARROW spellbody
+   73 spellguard: spellguard . OR spellguard
+
+    DARROW  deslocar, e ir ao estado 194
+    OR      deslocar, e ir ao estado 195
+
+
+estado 168
+
+   72 spellguard: prereq .
+
+    $padrão  reduzir usando a regra 72 (spellguard)
+
+
+estado 169
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+   54 location: '@' '(' expr ',' expr ',' expr . ')'
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+    ')'     deslocar, e ir ao estado 196
+
+
+estado 170
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+   56 area: location '@' '+' '(' expr ',' expr . ')'
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+    ')'     deslocar, e ir ao estado 197
+
+
+estado 171
+
+   57 area: location TOWARDS expr ':' '(' expr ',' . expr ')'
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 198
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 172
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+  100 effect: ID '=' expr . ';'
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    ';'     deslocar, e ir ao estado 199
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+
+
+estado 173
+
+  106 effect: ID '(' arg_list . ')' ';'
+
+    ')'  deslocar, e ir ao estado 200
+
+
+estado 174
+
+  108 effect: CALL ID '(' . arg_list ')' ';'
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    $padrão  reduzir usando a regra 50 (arg_list)
+
+    value        ir ao estado 27
+    expr         ir ao estado 69
+    arg_list     ir ao estado 201
+    arg_list_ne  ir ao estado 71
+    location     ir ao estado 29
+    area         ir ao estado 30
+
+
+estado 175
+
+  103 effect: IF expr THEN . effect ELSE effect
+  104       | IF expr THEN . effect
+
+    ID           deslocar, e ir ao estado 115
+    CALL         deslocar, e ir ao estado 116
+    SCRIPT_DATA  deslocar, e ir ao estado 117
+    END          deslocar, e ir ao estado 118
+    SKIP         deslocar, e ir ao estado 119
+    ABORT        deslocar, e ir ao estado 120
+    BREAK        deslocar, e ir ao estado 121
+    IF           deslocar, e ir ao estado 122
+    FOREACH      deslocar, e ir ao estado 123
+    FOR          deslocar, e ir ao estado 124
+    SLEEP        deslocar, e ir ao estado 125
+    '('          deslocar, e ir ao estado 126
+
+    effect  ir ao estado 202
+
+
+estado 176
+
+  101 effect: FOREACH selection ID . IN expr DO effect
+
+    IN  deslocar, e ir ao estado 203
+
+
+estado 177
+
+  102 effect: FOR ID '=' . expr TO expr DO effect
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 204
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 178
+
+  105 effect: SLEEP expr ';' .
+
+    $padrão  reduzir usando a regra 105 (effect)
+
+
+estado 179
+
+   95 effect: '(' effect_list ')' .
+
+    $padrão  reduzir usando a regra 95 (effect)
+
+
+estado 180
+
+  110 effect_list: effect semicolons effect_list .
+
+    $padrão  reduzir usando a regra 110 (effect_list)
+
+
+estado 181
+
+    4 semicolons: semicolons . ';'
+   60 defs: semicolons .
+
+    ';'  deslocar, e ir ao estado 34
+
+    $padrão  reduzir usando a regra 60 (defs)
+
+
+estado 182
+
+   59 spelldef: LET defs . IN spellbody_list
+   61 defs: defs . def semicolons
+
+    ID  deslocar, e ir ao estado 205
+    IN  deslocar, e ir ao estado 206
+
+    def  ir ao estado 207
+
+
+estado 183
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+   77 prereq: REQUIRE expr .
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+
+    $padrão  reduzir usando a regra 77 (prereq)
+
+
+estado 184
+
+   82 items: '[' . item_list ']'
+
+    INT     deslocar, e ir ao estado 208
+    STRING  deslocar, e ir ao estado 209
+
+    item_list  ir ao estado 210
+    item       ir ao estado 211
+    item_name  ir ao estado 212
+
+
+estado 185
+
+   78 prereq: CATALYSTS items .
+
+    $padrão  reduzir usando a regra 78 (prereq)
+
+
+estado 186
+
+   79 prereq: COMPONENTS items .
+
+    $padrão  reduzir usando a regra 79 (prereq)
+
+
+estado 187
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+   80 prereq: MANA expr .
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+
+    $padrão  reduzir usando a regra 80 (prereq)
+
+
+estado 188
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+   81 prereq: CASTTIME expr .
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+
+    $padrão  reduzir usando a regra 81 (prereq)
+
+
+estado 189
+
+   67 spellbody: EFFECT effect_list . maybe_trigger maybe_end
+
+    ATTRIGGER  deslocar, e ir ao estado 213
+
+    $padrão  reduzir usando a regra 68 (maybe_trigger)
+
+    maybe_trigger  ir ao estado 214
+
+
+estado 190
+
+   66 spellbody: '(' spellbody_list . ')'
+
+    ')'  deslocar, e ir ao estado 215
+
+
+estado 191
+
+   65 spellbody: spellguard . DARROW spellbody
+   73 spellguard: spellguard . OR spellguard
+   75 spellguard_list: spellguard .
+   76                | spellguard . ',' spellguard_list
+
+    ','     deslocar, e ir ao estado 216
+    DARROW  deslocar, e ir ao estado 194
+    OR      deslocar, e ir ao estado 195
+
+    $padrão  reduzir usando a regra 75 (spellguard_list)
+
+
+estado 192
+
+   74 spellguard: '(' spellguard_list . ')'
+
+    ')'  deslocar, e ir ao estado 217
+
+
+estado 193
+
+   64 spellbody_list: spellbody '|' . spellbody_list
+
+    REQUIRE     deslocar, e ir ao estado 157
+    CATALYSTS   deslocar, e ir ao estado 158
+    COMPONENTS  deslocar, e ir ao estado 159
+    MANA        deslocar, e ir ao estado 160
+    CASTTIME    deslocar, e ir ao estado 161
+    EFFECT      deslocar, e ir ao estado 162
+    '('         deslocar, e ir ao estado 218
+
+    spellbody_list  ir ao estado 219
+    spellbody       ir ao estado 166
+    spellguard      ir ao estado 167
+    prereq          ir ao estado 168
+
+
+estado 194
+
+   65 spellbody: spellguard DARROW . spellbody
+
+    REQUIRE     deslocar, e ir ao estado 157
+    CATALYSTS   deslocar, e ir ao estado 158
+    COMPONENTS  deslocar, e ir ao estado 159
+    MANA        deslocar, e ir ao estado 160
+    CASTTIME    deslocar, e ir ao estado 161
+    EFFECT      deslocar, e ir ao estado 162
+    '('         deslocar, e ir ao estado 218
+
+    spellbody   ir ao estado 220
+    spellguard  ir ao estado 167
+    prereq      ir ao estado 168
+
+
+estado 195
+
+   73 spellguard: spellguard OR . spellguard
+
+    REQUIRE     deslocar, e ir ao estado 157
+    CATALYSTS   deslocar, e ir ao estado 158
+    COMPONENTS  deslocar, e ir ao estado 159
+    MANA        deslocar, e ir ao estado 160
+    CASTTIME    deslocar, e ir ao estado 161
+    '('         deslocar, e ir ao estado 221
+
+    spellguard  ir ao estado 222
+    prereq      ir ao estado 168
+
+
+estado 196
+
+   54 location: '@' '(' expr ',' expr ',' expr ')' .
+
+    $padrão  reduzir usando a regra 54 (location)
+
+
+estado 197
+
+   56 area: location '@' '+' '(' expr ',' expr ')' .
+
+    $padrão  reduzir usando a regra 56 (area)
+
+
+estado 198
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+   57 area: location TOWARDS expr ':' '(' expr ',' expr . ')'
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+    ')'     deslocar, e ir ao estado 223
+
+
+estado 199
+
+  100 effect: ID '=' expr ';' .
+
+    $padrão  reduzir usando a regra 100 (effect)
+
+
+estado 200
+
+  106 effect: ID '(' arg_list ')' . ';'
+
+    ';'  deslocar, e ir ao estado 224
+
+
+estado 201
+
+  108 effect: CALL ID '(' arg_list . ')' ';'
+
+    ')'  deslocar, e ir ao estado 225
+
+
+estado 202
+
+  103 effect: IF expr THEN effect . ELSE effect
+  104       | IF expr THEN effect .
+
+    ELSE  deslocar, e ir ao estado 226
+
+    ELSE      [reduzir usando a regra 104 (effect)]
+    $padrão  reduzir usando a regra 104 (effect)
+
+
+estado 203
+
+  101 effect: FOREACH selection ID IN . expr DO effect
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 227
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 204
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+  102 effect: FOR ID '=' expr . TO expr DO effect
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+    TO      deslocar, e ir ao estado 228
+
+
+estado 205
+
+   62 def: ID . '=' expr
+
+    '='  deslocar, e ir ao estado 229
+
+
+estado 206
+
+   59 spelldef: LET defs IN . spellbody_list
+
+    REQUIRE     deslocar, e ir ao estado 157
+    CATALYSTS   deslocar, e ir ao estado 158
+    COMPONENTS  deslocar, e ir ao estado 159
+    MANA        deslocar, e ir ao estado 160
+    CASTTIME    deslocar, e ir ao estado 161
+    EFFECT      deslocar, e ir ao estado 162
+    '('         deslocar, e ir ao estado 218
+
+    spellbody_list  ir ao estado 230
+    spellbody       ir ao estado 166
+    spellguard      ir ao estado 167
+    prereq          ir ao estado 168
+
+
+estado 207
+
+   61 defs: defs def . semicolons
+
+    $padrão  reduzir usando a regra 3 (semicolons)
+
+    semicolons  ir ao estado 231
+
+
+estado 208
+
+   85 item: INT . '*' item_name
+   88 item_name: INT .
+
+    '*'  deslocar, e ir ao estado 232
+
+    $padrão  reduzir usando a regra 88 (item_name)
+
+
+estado 209
+
+   87 item_name: STRING .
+
+    $padrão  reduzir usando a regra 87 (item_name)
+
+
+estado 210
+
+   82 items: '[' item_list . ']'
+   84 item_list: item_list . ',' item
+
+    ','  deslocar, e ir ao estado 233
+    ']'  deslocar, e ir ao estado 234
+
+
+estado 211
+
+   83 item_list: item .
+
+    $padrão  reduzir usando a regra 83 (item_list)
+
+
+estado 212
+
+   86 item: item_name .
+
+    $padrão  reduzir usando a regra 86 (item)
+
+
+estado 213
+
+   69 maybe_trigger: ATTRIGGER . effect_list
+
+    ID           deslocar, e ir ao estado 115
+    CALL         deslocar, e ir ao estado 116
+    SCRIPT_DATA  deslocar, e ir ao estado 117
+    END          deslocar, e ir ao estado 118
+    SKIP         deslocar, e ir ao estado 119
+    ABORT        deslocar, e ir ao estado 120
+    BREAK        deslocar, e ir ao estado 121
+    IF           deslocar, e ir ao estado 122
+    FOREACH      deslocar, e ir ao estado 123
+    FOR          deslocar, e ir ao estado 124
+    SLEEP        deslocar, e ir ao estado 125
+    '('          deslocar, e ir ao estado 126
+
+    ID        [reduzir usando a regra 109 (effect_list)]
+    $padrão  reduzir usando a regra 109 (effect_list)
+
+    effect       ir ao estado 127
+    effect_list  ir ao estado 235
+
+
+estado 214
+
+   67 spellbody: EFFECT effect_list maybe_trigger . maybe_end
+
+    ATEND  deslocar, e ir ao estado 236
+
+    $padrão  reduzir usando a regra 70 (maybe_end)
+
+    maybe_end  ir ao estado 237
+
+
+estado 215
+
+   66 spellbody: '(' spellbody_list ')' .
+
+    $padrão  reduzir usando a regra 66 (spellbody)
+
+
+estado 216
+
+   76 spellguard_list: spellguard ',' . spellguard_list
+
+    REQUIRE     deslocar, e ir ao estado 157
+    CATALYSTS   deslocar, e ir ao estado 158
+    COMPONENTS  deslocar, e ir ao estado 159
+    MANA        deslocar, e ir ao estado 160
+    CASTTIME    deslocar, e ir ao estado 161
+    '('         deslocar, e ir ao estado 221
+
+    spellguard       ir ao estado 238
+    spellguard_list  ir ao estado 239
+    prereq           ir ao estado 168
+
+
+estado 217
+
+   74 spellguard: '(' spellguard_list ')' .
+
+    $padrão  reduzir usando a regra 74 (spellguard)
+
+
+estado 218
+
+   66 spellbody: '(' . spellbody_list ')'
+   74 spellguard: '(' . spellguard_list ')'
+
+    REQUIRE     deslocar, e ir ao estado 157
+    CATALYSTS   deslocar, e ir ao estado 158
+    COMPONENTS  deslocar, e ir ao estado 159
+    MANA        deslocar, e ir ao estado 160
+    CASTTIME    deslocar, e ir ao estado 161
+    EFFECT      deslocar, e ir ao estado 162
+    '('         deslocar, e ir ao estado 218
+
+    spellbody_list   ir ao estado 190
+    spellbody        ir ao estado 166
+    spellguard       ir ao estado 191
+    spellguard_list  ir ao estado 192
+    prereq           ir ao estado 168
+
+
+estado 219
+
+   64 spellbody_list: spellbody '|' spellbody_list .
+
+    $padrão  reduzir usando a regra 64 (spellbody_list)
+
+
+estado 220
+
+   65 spellbody: spellguard DARROW spellbody .
+
+    $padrão  reduzir usando a regra 65 (spellbody)
+
+
+estado 221
+
+   74 spellguard: '(' . spellguard_list ')'
+
+    REQUIRE     deslocar, e ir ao estado 157
+    CATALYSTS   deslocar, e ir ao estado 158
+    COMPONENTS  deslocar, e ir ao estado 159
+    MANA        deslocar, e ir ao estado 160
+    CASTTIME    deslocar, e ir ao estado 161
+    '('         deslocar, e ir ao estado 221
+
+    spellguard       ir ao estado 238
+    spellguard_list  ir ao estado 192
+    prereq           ir ao estado 168
+
+
+estado 222
+
+   73 spellguard: spellguard . OR spellguard
+   73           | spellguard OR spellguard .
+
+    $padrão  reduzir usando a regra 73 (spellguard)
+
+
+estado 223
+
+   57 area: location TOWARDS expr ':' '(' expr ',' expr ')' .
+
+    $padrão  reduzir usando a regra 57 (area)
+
+
+estado 224
+
+  106 effect: ID '(' arg_list ')' ';' .
+
+    $padrão  reduzir usando a regra 106 (effect)
+
+
+estado 225
+
+  108 effect: CALL ID '(' arg_list ')' . ';'
+
+    ';'  deslocar, e ir ao estado 240
+
+
+estado 226
+
+  103 effect: IF expr THEN effect ELSE . effect
+
+    ID           deslocar, e ir ao estado 115
+    CALL         deslocar, e ir ao estado 116
+    SCRIPT_DATA  deslocar, e ir ao estado 117
+    END          deslocar, e ir ao estado 118
+    SKIP         deslocar, e ir ao estado 119
+    ABORT        deslocar, e ir ao estado 120
+    BREAK        deslocar, e ir ao estado 121
+    IF           deslocar, e ir ao estado 122
+    FOREACH      deslocar, e ir ao estado 123
+    FOR          deslocar, e ir ao estado 124
+    SLEEP        deslocar, e ir ao estado 125
+    '('          deslocar, e ir ao estado 126
+
+    effect  ir ao estado 241
+
+
+estado 227
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+  101 effect: FOREACH selection ID IN expr . DO effect
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+    DO      deslocar, e ir ao estado 242
+
+
+estado 228
+
+  102 effect: FOR ID '=' expr TO . expr DO effect
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 243
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 229
+
+   62 def: ID '=' . expr
+
+    INT     deslocar, e ir ao estado 21
+    STRING  deslocar, e ir ao estado 22
+    ID      deslocar, e ir ao estado 23
+    DIR     deslocar, e ir ao estado 24
+    '@'     deslocar, e ir ao estado 25
+    '('     deslocar, e ir ao estado 26
+
+    value     ir ao estado 27
+    expr      ir ao estado 244
+    location  ir ao estado 29
+    area      ir ao estado 30
+
+
+estado 230
+
+   59 spelldef: LET defs IN spellbody_list .
+
+    $padrão  reduzir usando a regra 59 (spelldef)
+
+
+estado 231
+
+    4 semicolons: semicolons . ';'
+   61 defs: defs def semicolons .
+
+    ';'  deslocar, e ir ao estado 34
+
+    $padrão  reduzir usando a regra 61 (defs)
+
+
+estado 232
+
+   85 item: INT '*' . item_name
+
+    INT     deslocar, e ir ao estado 245
+    STRING  deslocar, e ir ao estado 209
+
+    item_name  ir ao estado 246
+
+
+estado 233
+
+   84 item_list: item_list ',' . item
+
+    INT     deslocar, e ir ao estado 208
+    STRING  deslocar, e ir ao estado 209
+
+    item       ir ao estado 247
+    item_name  ir ao estado 212
+
+
+estado 234
+
+   82 items: '[' item_list ']' .
+
+    $padrão  reduzir usando a regra 82 (items)
+
+
+estado 235
+
+   69 maybe_trigger: ATTRIGGER effect_list .
+
+    $padrão  reduzir usando a regra 69 (maybe_trigger)
+
+
+estado 236
+
+   71 maybe_end: ATEND . effect_list
+
+    ID           deslocar, e ir ao estado 115
+    CALL         deslocar, e ir ao estado 116
+    SCRIPT_DATA  deslocar, e ir ao estado 117
+    END          deslocar, e ir ao estado 118
+    SKIP         deslocar, e ir ao estado 119
+    ABORT        deslocar, e ir ao estado 120
+    BREAK        deslocar, e ir ao estado 121
+    IF           deslocar, e ir ao estado 122
+    FOREACH      deslocar, e ir ao estado 123
+    FOR          deslocar, e ir ao estado 124
+    SLEEP        deslocar, e ir ao estado 125
+    '('          deslocar, e ir ao estado 126
+
+    ID        [reduzir usando a regra 109 (effect_list)]
+    $padrão  reduzir usando a regra 109 (effect_list)
+
+    effect       ir ao estado 127
+    effect_list  ir ao estado 248
+
+
+estado 237
+
+   67 spellbody: EFFECT effect_list maybe_trigger maybe_end .
+
+    $padrão  reduzir usando a regra 67 (spellbody)
+
+
+estado 238
+
+   73 spellguard: spellguard . OR spellguard
+   75 spellguard_list: spellguard .
+   76                | spellguard . ',' spellguard_list
+
+    ','  deslocar, e ir ao estado 216
+    OR   deslocar, e ir ao estado 195
+
+    $padrão  reduzir usando a regra 75 (spellguard_list)
+
+
+estado 239
+
+   76 spellguard_list: spellguard ',' spellguard_list .
+
+    $padrão  reduzir usando a regra 76 (spellguard_list)
+
+
+estado 240
+
+  108 effect: CALL ID '(' arg_list ')' ';' .
+
+    $padrão  reduzir usando a regra 108 (effect)
+
+
+estado 241
+
+  103 effect: IF expr THEN effect ELSE effect .
+
+    $padrão  reduzir usando a regra 103 (effect)
+
+
+estado 242
+
+  101 effect: FOREACH selection ID IN expr DO . effect
+
+    ID           deslocar, e ir ao estado 115
+    CALL         deslocar, e ir ao estado 116
+    SCRIPT_DATA  deslocar, e ir ao estado 117
+    END          deslocar, e ir ao estado 118
+    SKIP         deslocar, e ir ao estado 119
+    ABORT        deslocar, e ir ao estado 120
+    BREAK        deslocar, e ir ao estado 121
+    IF           deslocar, e ir ao estado 122
+    FOREACH      deslocar, e ir ao estado 123
+    FOR          deslocar, e ir ao estado 124
+    SLEEP        deslocar, e ir ao estado 125
+    '('          deslocar, e ir ao estado 126
+
+    effect  ir ao estado 249
+
+
+estado 243
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+  102 effect: FOR ID '=' expr TO expr . DO effect
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+    DO      deslocar, e ir ao estado 250
+
+
+estado 244
+
+   28 expr: expr . '+' expr
+   29     | expr . '-' expr
+   30     | expr . '*' expr
+   31     | expr . '%' expr
+   32     | expr . '/' expr
+   33     | expr . '<' expr
+   34     | expr . '>' expr
+   35     | expr . '&' expr
+   36     | expr . '^' expr
+   37     | expr . '|' expr
+   38     | expr . SHL expr
+   39     | expr . SHR expr
+   40     | expr . LTE expr
+   41     | expr . GTE expr
+   42     | expr . ANDAND expr
+   43     | expr . OROR expr
+   44     | expr . EQ expr
+   45     | expr . '=' expr
+   46     | expr . NEQ expr
+   49     | expr . '.' ID
+   62 def: ID '=' expr .
+
+    '='     deslocar, e ir ao estado 40
+    '<'     deslocar, e ir ao estado 41
+    '>'     deslocar, e ir ao estado 42
+    '+'     deslocar, e ir ao estado 43
+    '-'     deslocar, e ir ao estado 44
+    '*'     deslocar, e ir ao estado 45
+    '/'     deslocar, e ir ao estado 46
+    '%'     deslocar, e ir ao estado 47
+    '.'     deslocar, e ir ao estado 48
+    '|'     deslocar, e ir ao estado 49
+    '&'     deslocar, e ir ao estado 50
+    '^'     deslocar, e ir ao estado 51
+    SHL     deslocar, e ir ao estado 52
+    SHR     deslocar, e ir ao estado 53
+    EQ      deslocar, e ir ao estado 54
+    NEQ     deslocar, e ir ao estado 55
+    GTE     deslocar, e ir ao estado 56
+    LTE     deslocar, e ir ao estado 57
+    ANDAND  deslocar, e ir ao estado 58
+    OROR    deslocar, e ir ao estado 59
+
+    $padrão  reduzir usando a regra 62 (def)
+
+
+estado 245
+
+   88 item_name: INT .
+
+    $padrão  reduzir usando a regra 88 (item_name)
+
+
+estado 246
+
+   85 item: INT '*' item_name .
+
+    $padrão  reduzir usando a regra 85 (item)
+
+
+estado 247
+
+   84 item_list: item_list ',' item .
+
+    $padrão  reduzir usando a regra 84 (item_list)
+
+
+estado 248
+
+   71 maybe_end: ATEND effect_list .
+
+    $padrão  reduzir usando a regra 71 (maybe_end)
+
+
+estado 249
+
+  101 effect: FOREACH selection ID IN expr DO effect .
+
+    $padrão  reduzir usando a regra 101 (effect)
+
+
+estado 250
+
+  102 effect: FOR ID '=' expr TO expr DO . effect
+
+    ID           deslocar, e ir ao estado 115
+    CALL         deslocar, e ir ao estado 116
+    SCRIPT_DATA  deslocar, e ir ao estado 117
+    END          deslocar, e ir ao estado 118
+    SKIP         deslocar, e ir ao estado 119
+    ABORT        deslocar, e ir ao estado 120
+    BREAK        deslocar, e ir ao estado 121
+    IF           deslocar, e ir ao estado 122
+    FOREACH      deslocar, e ir ao estado 123
+    FOR          deslocar, e ir ao estado 124
+    SLEEP        deslocar, e ir ao estado 125
+    '('          deslocar, e ir ao estado 126
+
+    effect  ir ao estado 251
+
+
+estado 251
+
+  102 effect: FOR ID '=' expr TO expr DO effect .
+
+    $padrão  reduzir usando a regra 102 (effect)
