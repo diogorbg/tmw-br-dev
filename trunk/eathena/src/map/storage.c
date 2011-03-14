@@ -23,7 +23,7 @@ static struct dbt *storage_db;
 static struct dbt *guild_storage_db;
 
 /*==========================================
- * qÉàACe\[g
+ * 倉庫内アイテムソート
  *------------------------------------------
  */
 int storage_comp_item (const void *_i1, const void *_i2)
@@ -69,10 +69,10 @@ void sortage_gsortitem (struct guild_storage *gstor)
 }
 
 /*==========================================
- * ú»Æ©
+ * 初期化とか
  *------------------------------------------
  */
-int do_init_storage (void)      // map.c::do_init()©çÄÎêé
+int do_init_storage (void)      // map.c::do_init()から呼ばれる
 {
     storage_db = numdb_init ();
     guild_storage_db = numdb_init ();
@@ -144,7 +144,7 @@ int storage_delete (int account_id)
 }
 
 /*==========================================
- * JvqÉðJ­
+ * カプラ倉庫を開く
  *------------------------------------------
  */
 int storage_storageopen (struct map_session_data *sd)
