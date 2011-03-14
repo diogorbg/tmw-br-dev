@@ -23,7 +23,7 @@ static struct dbt *storage_db;
 static struct dbt *guild_storage_db;
 
 /*==========================================
- * 倉庫内アイテムソート
+ * ﾂ倉ﾂ古可禿ﾂアﾂイﾂテﾂδﾂソﾂーﾂト
  *------------------------------------------
  */
 int storage_comp_item (const void *_i1, const void *_i2)
@@ -69,10 +69,10 @@ void sortage_gsortitem (struct guild_storage *gstor)
 }
 
 /*==========================================
- * 初期化とか
+ * ﾂ渉可甘ｺﾂ可ｻﾂづ�ﾂつｩ
  *------------------------------------------
  */
-int do_init_storage (void)      // map.c::do_init()から呼ばれる
+int do_init_storage (void)      // map.c::do_init()ﾂつｩﾂづｧﾂ古�ﾂづ篠づｪﾂづｩ
 {
     storage_db = numdb_init ();
     guild_storage_db = numdb_init ();
@@ -144,7 +144,7 @@ int storage_delete (int account_id)
 }
 
 /*==========================================
- * カプラ倉庫を開く
+ * ﾂカﾂプﾂδ可倉ﾂ古可づｰﾂ開ﾂつｭ
  *------------------------------------------
  */
 int storage_storageopen (struct map_session_data *sd)
@@ -583,6 +583,10 @@ int guild_storage_additem (struct map_session_data *sd,
     clif_guildstorageitemadded (sd, stor, i, amount);
     clif_updateguildstorageamount (sd, stor);
     stor->dirty = 1;
+
+	// FIXME TMW-BR
+	fprintf(stderr, "additem:%d|%s|%s|%s|%s\n", data->nameid, data->name, data->prefix, data->suffix, data->cardillustname);
+
     return 0;
 }
 
