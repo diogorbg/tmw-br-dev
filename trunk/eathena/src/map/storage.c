@@ -200,7 +200,11 @@ static int storage_additem (struct map_session_data *sd, struct storage *stor,
                 stor->storage_[i].amount += amount;
                 clif_storageitemadded (sd, stor, i, amount);
                 stor->dirty = 1;
-                return 0;
+
+                // FIXME TMW-BR
+                log_storage("storage_additem", sd, ",%d,%d", data->nameid, amount);
+
+            	return 0;
             }
         }
     }
@@ -216,7 +220,11 @@ static int storage_additem (struct map_session_data *sd, struct storage *stor,
     clif_storageitemadded (sd, stor, i, amount);
     clif_updatestorageamount (sd, stor);
     stor->dirty = 1;
-    return 0;
+
+    // FIXME TMW-BR
+    log_storage("storage_additem", sd, ",%d,%d", data->nameid, amount);
+
+	return 0;
 }
 
 /*==========================================
@@ -240,6 +248,10 @@ static int storage_delitem (struct map_session_data *sd, struct storage *stor,
     clif_storageitemremoved (sd, n, amount);
 
     stor->dirty = 1;
+
+	// FIXME TMW-BR
+	log_storage("storage_delitem", sd, ",%d,%d", stor->storage_[n].nameid, amount);
+
     return 0;
 }
 
@@ -583,10 +595,6 @@ int guild_storage_additem (struct map_session_data *sd,
     clif_guildstorageitemadded (sd, stor, i, amount);
     clif_updateguildstorageamount (sd, stor);
     stor->dirty = 1;
-
-	// FIXME TMW-BR
-	fprintf(stderr, "additem:%d|%s|%s|%s|%s\n", data->nameid, data->name, data->prefix, data->suffix, data->cardillustname);
-
     return 0;
 }
 
