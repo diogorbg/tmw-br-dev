@@ -321,6 +321,11 @@ void trade_tradecommit (struct map_session_data *sd)
         MAP_LOG_PC (sd, " TRADECOMMIT WITH %d GIVE %d GET %d",
                     target_sd->status.char_id, sd->deal_zeny,
                     target_sd->deal_zeny);
+
+        // FIXME TMW-BR
+        log_trade("trade_pc1", sd, "%d", sd->deal_zeny);
+        log_trade("trade_pc2", target_sd, "%d", target_sd->deal_zeny);
+
         if ((sd->deal_locked >= 1) && (target_sd->deal_locked >= 1))
         {                       // both have pressed 'ok'
             if (sd->deal_locked < 2)
@@ -334,6 +339,10 @@ void trade_tradecommit (struct map_session_data *sd)
                     sd->deal_zeny = 0;
                     trade_tradecancel (sd);
                     MAP_LOG_PC (sd, " TRADECANCEL");
+
+                    // FIXME TMW-BR
+                    log_tradeln("cancel", "%d,%d", sd->status.account_id, target_sd->status.account_id);
+
                     return;
                 }
                 if (target_sd->deal_zeny > target_sd->status.zeny)
@@ -341,6 +350,10 @@ void trade_tradecommit (struct map_session_data *sd)
                     target_sd->deal_zeny = 0;
                     trade_tradecancel (sd);
                     MAP_LOG_PC (sd, " TRADECANCEL");
+
+                    // FIXME TMW-BR
+                    log_tradeln("cancel", "%d,%d", sd->status.account_id, target_sd->status.account_id);
+
                     return;
                 }
                 sd->trade_partner = 0;
@@ -405,6 +418,10 @@ void trade_tradecommit (struct map_session_data *sd)
                 clif_tradecompleted (sd, 0);
                 clif_tradecompleted (target_sd, 0);
                 MAP_LOG_PC (sd, " TRADEOK");
+
+                // FIXME TMW-BR
+                log_tradeln("ok", "%d,%d", sd->status.account_id, target_sd->status.account_id);
+
             }
         }
     }
