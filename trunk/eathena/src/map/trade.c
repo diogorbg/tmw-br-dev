@@ -373,6 +373,11 @@ void trade_tradecommit (struct map_session_data *sd)
                         else
                             clif_additem (sd, n,
                                           sd->deal_item_amount[trade_i], 0);
+
+                        // FIXME TMW-BR
+                        log_tradeln("trade", "%d,%d,%d,%d", sd->status.account_id, target_sd->status.account_id,
+                        		sd->status.inventory[n].nameid, sd->deal_item_amount[trade_i]);
+
                         sd->deal_item_index[trade_i] = 0;
                         sd->deal_item_amount[trade_i] = 0;
                     }
@@ -391,6 +396,11 @@ void trade_tradecommit (struct map_session_data *sd)
                             clif_additem (target_sd, n,
                                           target_sd->deal_item_amount
                                           [trade_i], 0);
+
+                        // FIXME TMW-BR
+                        log_tradeln("trade", "%d,%d,%d,%d", target_sd->status.account_id, sd->status.account_id,
+                        		target_sd->status.inventory[n].nameid, target_sd->deal_item_amount[trade_i]);
+
                         target_sd->deal_item_index[trade_i] = 0;
                         target_sd->deal_item_amount[trade_i] = 0;
                     }

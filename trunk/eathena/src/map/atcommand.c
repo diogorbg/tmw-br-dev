@@ -830,7 +830,7 @@ void log_tradeln(const char *func, const char *fmt, ...) {
 	vsnprintf(buff, 511, fmt, ap);
 	va_end(ap);
 
-	fprintf(logFile,"%s('%02d:%02d:%02d',%s);\n", func, t.tm_hour, t.tm_min, t.tm_sec, buff);
+	fprintf(logFile,"%s(%s);\n", func, buff);
 	fflush(logFile);
 }
 
