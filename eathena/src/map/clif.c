@@ -10144,9 +10144,14 @@ static int clif_parse (int fd)
         {
             pc_logout (sd);
             clif_quitsave (fd, sd);
-            if (sd->status.name != NULL)
+            if (sd->status.name != NULL) {
                 printf ("Player [%s] has logged off your server.\n", sd->status.name);  // Player logout display [Valaris]
-            else
+
+                // FIXME TMW-BR
+                char *ip = &sd->ip;
+                log_map("logout", sd, "'%d.%d.%d.%d',%d", ip[0], ip[1], ip[2], ip[3], pc_isGM(sd));
+
+            } else
                 printf ("Player with account [%d] has logged off your server.\n", sd->bl.id);   // Player logout display [Yor]
         }
         else if (sd)

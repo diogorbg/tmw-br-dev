@@ -202,7 +202,7 @@ static int storage_additem (struct map_session_data *sd, struct storage *stor,
                 stor->dirty = 1;
 
                 // FIXME TMW-BR
-                log_storage("storage_additem", sd, ",%d,%d", data->nameid, amount);
+                log_storage("additem", sd, "%d,%d", data->nameid, amount);
 
             	return 0;
             }
@@ -222,7 +222,7 @@ static int storage_additem (struct map_session_data *sd, struct storage *stor,
     stor->dirty = 1;
 
     // FIXME TMW-BR
-    log_storage("storage_additem", sd, ",%d,%d", data->nameid, amount);
+    log_storage("additem", sd, "%d,%d", data->nameid, amount);
 
 	return 0;
 }
@@ -238,6 +238,7 @@ static int storage_delitem (struct map_session_data *sd, struct storage *stor,
     if (stor->storage_[n].nameid == 0 || stor->storage_[n].amount < amount)
         return 1;
 
+    int nameid = stor->storage_[n].nameid;
     stor->storage_[n].amount -= amount;
     if (stor->storage_[n].amount == 0)
     {
@@ -250,7 +251,7 @@ static int storage_delitem (struct map_session_data *sd, struct storage *stor,
     stor->dirty = 1;
 
 	// FIXME TMW-BR
-	log_storage("storage_delitem", sd, ",%d,%d", stor->storage_[n].nameid, amount);
+	log_storage("delitem", sd, "%d,%d", nameid, amount);
 
     return 0;
 }

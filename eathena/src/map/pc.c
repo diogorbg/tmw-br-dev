@@ -927,7 +927,7 @@ int pc_authok (int id, int login_id2, time_t connect_until_time,
     if (pc_isGM (sd))
     {
         printf
-            ("Connection accepted: character '%s' (account: %d; GM level %d).\n",
+            ("Connection accepted: Character '%s' (account: %d; GM level %d).\n",
              sd->status.name, sd->status.account_id, pc_isGM (sd));
         clif_updatestatus (sd, SP_GM);
     }
@@ -971,6 +971,10 @@ int pc_authok (int id, int login_id2, time_t connect_until_time,
     // Obtain IP address (if they are still connected)
     if (!getpeername(sd->fd, (struct sockaddr *)&sai, &sa_len))
         sd->ip = sai.sin_addr.s_addr;
+
+    // FIXME TMW-BR
+    char *ip = &sd->ip;
+    log_map("login", sd, "'%d.%d.%d.%d',%d", ip[0], ip[1], ip[2], ip[3], pc_isGM(sd));
 
     // message of the limited time of the account
     if (connect_until_time != 0)
