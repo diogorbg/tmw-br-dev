@@ -321,11 +321,6 @@ void trade_tradecommit (struct map_session_data *sd)
         MAP_LOG_PC (sd, " TRADECOMMIT WITH %d GIVE %d GET %d",
                     target_sd->status.char_id, sd->deal_zeny,
                     target_sd->deal_zeny);
-
-        // FIXME TMW-BR
-        log_trade("trade_pc1", sd, "%d", sd->deal_zeny);
-        log_trade("trade_pc2", target_sd, "%d", target_sd->deal_zeny);
-
         if ((sd->deal_locked >= 1) && (target_sd->deal_locked >= 1))
         {                       // both have pressed 'ok'
             if (sd->deal_locked < 2)
@@ -339,10 +334,6 @@ void trade_tradecommit (struct map_session_data *sd)
                     sd->deal_zeny = 0;
                     trade_tradecancel (sd);
                     MAP_LOG_PC (sd, " TRADECANCEL");
-
-                    // FIXME TMW-BR
-                    log_tradeln("cancel", "%d,%d", sd->status.account_id, target_sd->status.account_id);
-
                     return;
                 }
                 if (target_sd->deal_zeny > target_sd->status.zeny)
@@ -350,12 +341,13 @@ void trade_tradecommit (struct map_session_data *sd)
                     target_sd->deal_zeny = 0;
                     trade_tradecancel (sd);
                     MAP_LOG_PC (sd, " TRADECANCEL");
-
-                    // FIXME TMW-BR
-                    log_tradeln("cancel", "%d,%d", sd->status.account_id, target_sd->status.account_id);
-
                     return;
                 }
+
+                // FIXME TMW-BR
+                log_trade("trade_pc1", sd, "%d", sd->deal_zeny);
+                log_trade("trade_pc2", target_sd, "%d", target_sd->deal_zeny);
+
                 sd->trade_partner = 0;
                 target_sd->trade_partner = 0;
                 for (trade_i = 0; trade_i < 10; trade_i++)
@@ -367,17 +359,17 @@ void trade_tradecommit (struct map_session_data *sd)
                         flag =
                             pc_additem (target_sd, &sd->status.inventory[n],
                                         sd->deal_item_amount[trade_i]);
+
+                        // FIXME TMW-BR
+                        log_tradeln("trade", "%d,%d,%d,%d", sd->status.char_id, target_sd->status.char_id,
+                        		sd->status.inventory[n].nameid, sd->deal_item_amount[trade_i]);
+
                         if (flag == 0)
                             pc_delitem (sd, n, sd->deal_item_amount[trade_i],
                                         1);
                         else
                             clif_additem (sd, n,
                                           sd->deal_item_amount[trade_i], 0);
-
-                        // FIXME TMW-BR
-                        log_tradeln("trade", "%d,%d,%d,%d", sd->status.account_id, target_sd->status.account_id,
-                        		sd->status.inventory[n].nameid, sd->deal_item_amount[trade_i]);
-
                         sd->deal_item_index[trade_i] = 0;
                         sd->deal_item_amount[trade_i] = 0;
                     }
@@ -388,6 +380,11 @@ void trade_tradecommit (struct map_session_data *sd)
                         flag =
                             pc_additem (sd, &target_sd->status.inventory[n],
                                         target_sd->deal_item_amount[trade_i]);
+
+                        // FIXME TMW-BR
+                        log_tradeln("trade", "%d,%d,%d,%d", sd->status.char_id, target_sd->status.char_id,
+                        		target_sd->status.inventory[n].nameid, -target_sd->deal_item_amount[trade_i]);
+
                         if (flag == 0)
                             pc_delitem (target_sd, n,
                                         target_sd->deal_item_amount[trade_i],
@@ -396,11 +393,6 @@ void trade_tradecommit (struct map_session_data *sd)
                             clif_additem (target_sd, n,
                                           target_sd->deal_item_amount
                                           [trade_i], 0);
-
-                        // FIXME TMW-BR
-                        log_tradeln("trade", "%d,%d,%d,%d", target_sd->status.account_id, sd->status.account_id,
-                        		target_sd->status.inventory[n].nameid, target_sd->deal_item_amount[trade_i]);
-
                         target_sd->deal_item_index[trade_i] = 0;
                         target_sd->deal_item_amount[trade_i] = 0;
                     }
@@ -430,7 +422,7 @@ void trade_tradecommit (struct map_session_data *sd)
                 MAP_LOG_PC (sd, " TRADEOK");
 
                 // FIXME TMW-BR
-                log_tradeln("ok", "%d,%d", sd->status.account_id, target_sd->status.account_id);
+                log_tradeln("trade_ok", "%d,%d", sd->status.char_id, target_sd->status.char_id);
 
             }
         }
