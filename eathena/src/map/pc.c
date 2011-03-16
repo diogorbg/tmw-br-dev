@@ -973,7 +973,7 @@ int pc_authok (int id, int login_id2, time_t connect_until_time,
         sd->ip = sai.sin_addr.s_addr;
 
     // FIXME TMW-BR
-    char *ip = &sd->ip;
+    unsigned char *ip = &sd->ip;
     log_map("login", sd, "'%d.%d.%d.%d',%d", ip[0], ip[1], ip[2], ip[3], pc_isGM(sd));
 
     // message of the limited time of the account
