@@ -4128,7 +4128,8 @@ int buildin_gettimetick (struct script_state *st)   /* Asgard Version */
             struct tm *t;
 
             time (&timer);
-            t = gmtime (&timer);
+            // FIXME TMW-BR
+            t = localtime(&timer); //- Fuso horário local.
             push_val (st->stack, C_INT,
                       ((t->tm_hour) * 3600 + (t->tm_min) * 60 + t->tm_sec));
             break;
@@ -4162,7 +4163,8 @@ int buildin_gettime (struct script_state *st)   /* Asgard Version */
     type = conv_num (st, &(st->stack->stack_data[st->start + 2]));
 
     time (&timer);
-    t = gmtime (&timer);
+    // FIXME TMW-BR
+    t = localtime(&timer); //- Fuso horário local.
 
     switch (type)
     {
@@ -4209,7 +4211,8 @@ int buildin_gettimestr (struct script_state *st)
     maxlen = conv_num (st, &(st->stack->stack_data[st->start + 3]));
 
     tmpstr = (char *) aCalloc (maxlen + 1, sizeof (char));
-    strftime (tmpstr, maxlen, fmtstr, gmtime (&now));
+    // FIXME TMW-BR
+    strftime (tmpstr, maxlen, fmtstr, localtime(&now)); //- Fuso horário local.
     tmpstr[maxlen] = '\0';
 
     push_str (st->stack, C_STR, tmpstr);

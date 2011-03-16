@@ -386,7 +386,8 @@ int npc_event_do_clock (int tid, unsigned int tick, int id, int data)
     int  c = 0;
 
     time (&timer);
-    t = gmtime (&timer);
+    // FIXME TMW-BR
+    t = localtime(&timer); //- Fuso horário local.
 
     if (t->tm_min != ev_tm_b.tm_min)
     {
