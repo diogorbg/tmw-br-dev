@@ -754,7 +754,7 @@ void log_map(const char *func, struct map_session_data *sd, const char *fmt, ...
 	//- criação do arquivo log_map...
     static int timeLogFile = 0;
 	static FILE *logFile = NULL;
-	int time = t.tm_year*12 + t.tm_mon;
+	int time = t.tm_year*12*31 + t.tm_mon*31 + t.tm_mday;
 	if( timeLogFile!=time ) {
 		if(logFile)
 			fclose(logFile);
@@ -762,7 +762,7 @@ void log_map(const char *func, struct map_session_data *sd, const char *fmt, ...
 	}
 	if(!logFile) {
 		timeLogFile = time;
-		sprintf(buff, "log/map.%04d-%02d.log", t.tm_year+1900, t.tm_mon+1);
+		sprintf(buff, "log/storage.%04d-%02d-%02d.log", t.tm_year+1900, t.tm_mon+1, t.tm_mday);
 		logFile = fopen(buff, "a");
 	}
 
