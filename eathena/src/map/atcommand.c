@@ -1172,8 +1172,8 @@ int atcommand_charwarp (const int fd, struct map_session_data *sd,
                 if (pl_sd->bl.m >= 0 && map[pl_sd->bl.m].flag.nowarp
                     && battle_config.any_warp_GM_min_level > pc_isGM (sd))
                 {
-                    clif_displaymessage (fd,
-                                         "You are not authorised to warp this player from its actual map.");
+                    clif_displaymessage (fd, "Você não está autorizado puchar este jogador de seu mapa atual.");
+                                         //"You are not authorised to warp this player from its actual map.");
                     return -1;
                 }
                 if (pc_setpos (pl_sd, map_name, x, y, 3) == 0)
@@ -3809,15 +3809,15 @@ int atcommand_recall (const int fd, struct map_session_data *sd,
             if (sd->bl.m >= 0 && map[sd->bl.m].flag.nowarpto
                 && battle_config.any_warp_GM_min_level > pc_isGM (sd))
             {
-                clif_displaymessage (fd,
-                                     "You are not authorised to warp somenone to your actual map.");
+                clif_displaymessage (fd, "Você não está autorizado puchar um jogador ao mapa atual.");
+                                     //"You are not authorised to warp somenone to your actual map.");
                 return -1;
             }
             if (pl_sd->bl.m >= 0 && map[pl_sd->bl.m].flag.nowarp
                 && battle_config.any_warp_GM_min_level > pc_isGM (sd))
             {
-                clif_displaymessage (fd,
-                                     "You are not authorised to warp this player from its actual map.");
+                clif_displaymessage (fd, "Você não está autorizado puchar este jogador de seu mapa atual.");
+                                     //"You are not authorised to warp this player from its actual map.");
                 return -1;
             }
             pc_setpos (pl_sd, sd->mapname, sd->bl.x, sd->bl.y, 2);
@@ -5714,8 +5714,8 @@ int atcommand_recallall (const int fd, struct map_session_data *sd,
     if (sd->bl.m >= 0 && map[sd->bl.m].flag.nowarpto
         && battle_config.any_warp_GM_min_level > pc_isGM (sd))
     {
-        clif_displaymessage (fd,
-                             "You are not authorised to warp somenone to your actual map.");
+        clif_displaymessage (fd, "Você não está autorizado puchar um jogador ao mapa atual.");
+                             //"You are not authorised to warp somenone to your actual map.");
         return -1;
     }
 
@@ -5738,8 +5738,8 @@ int atcommand_recallall (const int fd, struct map_session_data *sd,
     clif_displaymessage (fd, msg_table[92]);    // All characters recalled!
     if (count)
     {
-        sprintf (output,
-                 "Because you are not authorised to warp from some maps, %d player(s) have not been recalled.",
+        sprintf (output, "Por não estar autorizado a puchar de alguns mapas, %d jogadores não foram recolhidos.",
+                 //"Because you are not authorised to warp from some maps, %d player(s) have not been recalled.",
                  count);
         clif_displaymessage (fd, output);
     }
@@ -5774,8 +5774,8 @@ int atcommand_guildrecall (const int fd, struct map_session_data *sd,
     if (sd->bl.m >= 0 && map[sd->bl.m].flag.nowarpto
         && battle_config.any_warp_GM_min_level > pc_isGM (sd))
     {
-        clif_displaymessage (fd,
-                             "You are not authorised to warp somenone to your actual map.");
+        clif_displaymessage (fd, "Você não está autorizado puchar um jogador ao mapa atual.");
+                             //"You are not authorised to warp somenone to your actual map.");
         return -1;
     }
 
@@ -5801,8 +5801,8 @@ int atcommand_guildrecall (const int fd, struct map_session_data *sd,
         clif_displaymessage (fd, output);
         if (count)
         {
-            sprintf (output,
-                     "Because you are not authorised to warp from some maps, %d player(s) have not been recalled.",
+            sprintf (output, "Por não estar autorizado a puchar de alguns mapas, %d jogadores não foram recolhidos.",
+                     //"Because you are not authorised to warp from some maps, %d player(s) have not been recalled.",
                      count);
             clif_displaymessage (fd, output);
         }
@@ -5843,8 +5843,8 @@ int atcommand_partyrecall (const int fd, struct map_session_data *sd,
     if (sd->bl.m >= 0 && map[sd->bl.m].flag.nowarpto
         && battle_config.any_warp_GM_min_level > pc_isGM (sd))
     {
-        clif_displaymessage (fd,
-                             "You are not authorised to warp somenone to your actual map.");
+        clif_displaymessage (fd, "Você não está autorizado puchar um jogador ao mapa atual.");
+                             //"You are not authorised to warp somenone to your actual map.");
         return -1;
     }
 
@@ -5870,8 +5870,8 @@ int atcommand_partyrecall (const int fd, struct map_session_data *sd,
         clif_displaymessage (fd, output);
         if (count)
         {
-            sprintf (output,
-                     "Because you are not authorised to warp from some maps, %d player(s) have not been recalled.",
+            sprintf (output, "Por não estar autorizado a puchar de alguns mapas, %d jogadores não foram recolhidos.",
+                     //"Because you are not authorised to warp from some maps, %d player(s) have not been recalled.",
                      count);
             clif_displaymessage (fd, output);
         }
