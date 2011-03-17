@@ -1045,6 +1045,9 @@ int make_new_char (int fd, unsigned char *dat)
          dat[24] + dat[25] + dat[26] + dat[27] + dat[28] + dat[29], dat[33],
          dat[31], ip);
 
+	// FIXME TMW-BR
+	log_map("newChar", sd, "%s\t,%s", dat, ip);
+
     memset (&char_dat[i], 0, sizeof (struct mmo_charstatus));
 
     char_dat[i].char_id = char_id_count++;
