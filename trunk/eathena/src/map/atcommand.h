@@ -218,16 +218,7 @@ int  atcommand_recall (const int fd, struct map_session_data *sd, const char *co
 
 int  atcommand_config_read (const char *cfgName);
 int  msg_config_read (const char *cfgName);
-
 void log_atcommand (struct map_session_data *sd, const char *fmt, ...);
-
-// FIXME TMW-BR
-void log_storage(const char *func, struct map_session_data *sd, const char *fmt, ...);
-void log_map(const char *func, struct map_session_data *sd, const char *fmt, ...);
-void log_trade(const char *func, struct map_session_data *sd, const char *fmt, ...);
-void log_tradeln(const char *func, const char *fmt, ...);
-char *trocaAspa(char *name);
-
 void gm_log (const char *fmt, ...);
 
 #endif

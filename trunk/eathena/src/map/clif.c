@@ -43,6 +43,7 @@
 #include "skill.h"
 #include "storage.h"
 #include "tmw.h"
+#include "tmwbr.h"
 #include "trade.h"
 
 #ifdef MEMWATCH

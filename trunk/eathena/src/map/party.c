@@ -16,6 +16,7 @@
 #include "clif.h"
 #include "skill.h"
 #include "tmw.h"
+#include "tmwbr.h"
 
 #ifdef MEMWATCH
 #include "memwatch.h"

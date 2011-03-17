@@ -18,6 +18,7 @@
 #include "intif.h"
 #include "clif.h"
 #include "tmw.h"
+#include "tmwbr.h"
 
 #ifdef MEMWATCH
 #include "memwatch.h"
