@@ -61,8 +61,7 @@ void log_storage(const char *func, struct map_session_data *sd, const char *fmt,
 	vsnprintf(buff, 511, fmt, ap);
 	va_end(ap);
 
-	fprintf(logFile,"%s('%02d:%02d:%02d',%d,%d,'%s',%s);\n", func, t.tm_hour, t.tm_min, t.tm_sec,
-			sd->status.account_id, sd->status.char_id,
+	fprintf(logFile,"%s,%ld,%d,%d,%s,%s\n", func, time_v, sd->status.account_id, sd->status.char_id,
 			map[sd->bl.m].name, buff);
 	fflush(logFile);
 }
@@ -97,8 +96,7 @@ void log_map(const char *func, struct map_session_data *sd, const char *fmt, ...
 	vsnprintf(buff, 511, fmt, ap);
 	va_end(ap);
 
-	fprintf(logFile,"%s('%02d:%02d:%02d',%d,%d,'%s',%d,%d,%s);\n", func, t.tm_hour, t.tm_min, t.tm_sec,
-			sd->status.account_id, sd->status.char_id,
+	fprintf(logFile,"%s,%ld,%d,%d,%s,%d,%d,%s\n", func, time_v, sd->status.account_id, sd->status.char_id,
 			map[sd->bl.m].name, sd->bl.x, sd->bl.y, buff);
 	fflush(logFile);
 }
@@ -108,9 +106,7 @@ void log_trade(const char *func, struct map_session_data *sd, const char *fmt, .
 
 	//- cálculo de tempo...
 	time_t time_v;
-	struct tm t;
 	time (&time_v);
-	localtime_r(&time_v, &t);
 
 	//- recuperando parâmetros...
 	va_list ap;
@@ -118,8 +114,7 @@ void log_trade(const char *func, struct map_session_data *sd, const char *fmt, .
 	vsnprintf(buff, 511, fmt, ap);
 	va_end(ap);
 
-	log_tradeln(func, "'%02d:%02d:%02d',%d,%d,'%s',%d,%d,%s", t.tm_hour, t.tm_min, t.tm_sec,
-			sd->status.account_id, sd->status.char_id,
+	log_tradeln(func, "%ld,%d,%d,%s,%d,%d,%s", time_v, sd->status.account_id, sd->status.char_id,
 			map[sd->bl.m].name, sd->bl.x, sd->bl.y, buff);
 }
 
@@ -153,7 +148,7 @@ void log_tradeln(const char *func, const char *fmt, ...) {
 	vsnprintf(buff, 511, fmt, ap);
 	va_end(ap);
 
-	fprintf(logFile,"%s(%s);\n", func, buff);
+	fprintf(logFile,"%s,%s\n", func, buff);
 	fflush(logFile);
 }
 
