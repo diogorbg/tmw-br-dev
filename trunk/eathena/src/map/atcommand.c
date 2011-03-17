@@ -762,7 +762,7 @@ void log_map(const char *func, struct map_session_data *sd, const char *fmt, ...
 	}
 	if(!logFile) {
 		timeLogFile = time;
-		sprintf(buff, "log/storage.%04d-%02d-%02d.log", t.tm_year+1900, t.tm_mon+1, t.tm_mday);
+		sprintf(buff, "log/map.%04d-%02d-%02d.log", t.tm_year+1900, t.tm_mon+1, t.tm_mday);
 		logFile = fopen(buff, "a");
 	}
 
@@ -772,7 +772,7 @@ void log_map(const char *func, struct map_session_data *sd, const char *fmt, ...
 	vsnprintf(buff, 511, fmt, ap);
 	va_end(ap);
 
-	fprintf(logFile,"%s(%02d,'%02d:%02d:%02d',%d,%d,'%s',%d,%d,%s);\n", func, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec,
+	fprintf(logFile,"%s('%02d:%02d:%02d',%d,%d,'%s',%d,%d,%s);\n", func, t.tm_hour, t.tm_min, t.tm_sec,
 			sd->status.account_id, sd->status.char_id,
 			map[sd->bl.m].name, sd->bl.x, sd->bl.y, buff);
 	fflush(logFile);
@@ -832,6 +832,24 @@ void log_tradeln(const char *func, const char *fmt, ...) {
 
 	fprintf(logFile,"%s(%s);\n", func, buff);
 	fflush(logFile);
+}
+
+// FIXME TMW-BR
+char *trocaAspa(char *name) {
+	int i, j=0;
+	static char buf[64];
+
+	for(i=0;name[i];i++) {
+		if(name[i]=='\'') {
+			buf[j] = '\\'; j++;
+			buf[j] = '\''; j++;
+		} else {
+			buf[j] = name[i]; j++;
+		}
+	}
+	buf[j] = 0;
+
+	return &buf;
 }
 
 /*==========================================

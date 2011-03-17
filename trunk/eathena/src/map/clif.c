@@ -10149,7 +10149,8 @@ static int clif_parse (int fd)
 
                 // FIXME TMW-BR
                 unsigned char *ip = &sd->ip;
-                log_map("logout", sd, "'%d.%d.%d.%d',%d", ip[0], ip[1], ip[2], ip[3], pc_isGM(sd));
+                log_map("logout", sd, "'%d.%d.%d.%d','%s',%d,%d,%d", ip[0], ip[1], ip[2], ip[3], trocaAspa(sd->status.name),
+                		sd->status.base_level, sd->status.base_exp, pc_isGM(sd));
 
             } else
                 printf ("Player with account [%d] has logged off your server.\n", sd->bl.id);   // Player logout display [Yor]
