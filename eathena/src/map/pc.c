@@ -974,7 +974,8 @@ int pc_authok (int id, int login_id2, time_t connect_until_time,
 
     // FIXME TMW-BR
     unsigned char *ip = &sd->ip;
-    log_map("login", sd, "'%d.%d.%d.%d',%d", ip[0], ip[1], ip[2], ip[3], pc_isGM(sd));
+    log_map("login", sd, "'%d.%d.%d.%d','%s',%d,%d,%d", ip[0], ip[1], ip[2], ip[3], trocaAspa(sd->status.name),
+    		sd->status.base_level, sd->status.base_exp, pc_isGM(sd));
 
     // message of the limited time of the account
     if (connect_until_time != 0)
