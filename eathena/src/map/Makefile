@@ -10,7 +10,7 @@ obj:
 COMMON_OBJ = ../common/core.o ../common/socket.o ../common/timer.o ../common/grfio.o ../common/db.o ../common/lock.o ../common/nullpo.o ../common/malloc.o ../common/mt_rand.o ../common/md5calc.o
 LIBS = -lz -lm
 
-map-server: obj/tmw.o obj/magic-interpreter-lexer.o obj/magic-interpreter-parser.o obj/magic-interpreter-base.o obj/magic-expr.o obj/magic-stmt.o obj/magic.o obj/map.o obj/chrif.o obj/clif.o obj/pc.o obj/npc.o obj/chat.o obj/path.o obj/itemdb.o obj/mob.o obj/script.o obj/storage.o obj/skill.o obj/skill-pools.o obj/atcommand.o obj/battle.o obj/intif.o obj/trade.o obj/party.o obj/guild.o $(COMMON_OBJ)
+map-server: obj/tmw.o obj/tmwbr.o obj/magic-interpreter-lexer.o obj/magic-interpreter-parser.o obj/magic-interpreter-base.o obj/magic-expr.o obj/magic-stmt.o obj/magic.o obj/map.o obj/chrif.o obj/clif.o obj/pc.o obj/npc.o obj/chat.o obj/path.o obj/itemdb.o obj/mob.o obj/script.o obj/storage.o obj/skill.o obj/skill-pools.o obj/atcommand.o obj/battle.o obj/intif.o obj/trade.o obj/party.o obj/guild.o $(COMMON_OBJ)
 	$(CC) -o ../../$@ $^ $(LIBS)
 
 obj/%.o: %.c
@@ -47,6 +47,7 @@ obj/intif.o: intif.c intif.h chrif.h clif.h party.h guild.h storage.h map.h batt
 obj/trade.o: trade.c trade.h clif.h itemdb.h map.h pc.h npc.h ../common/mmo.h
 obj/party.o: party.c party.h clif.h intif.h pc.h map.h battle.h ../common/db.h ../common/socket.h ../common/timer.h ../common/mmo.h
 obj/tmw.o: tmw.c tmw.h map.h clif.h
+obj/tmwbr.o: tmwbr.c tmwbr.h map.h clif.h
 
 clean:
 	rm -rf *.o ../../map-server obj
