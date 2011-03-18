@@ -27,6 +27,10 @@ int  mapif_send (int fd, unsigned char *buf, unsigned int len);
 
 int  char_log (char *fmt, ...);
 
+// FIXME TMW-BR
+void log_char(const char *func, struct mmo_charstatus *cs, const char *fmt, ...);
+void backup_char(struct mmo_charstatus *cs);
+
 extern int autosave_interval;
 
 #endif
