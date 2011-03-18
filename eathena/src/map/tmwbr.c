@@ -37,7 +37,7 @@ void log_storage(const char *func, struct map_session_data *sd, const char *fmt,
 	//- cálculo de tempo...
 	time_t time_v;
 	struct tm t;
-	time (&time_v);
+	time(&time_v);
 	localtime_r(&time_v, &t);
 
 	//- criação do arquivo log_storage...
@@ -72,7 +72,7 @@ void log_map(const char *func, struct map_session_data *sd, const char *fmt, ...
 	//- cálculo de tempo...
 	time_t time_v;
 	struct tm t;
-	time (&time_v);
+	time(&time_v);
 	localtime_r(&time_v, &t);
 
 	//- criação do arquivo log_map...
@@ -106,7 +106,7 @@ void log_trade(const char *func, struct map_session_data *sd, const char *fmt, .
 
 	//- cálculo de tempo...
 	time_t time_v;
-	time (&time_v);
+	time(&time_v);
 
 	//- recuperando parâmetros...
 	va_list ap;
@@ -124,7 +124,7 @@ void log_tradeln(const char *func, const char *fmt, ...) {
 	//- cálculo de tempo...
 	time_t time_v;
 	struct tm t;
-	time (&time_v);
+	time(&time_v);
 	localtime_r(&time_v, &t);
 
 	//- criação do arquivo log_trade...

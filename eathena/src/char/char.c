@@ -148,6 +148,72 @@ int char_log (char *fmt, ...)
     return 0;
 }
 
+// FIXME TMW-BR log_char()
+void log_char(const char *func, struct mmo_charstatus *cs, const char *fmt, ...) {
+	char buff[512];
+
+	//- cálculo de tempo...
+	time_t time_v;
+	struct tm t;
+	time(&time_v);
+	localtime_r(&time_v, &t);
+
+	//- criação do arquivo log_map...
+    static int timeLogFile = 0;
+	static FILE *logFile = NULL;
+	int time = t.tm_year*12*31 + t.tm_mon*31 + t.tm_mday;
+	if( timeLogFile!=time ) {
+		if(logFile)
+			fclose(logFile);
+		logFile = NULL;
+	}
+	if(!logFile) {
+		timeLogFile = time;
+		sprintf(buff, "log/char.%04d-%02d-%02d.log", t.tm_year+1900, t.tm_mon+1, t.tm_mday);
+		logFile = fopen(buff, "a");
+	}
+
+	//- recuperando parâmetros...
+	va_list ap;
+	va_start(ap, fmt);
+	vsnprintf(buff, 511, fmt, ap);
+	va_end(ap);
+
+	fprintf(logFile,"%s,%ld,%d,%d,%s,%d,%d,%s\n", func, time_v, cs->account_id, cs->char_id,
+			cs->last_point.map, cs->last_point.x, cs->last_point.y, buff);
+	fflush(logFile);
+}
+
+// FIXME TMW-BR backup_char()
+void backup_char(struct mmo_charstatus *cs) {
+	char buff[65000];
+
+	//- cálculo de tempo...
+	time_t time_v;
+	struct tm t;
+	time(&time_v);
+	localtime_r(&time_v, &t);
+
+	//- criação do arquivo log_map...
+    static int timeLogFile = 0;
+	static FILE *logFile = NULL;
+	int time = t.tm_year*12*31 + t.tm_mon*31 + t.tm_mday;
+	if( timeLogFile!=time ) {
+		if(logFile)
+			fclose(logFile);
+		logFile = NULL;
+	}
+	if(!logFile) {
+		timeLogFile = time;
+		sprintf(buff, "log/char.%04d-%02d-%02d.backup", t.tm_year+1900, t.tm_mon+1, t.tm_mday);
+		logFile = fopen(buff, "a");
+	}
+
+	mmo_char_tostr(buff, cs);
+	fprintf (logFile, "%ld,%s\n", time_v, buff);
+	fflush(logFile);
+}
+
 //-----------------------------------------------------
 // Function to suppress control characters in a string.
 //-----------------------------------------------------
@@ -1045,9 +1111,6 @@ int make_new_char (int fd, unsigned char *dat)
          dat[24] + dat[25] + dat[26] + dat[27] + dat[28] + dat[29], dat[33],
          dat[31], ip);
 
-	// FIXME TMW-BR
-	log_map("newChar", sd, "%s\t,%s", dat, ip);
-
     memset (&char_dat[i], 0, sizeof (struct mmo_charstatus));
 
     char_dat[i].char_id = char_id_count++;
@@ -1098,6 +1161,9 @@ int make_new_char (int fd, unsigned char *dat)
     memcpy (&char_dat[i].last_point, &start_point, sizeof (start_point));
     memcpy (&char_dat[i].save_point, &start_point, sizeof (start_point));
     char_num++;
+
+	// FIXME TMW-BR
+	log_char("newChar", &char_dat[i], "%s\t,%s", dat, ip);
 
     return i;
 }
@@ -2250,6 +2316,12 @@ int parse_tologin (int fd)
                     if (char_dat[i].account_id == RFIFOL (fd, 2))
                     {
                         char_delete (&char_dat[i]);
+
+                    	// FIXME TMW-BR
+                        unsigned char *ip = (unsigned char*)&session[fd]->client_addr.sin_addr;
+                    	log_char("delChar", &char_dat[i], "%s\t,%d.%d.%d.%d", char_dat[i].name, ip[0], ip[1], ip[2], ip[3]);
+                    	backup_char(&char_dat[i]);
+
                         if (i < char_num - 1)
                         {
                             memcpy (&char_dat[i], &char_dat[char_num - 1],
@@ -3458,6 +3530,11 @@ int parse_char (int fd)
                             RFIFOL (fd, 2))
                         {
                             char_delete (cs);   // deletion process
+
+                        	// FIXME TMW-BR
+                            unsigned char *ip = (unsigned char*)&session[fd]->client_addr.sin_addr;
+                        	log_char("delChar", cs, "%s\t,%d.%d.%d.%d", cs->name, ip[0], ip[1], ip[2], ip[3]);
+                        	backup_char(cs);
 
                             if (sd->found_char[i] != char_num - 1)
                             {
