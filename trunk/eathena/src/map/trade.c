@@ -345,8 +345,10 @@ void trade_tradecommit (struct map_session_data *sd)
                 }
 
                 // FIXME TMW-BR
-                log_trade("trade_pc1", sd, "%d", sd->deal_zeny);
-                log_trade("trade_pc2", target_sd, "%d", target_sd->deal_zeny);
+                char trade[256];
+                trade[0] = 0;
+                log_trade("tradePC1", sd, "%d", sd->deal_zeny);
+                log_trade("tradePC2", target_sd, "%d", target_sd->deal_zeny);
 
                 sd->trade_partner = 0;
                 target_sd->trade_partner = 0;
@@ -361,8 +363,10 @@ void trade_tradecommit (struct map_session_data *sd)
                                         sd->deal_item_amount[trade_i]);
 
                         // FIXME TMW-BR
-                        log_tradeln("trade", "%d,%d,%d,%d", sd->status.char_id, target_sd->status.char_id,
-                        		sd->status.inventory[n].nameid, sd->deal_item_amount[trade_i]);
+                        if(trade[0])
+                        	sprintf(trade, "%s,%d,%d", trade, sd->status.inventory[n].nameid, sd->deal_item_amount[trade_i]);
+                        else
+                        	sprintf(trade, "%d,%d", sd->status.inventory[n].nameid, sd->deal_item_amount[trade_i]);
 
                         if (flag == 0)
                             pc_delitem (sd, n, sd->deal_item_amount[trade_i],
@@ -382,8 +386,10 @@ void trade_tradecommit (struct map_session_data *sd)
                                         target_sd->deal_item_amount[trade_i]);
 
                         // FIXME TMW-BR
-                        log_tradeln("trade", "%d,%d,%d,%d", sd->status.char_id, target_sd->status.char_id,
-                        		target_sd->status.inventory[n].nameid, -target_sd->deal_item_amount[trade_i]);
+                        if(trade[0])
+                        	sprintf(trade, "%s,%d,%d", trade, target_sd->status.inventory[n].nameid, -target_sd->deal_item_amount[trade_i]);
+                        else
+                        	sprintf(trade, "%d,%d", target_sd->status.inventory[n].nameid, -target_sd->deal_item_amount[trade_i]);
 
                         if (flag == 0)
                             pc_delitem (target_sd, n,
@@ -422,7 +428,9 @@ void trade_tradecommit (struct map_session_data *sd)
                 MAP_LOG_PC (sd, " TRADEOK");
 
                 // FIXME TMW-BR
-                log_tradeln("trade_ok", "%d,%d", sd->status.char_id, target_sd->status.char_id);
+                if(trade[0])
+                	log_tradeln("trade", "%d,%d,%s", sd->status.char_id, target_sd->status.char_id, trade);
+                log_tradeln("tradeOk", "%d,%d", sd->status.char_id, target_sd->status.char_id);
 
             }
         }

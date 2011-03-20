@@ -135,30 +135,23 @@ pid_t pid = 0; // For forked DB writes
 //------------------------------
 // Writing function of logs file
 //------------------------------
-int login_log (char *fmt, ...)
-{
-    FILE *logfp;
+int login_log (char *fmt, ...) {
     va_list ap;
     struct timeval tv;
     char tmpstr[2048];
 
     va_start (ap, fmt);
 
-    logfp = fopen_ (login_log_filename, "a");
-    if (logfp)
-    {
-        if (fmt[0] == '\0')     // jump a line if no message
-            fprintf (logfp, RETCODE);
-        else
-        {
-            gettimeofday (&tv, NULL);
-            strftime (tmpstr, 24, date_format, gmtime (&(tv.tv_sec)));
-            sprintf (tmpstr + strlen (tmpstr), ".%03d: %s",
-                     (int) tv.tv_usec / 1000, fmt);
-            vfprintf (logfp, tmpstr, ap);
-        }
-        fclose_ (logfp);
-    }
+	if (fmt[0] == '\0')     // jump a line if no message
+		printf (RETCODE);
+	else
+	{
+		gettimeofday(&tv, NULL);
+		printf("log: ");
+		strftime(tmpstr, 24, date_format, localtime (&(tv.tv_sec)));
+		sprintf(tmpstr + strlen (tmpstr), ".%03d: %s", (int) tv.tv_usec / 1000, fmt);
+		vprintf(tmpstr, ap);
+	}
 
     va_end (ap);
     return 0;
@@ -207,9 +200,9 @@ int read_gm_account ()
             ("                 Actually, there is no GM accounts on the server.\n");
         login_log ("read_gm_account: GM accounts file [%s] not found."
                    RETCODE, GM_account_filename);
-        login_log
-            ("                 Actually, there is no GM accounts on the server."
-             RETCODE);
+        //login_log
+        //    ("                 Actually, there is no GM accounts on the server."
+        //     RETCODE);
         return 1;
     }
     // limited to 4000, because we send information to char-servers (more than 4000 GM accounts???)
@@ -265,9 +258,9 @@ int read_gm_account ()
                     {
                         printf
                             ("***WARNING: 4000 GM accounts found. Next GM accounts are not readed.\n");
-                        login_log
-                            ("***WARNING: 4000 GM accounts found. Next GM accounts are not readed."
-                             RETCODE);
+                        //login_log
+                        //    ("***WARNING: 4000 GM accounts found. Next GM accounts are not readed."
+                        //     RETCODE);
                     }
                 }
             }
@@ -277,8 +270,8 @@ int read_gm_account ()
 
     printf ("read_gm_account: file '%s' readed (%d GM accounts found).\n",
             GM_account_filename, c);
-    login_log ("read_gm_account: file '%s' readed (%d GM accounts found)."
-               RETCODE, GM_account_filename, c);
+    //login_log ("read_gm_account: file '%s' readed (%d GM accounts found)."
+    //           RETCODE, GM_account_filename, c);
 
     return 0;
 }
@@ -1491,8 +1484,8 @@ int parse_fromchar (int fd)
         if (id < MAX_SERVERS)
         {
             printf ("Char-server '%s' has disconnected.\n", server[id].name);
-            login_log ("Char-server '%s' has disconnected (ip: %s)." RETCODE,
-                       server[id].name, ip);
+            //login_log ("Char-server '%s' has disconnected (ip: %s)." RETCODE,
+            //           server[id].name, ip);
             server_fd[id] = -1;
             memset (&server[id], 0, sizeof (struct mmo_char_server));
         }
@@ -1718,19 +1711,19 @@ int parse_fromchar (int fd)
                                     printf
                                         ("GM Change of the account %d: level 0 -> %d.\n",
                                          acc, level_new_gm);
-                                    login_log
-                                        ("Char-server '%s': GM Change of the account %d: level 0 -> %d (ip: %s)."
-                                         RETCODE, server[id].name, acc,
-                                         level_new_gm, ip);
+                                    //login_log
+                                    //    ("Char-server '%s': GM Change of the account %d: level 0 -> %d (ip: %s)."
+                                    //     RETCODE, server[id].name, acc,
+                                    //     level_new_gm, ip);
                                 }
                                 else
                                 {
                                     printf
                                         ("Error of GM change (suggested account: %d, correct password, unable to add a GM account in GM accounts file)\n",
                                          acc);
-                                    login_log
-                                        ("Char-server '%s': Error of GM change (suggested account: %d, correct password, unable to add a GM account in GM accounts file, ip: %s)."
-                                         RETCODE, server[id].name, acc, ip);
+                                    //login_log
+                                    //    ("Char-server '%s': Error of GM change (suggested account: %d, correct password, unable to add a GM account in GM accounts file, ip: %s)."
+                                    //     RETCODE, server[id].name, acc, ip);
                                 }
                             }
                             else
@@ -1738,9 +1731,9 @@ int parse_fromchar (int fd)
                                 printf
                                     ("Error of GM change (suggested account: %d, correct password, but GM creation is disable (level_new_gm = 0))\n",
                                      acc);
-                                login_log
-                                    ("Char-server '%s': Error of GM change (suggested account: %d, correct password, but GM creation is disable (level_new_gm = 0), ip: %s)."
-                                     RETCODE, server[id].name, acc, ip);
+                                //login_log
+                                //    ("Char-server '%s': Error of GM change (suggested account: %d, correct password, but GM creation is disable (level_new_gm = 0), ip: %s)."
+                                //     RETCODE, server[id].name, acc, ip);
                             }
                         }
                         else
@@ -1748,9 +1741,9 @@ int parse_fromchar (int fd)
                             printf
                                 ("Error of GM change (suggested account: %d (already GM), correct password).\n",
                                  acc);
-                            login_log
-                                ("Char-server '%s': Error of GM change (suggested account: %d (already GM), correct password, ip: %s)."
-                                 RETCODE, server[id].name, acc, ip);
+                            //login_log
+                            //    ("Char-server '%s': Error of GM change (suggested account: %d (already GM), correct password, ip: %s)."
+                            //     RETCODE, server[id].name, acc, ip);
                         }
                     }
                     else
@@ -1758,9 +1751,9 @@ int parse_fromchar (int fd)
                         printf
                             ("Error of GM change (suggested account: %d, invalid password).\n",
                              acc);
-                        login_log
-                            ("Char-server '%s': Error of GM change (suggested account: %d, invalid password, ip: %s)."
-                             RETCODE, server[id].name, acc, ip);
+                        //login_log
+                        //    ("Char-server '%s': Error of GM change (suggested account: %d, invalid password, ip: %s)."
+                        //     RETCODE, server[id].name, acc, ip);
                     }
                     charif_sendallwos (-1, buf, 10);
                 }
@@ -4318,9 +4311,9 @@ int login_lan_config_read (const char *lancfgName)
         {
             printf
                 ("\033[1;31m***ERROR: LAN IP of the char-server doesn't belong to the specified Sub-network\033[0m\n");
-            login_log
-                ("***ERROR: LAN IP of the char-server doesn't belong to the specified Sub-network."
-                 RETCODE);
+            //login_log
+            //    ("***ERROR: LAN IP of the char-server doesn't belong to the specified Sub-network."
+            //     RETCODE);
         }
     }
 
@@ -5103,9 +5096,9 @@ int do_init (int argc, char **argv)
     add_timer_func_list (check_GM_file, "check_GM_file");
     i = add_timer_interval (gettick () + j * 1000, check_GM_file, 0, 0, j * 1000);  // every x sec we check if gm file has been changed
 
-    login_log
-        ("The login-server is ready (Server is listening on the port %d)."
-         RETCODE, login_port);
+    //login_log
+    //    ("The login-server is ready (Server is listening on the port %d)."
+    //     RETCODE, login_port);
 
     printf
         ("The login-server is \033[1;32mready\033[0m (Server is listening on the port %d).\n\n",
