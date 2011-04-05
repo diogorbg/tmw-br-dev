@@ -11872,8 +11872,7 @@ int skill_readdb (void)
         }
         if (split[17] == NULL || j < 18)
         {
-            fprintf (stderr, "Incomplete skill db data online (%d entries)\n",
-                     j);
+            //fprintf (stderr, "Incomplete skill db data online (%d entries)\n", j);
             continue;
         }
 
