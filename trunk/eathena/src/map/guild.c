@@ -1780,7 +1780,7 @@ int guild_castlealldataload (int len, struct guild_castle *gc)
         struct guild_castle *c = guild_castle_search (gc->castle_id);
         if (!c)
         {
-            printf ("guild_castlealldataload ??\n");
+            //printf ("guild_castlealldataload ??\n");
             continue;
         }
         memcpy (&c->guild_id, &gc->guild_id,
