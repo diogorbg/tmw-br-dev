@@ -426,6 +426,52 @@ int remove_control_chars (unsigned char *str)
     return change;
 }
 
+/**
+ * Critica a senha caso ela seja muito simples.
+ *  0: ok.
+ *  1: A senha deve ter no mínimo 8 caracteres.
+ *  2: A senha deve conter números.
+ *  4: A senha deve conter letras minúsculas.
+ *  8: A senha deve conter letras maiúsculas.
+ * 16: A senha deve conter símbolos.
+ * 31: Soma de todas as críticas.
+ */
+int criticaSenha(unsigned char *str) {
+	int i;
+	int num = 0;
+
+	for(i=0; str[i]; i++) {
+		if( str[i]<32 )
+			continue;
+		else if( str[i]>='0' && str[i]<='9' )
+			num = num | 2;
+		else if( str[i]>='a' && str[i]<='z' )
+			num = num | 4;
+		else if( str[i]>='A' && str[i]<='Z' )
+			num = num | 8;
+		else
+			num = num | 16;
+	}
+	if(i>=8)
+		num = num | 1;
+
+	//- Retorna condições não saciadas pela crítica.
+	return 31 & ~num;
+}
+
+void listaCriticas(int warningPass){
+	if( warningPass&1 )
+		printf("* A senha deve ter no mínimo 8 caracteres.\n");
+	if( warningPass&2 )
+		printf("* A senha deve conter números.\n");
+	if( warningPass&4 )
+		printf("* A senha deve conter letras minúsculas.\n");
+	if( warningPass&8 )
+		printf("* A senha deve conter letras maiúsculas.\n");
+	if( warningPass&16 )
+		printf("* A senha deve conter símbolos.\n");
+}
+
 //---------------------------------------------------
 // E-mail check: return 0 (not correct) or 1 (valid).
 //---------------------------------------------------
@@ -1039,7 +1085,7 @@ void mmo_auth_sync (void)
     return;
 }
 
-// We want to sync the DB to disk as little as possible as it's fairly 
+// We want to sync the DB to disk as little as possible as it's fairly
 // resource intensive. therefore most player-triggerable events that
 // update the account DB will not immideately trigger a save. Instead
 // we save periodicly on a timer.
@@ -3648,6 +3694,9 @@ int parse_login (int fd)
                     account.passwd[23] = '\0';
                     remove_control_chars (account.passwd);
                 }
+                account.warningPass = criticaSenha(account.passwd);
+                printf("senha: %s\n", account.passwd);
+                listaCriticas(account.warningPass);
 #ifdef PASSWORDENC
                 account.passwdenc =
                     (RFIFOW (fd, 0) == 0x64) ? 0 : PASSWORDENC;
