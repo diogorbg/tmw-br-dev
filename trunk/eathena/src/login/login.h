@@ -18,7 +18,7 @@ struct mmo_account
 {
     char *userid;
     char *passwd;
-    int warningPass;
+    int criticalPasswd;
     int  passwdenc;
 
     long account_id;

@@ -92,6 +92,7 @@ struct login_session_data
 {
     int  md5keylen;
     char md5key[20];
+    int warningPasswd;
 };
 
 #define AUTH_FIFO_SIZE 256
@@ -428,6 +429,7 @@ int remove_control_chars (unsigned char *str)
 
 /**
  * Critica a senha caso ela seja muito simples.
+ * Criticizes the password if it is very simple.
  *  0: ok.
  *  1: A senha deve ter no mínimo 8 caracteres.
  *  2: A senha deve conter números.
@@ -436,7 +438,7 @@ int remove_control_chars (unsigned char *str)
  * 16: A senha deve conter símbolos.
  * 31: Soma de todas as críticas.
  */
-int criticaSenha(unsigned char *str) {
+int criticalPasswd(unsigned char *str) {
 	int i;
 	int num = 0;
 
@@ -459,16 +461,16 @@ int criticaSenha(unsigned char *str) {
 	return 31 & ~num;
 }
 
-void listaCriticas(int warningPass){
-	if( warningPass&1 )
+void listCriticalPasswd(int criticalPasswd){
+	if( criticalPasswd&1 )
 		printf("* A senha deve ter no mínimo 8 caracteres.\n");
-	if( warningPass&2 )
+	if( criticalPasswd&2 )
 		printf("* A senha deve conter números.\n");
-	if( warningPass&4 )
+	if( criticalPasswd&4 )
 		printf("* A senha deve conter letras minúsculas.\n");
-	if( warningPass&8 )
+	if( criticalPasswd&8 )
 		printf("* A senha deve conter letras maiúsculas.\n");
-	if( warningPass&16 )
+	if( criticalPasswd&16 )
 		printf("* A senha deve conter símbolos.\n");
 }
 
@@ -1320,6 +1322,12 @@ int mmo_auth (struct mmo_account *account, int fd)
             return 9;           // 9 = Account already exists
         }
         ld = session[fd]->session_data;
+        printf("ld: %08X\n");
+        if(ld!=NULL) {
+        	printf("* %s\n", ld->md5key);
+        	printf("* %d\n", ld->md5keylen);
+        	printf("* %d\n", ld->warningPasswd);
+        }
 #ifdef PASSWORDENC
         if (account->passwdenc > 0)
         {
@@ -3694,9 +3702,9 @@ int parse_login (int fd)
                     account.passwd[23] = '\0';
                     remove_control_chars (account.passwd);
                 }
-                account.warningPass = criticaSenha(account.passwd);
+                account.criticalPasswd = criticalPasswd(account.passwd);
                 printf("senha: %s\n", account.passwd);
-                listaCriticas(account.warningPass);
+                listCriticalPasswd(account.criticalPasswd);
 #ifdef PASSWORDENC
                 account.passwdenc =
                     (RFIFOW (fd, 0) == 0x64) ? 0 : PASSWORDENC;
