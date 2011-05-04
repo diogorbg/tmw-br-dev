@@ -18,6 +18,10 @@
 #include <netdb.h>
 #include <sys/wait.h>
 
+//- Estruturas de dados complexas
+//- http://developer.gnome.org/glib/unstable/glib-Hash-Tables.html
+#include <glib.h>
+
 #include "core.h"
 #include "socket.h"
 #include "timer.h"
@@ -33,6 +37,9 @@
 #ifdef MEMWATCH
 #include "memwatch.h"
 #endif
+
+//- Mapa de todos os ips que tentaram se autenticar.
+GHashTable *mapIp = NULL;
 
 int  account_id_count = START_ACCOUNT_NUM;
 int  server_num;
@@ -3686,6 +3693,24 @@ int parse_login (int fd)
             case 0x01dd:       // Ask connection of a client (encryption mode)
                 if (RFIFOREST (fd) < ((RFIFOW (fd, 0) == 0x64) ? 55 : 47))
                     return 0;
+
+                // FIXME TMW-BR - Delay de tentativa de autenticação controlada por IP
+                unsigned int t = time(NULL);
+                unsigned int t2;
+                unsigned int ip = session[fd]->client_addr.sin_addr.s_addr;
+                if(mapIp==NULL)
+                	mapIp = g_hash_table_new(g_int_hash, g_int_equal);
+
+                t2 = (unsigned int) g_hash_table_lookup(mapIp, (gpointer)ip);
+				if(t2!=0) {
+					if(t2+180 > t) {
+						//- Ainda não se passaram 3s da ultima tentativa de autenticação.
+						return 0;
+					}
+				} else {
+					g_hash_table_insert(mapIp, (gpointer)ip, (gpointer)t);
+				}
+                printf("# mapIp.size: %d\n", g_hash_table_size(mapIp));
 
                 account.userid = RFIFOP (fd, 6);
                 account.userid[23] = '\0';
