@@ -14,11 +14,14 @@
 #define START_ACCOUNT_NUM 2000000
 #define END_ACCOUNT_NUM 100000000
 
+#define DEBUG() printf("# login linha:%d\n", __LINE__);
+#define DEBUGD(d) printf("# login linha:%d var:%d\n", __LINE__, (d));
+#define DEBUGS(s) printf("# login linha:%d var:%s\n", __LINE__, (s));
+
 struct mmo_account
 {
     char *userid;
     char *passwd;
-    int criticalPasswd;
     int  passwdenc;
 
     long account_id;

@@ -75,6 +75,7 @@ struct char_session_data
     int  found_char[9];
     char email[40];             // e-mail (default: a@a.com) by [Yor]
     time_t connect_until_time;  // # of seconds 1/1/1970 (timestamp): Validity limit of the account (0 = unlimited)
+    int warningPasswd;
 };
 
 #define AUTH_FIFO_SIZE 256
@@ -2598,6 +2599,7 @@ int parse_frommap (int fd)
 
                 // �F�ؗv��
             case 0x2afc:
+                // FIXME TMW-BR - Login no map-server
                 if (RFIFOREST (fd) < 22)
                     return 0;
                 //printf("auth_fifo search: account: %d, char: %d, secure: %08x-%08x\n", RFIFOL(fd,2), RFIFOL(fd,6), RFIFOL(fd,10), RFIFOL(fd,14));
@@ -3115,6 +3117,7 @@ int parse_char (int fd)
                 break;
 
             case 0x65:         // �ڑ��v��
+            	// FIXME TMW-BR - Login da conta no char-server.
                 if (RFIFOREST (fd) < 17)
                     return 0;
                 {
