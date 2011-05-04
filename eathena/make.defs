@@ -19,10 +19,10 @@ OPT = -pipe -g -fno-strict-aliasing -O2 -Wall
 
 ifeq ($(findstring CYGWIN,$(PLATFORM)), CYGWIN)
 OS_TYPE = -DCYGWIN
-CFLAGS = $(OPT) -DFD_SETSIZE=4096 -I../common $(PACKETDEF) $(OS_TYPE)
+CFLAGS = $(OPT) -DFD_SETSIZE=4096 -I../common $(PACKETDEF) $(OS_TYPE)  `pkg-config glib-2.0 --cflags --libs`
 else
 OS_TYPE =
-CFLAGS = $(OPT) -fstack-protector -Wno-pointer-sign -I../common $(PACKETDEF) $(OS_TYPE)
+CFLAGS = $(OPT) -fstack-protector -Wno-pointer-sign -I../common $(PACKETDEF) $(OS_TYPE)  `pkg-config glib-2.0 --cflags --libs`
 endif
 
 MKDEF = CC="$(CC)" CFLAGS="$(CFLAGS)"
