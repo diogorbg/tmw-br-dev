@@ -1322,12 +1322,6 @@ int mmo_auth (struct mmo_account *account, int fd)
             return 9;           // 9 = Account already exists
         }
         ld = session[fd]->session_data;
-        printf("ld: %08X\n");
-        if(ld!=NULL) {
-        	printf("* %s\n", ld->md5key);
-        	printf("* %d\n", ld->md5keylen);
-        	printf("* %d\n", ld->warningPasswd);
-        }
 #ifdef PASSWORDENC
         if (account->passwdenc > 0)
         {
@@ -2175,10 +2169,9 @@ int parse_fromchar (int fd)
                         {
                             if (pass_ok (actual_pass, auth_dat[i].pass))
                             {
-                                if (strlen (new_pass) < 4)
+                                if( criticalPasswd(new_pass)!=0 )
                                     status = 3;
-                                else
-                                {
+                                else {
                                     status = 1;
                                     strcpy (auth_dat[i].pass, MD5_saltcrypt(new_pass, make_salt()));
                                     login_log
@@ -3636,6 +3629,7 @@ int lan_ip_check (unsigned char *p)
 int parse_login (int fd)
 {
     struct mmo_account account;
+    struct login_session_data *ld = session[fd]->session_data;
     int  result, i, j;
     unsigned char *p = (unsigned char *) &session[fd]->client_addr.sin_addr;
     char ip[16];
@@ -3702,9 +3696,9 @@ int parse_login (int fd)
                     account.passwd[23] = '\0';
                     remove_control_chars (account.passwd);
                 }
-                account.criticalPasswd = criticalPasswd(account.passwd);
-                printf("senha: %s\n", account.passwd);
-                listCriticalPasswd(account.criticalPasswd);
+                ld = session[fd]->session_data = calloc(sizeof (*ld), 1);
+                ld->warningPasswd = criticalPasswd(account.passwd);
+                listCriticalPasswd(ld->warningPasswd);
 #ifdef PASSWORDENC
                 account.passwdenc =
                     (RFIFOW (fd, 0) == 0x64) ? 0 : PASSWORDENC;
@@ -3712,6 +3706,7 @@ int parse_login (int fd)
                 account.passwdenc = 0;
 #endif
 
+                DEBUG();
                 if (RFIFOW (fd, 0) == 0x64)
                 {
                     login_log
@@ -3737,12 +3732,15 @@ int parse_login (int fd)
                     break;
                 }
 
+                DEBUG();
                 result = mmo_auth (&account, fd);
+                DEBUG();
                 if (result == -1)
                 {
                     int  gm_level = isGM (account.account_id);
                     if (min_level_to_connect > gm_level)
                     {
+                    	DEBUG();
                         login_log
                             ("Connection refused: the minimum GM level for connection is %d (account: %s, GM level: %d, ip: %s)."
                              RETCODE, min_level_to_connect, account.userid,
@@ -3753,6 +3751,7 @@ int parse_login (int fd)
                     }
                     else
                     {
+                    	DEBUG();
                         int  version_2 = RFIFOB (fd, 54);   // version 2
 
                         if (gm_level)
@@ -3879,6 +3878,7 @@ int parse_login (int fd)
                 }
                 else
                 {
+                	DEBUG();
                     memset (WFIFOP (fd, 0), '\0', 23);
                     WFIFOW (fd, 0) = 0x6a;
                     WFIFOB (fd, 2) = result;
