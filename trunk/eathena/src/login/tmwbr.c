@@ -4,8 +4,28 @@
 
 #include <glib.h>
 
+typedef struct InfoLogin {
+	unsigned int time;
+	unsigned int ignorados;
+	unsigned int erros;
+	unsigned int acertos;
+}InfoLogin;
+
+gpointer newInfoLogin(unsigned int time) {
+	InfoLogin *new = (InfoLogin*) malloc(sizeof(InfoLogin));
+    new->time = time;
+    new->ignorados = 0;
+    new->erros = 0;
+    new->acertos = 0;
+	return (gpointer)new;
+}
+
+void freeGPoniter(gpointer data) {
+	free(data);
+}
+
 gpointer newInt(int i) {
-	int *p = (int*) malloc(4);
-    *p = i;
-	return (gpointer)p;
+	int *new = (int*) malloc(4);
+    *new = i;
+	return (gpointer)new;
 }

@@ -3689,34 +3689,33 @@ int parse_login (int fd)
                 RFIFOSKIP (fd, 18);
                 break;
 
-            case 0x64:         // Ask connection of a client
-            case 0x01dd:       // Ask connection of a client (encryption mode)
-                if (RFIFOREST (fd) < ((RFIFOW (fd, 0) == 0x64) ? 55 : 47))
-                    return 0;
+			case 0x64:         // Ask connection of a client
+			case 0x01dd:       // Ask connection of a client (encryption mode)
+				if (RFIFOREST (fd) < ((RFIFOW (fd, 0) == 0x64) ? 55 : 47))
+					return 0;
 
-                // FIXME TMW-BR - Delay de tentativa de autenticação controlada por IP
-                unsigned int t = time(NULL);
-                unsigned int *t2;
-                DEBUG();
-                unsigned int ip2 = session[fd]->client_addr.sin_addr.s_addr;
-                DEBUG();
-                if(mapIp==NULL)
-                	mapIp = g_hash_table_new(g_int_hash, g_int_equal);
+				// FIXME TMW-BR - Delay de tentativa de autenticação controlada por IP
+				unsigned int t = time(NULL);
+				unsigned int *t2;
+				DEBUG();
+				unsigned int ip2 = session[fd]->client_addr.sin_addr.s_addr;
+				DEBUG();
+				if(mapIp==NULL)
+					mapIp = g_hash_table_new(g_int_hash, g_int_equal);
 
-                DEBUG();
-                t2 = g_hash_table_lookup(mapIp, (gpointer)&ip2);
-                DEBUG();
-				if(t2!=0) {
-	                printf("* t2: %d\n", *t2);
+				DEBUG();
+				t2 = g_hash_table_lookup(mapIp, (gpointer)&ip2);
+				DEBUG();
+				if(t2!=NULL) {
 					if(*t2+5 > t) {
-						//- Ainda não se passaram 3s da ultima tentativa de autenticação.
+						//- Ainda não se passaram 5s da ultima tentativa de autenticação.
 						return 0;
 					}
 				}
-	            DEBUG();
-	            g_hash_table_insert(mapIp, newInt(ip2), newInt(t));
-                DEBUG();
-                printf("# mapIp.size: %d\n", g_hash_table_size(mapIp));
+				DEBUG();
+				g_hash_table_insert(mapIp, newInt(ip2), t2=newInt(t));
+				DEBUG();
+				printf("# mapIp.size: %d\n", g_hash_table_size(mapIp));
 
                 account.userid = RFIFOP (fd, 6);
                 account.userid[23] = '\0';
