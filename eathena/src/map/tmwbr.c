@@ -168,3 +168,4 @@ char *trocaAspa(char *name) {
 
 	return (char*)&buf;
 }
+

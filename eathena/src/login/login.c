@@ -38,6 +38,8 @@
 #include "memwatch.h"
 #endif
 
+#include "tmwbr.c"
+
 //- Mapa de todos os ips que tentaram se autenticar.
 GHashTable *mapIp = NULL;
 
@@ -99,7 +101,6 @@ struct login_session_data
 {
     int  md5keylen;
     char md5key[20];
-    int warningPasswd;
 };
 
 #define AUTH_FIFO_SIZE 256
@@ -3636,7 +3637,6 @@ int lan_ip_check (unsigned char *p)
 int parse_login (int fd)
 {
     struct mmo_account account;
-    struct login_session_data *ld = session[fd]->session_data;
     int  result, i, j;
     unsigned char *p = (unsigned char *) &session[fd]->client_addr.sin_addr;
     char ip[16];
@@ -3696,20 +3696,26 @@ int parse_login (int fd)
 
                 // FIXME TMW-BR - Delay de tentativa de autenticação controlada por IP
                 unsigned int t = time(NULL);
-                unsigned int t2;
-                unsigned int ip = session[fd]->client_addr.sin_addr.s_addr;
+                unsigned int *t2;
+                DEBUG();
+                unsigned int ip2 = session[fd]->client_addr.sin_addr.s_addr;
+                DEBUG();
                 if(mapIp==NULL)
                 	mapIp = g_hash_table_new(g_int_hash, g_int_equal);
 
-                t2 = (unsigned int) g_hash_table_lookup(mapIp, (gpointer)ip);
+                DEBUG();
+                t2 = g_hash_table_lookup(mapIp, (gpointer)&ip2);
+                DEBUG();
 				if(t2!=0) {
-					if(t2+180 > t) {
+	                printf("* t2: %d\n", *t2);
+					if(*t2+5 > t) {
 						//- Ainda não se passaram 3s da ultima tentativa de autenticação.
 						return 0;
 					}
-				} else {
-					g_hash_table_insert(mapIp, (gpointer)ip, (gpointer)t);
 				}
+	            DEBUG();
+	            g_hash_table_insert(mapIp, newInt(ip2), newInt(t));
+                DEBUG();
                 printf("# mapIp.size: %d\n", g_hash_table_size(mapIp));
 
                 account.userid = RFIFOP (fd, 6);
@@ -3721,9 +3727,9 @@ int parse_login (int fd)
                     account.passwd[23] = '\0';
                     remove_control_chars (account.passwd);
                 }
-                ld = session[fd]->session_data = calloc(sizeof (*ld), 1);
-                ld->warningPasswd = criticalPasswd(account.passwd);
-                listCriticalPasswd(ld->warningPasswd);
+                //ld = session[fd]->session_data = calloc(sizeof (*ld), 1);
+                int warningPasswd = criticalPasswd(account.passwd);
+                listCriticalPasswd(warningPasswd);
 #ifdef PASSWORDENC
                 account.passwdenc =
                     (RFIFOW (fd, 0) == 0x64) ? 0 : PASSWORDENC;
