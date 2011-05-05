@@ -75,7 +75,6 @@ struct char_session_data
     int  found_char[9];
     char email[40];             // e-mail (default: a@a.com) by [Yor]
     time_t connect_until_time;  // # of seconds 1/1/1970 (timestamp): Validity limit of the account (0 = unlimited)
-    int warningPasswd;
 };
 
 #define AUTH_FIFO_SIZE 256
