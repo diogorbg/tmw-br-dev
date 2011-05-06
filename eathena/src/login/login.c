@@ -435,53 +435,6 @@ int remove_control_chars (unsigned char *str)
     return change;
 }
 
-/**
- * Critica a senha caso ela seja muito simples.
- * Criticizes the password if it is very simple.
- *  0: ok.
- *  1: A senha deve ter no mínimo 8 caracteres.
- *  2: A senha deve conter números.
- *  4: A senha deve conter letras minúsculas.
- *  8: A senha deve conter letras maiúsculas.
- * 16: A senha deve conter símbolos.
- * 31: Soma de todas as críticas.
- */
-int criticalPasswd(unsigned char *str) {
-	int i;
-	int num = 0;
-
-	for(i=0; str[i]; i++) {
-		if( str[i]<32 )
-			continue;
-		else if( str[i]>='0' && str[i]<='9' )
-			num = num | 2;
-		else if( str[i]>='a' && str[i]<='z' )
-			num = num | 4;
-		else if( str[i]>='A' && str[i]<='Z' )
-			num = num | 8;
-		else
-			num = num | 16;
-	}
-	if(i>=8)
-		num = num | 1;
-
-	//- Retorna condições não saciadas pela crítica.
-	return 31 & ~num;
-}
-
-void listCriticalPasswd(int criticalPasswd){
-	if( criticalPasswd&1 )
-		printf("* A senha deve ter no mínimo 8 caracteres.\n");
-	if( criticalPasswd&2 )
-		printf("* A senha deve conter números.\n");
-	if( criticalPasswd&4 )
-		printf("* A senha deve conter letras minúsculas.\n");
-	if( criticalPasswd&8 )
-		printf("* A senha deve conter letras maiúsculas.\n");
-	if( criticalPasswd&16 )
-		printf("* A senha deve conter símbolos.\n");
-}
-
 //---------------------------------------------------
 // E-mail check: return 0 (not correct) or 1 (valid).
 //---------------------------------------------------
@@ -3701,7 +3654,7 @@ int parse_login (int fd)
 				unsigned int ip2 = session[fd]->client_addr.sin_addr.s_addr;
 				DEBUG();
 				if(mapIp==NULL)
-					mapIp = g_hash_table_new(g_int_hash, g_int_equal);
+					mapIp = g_hash_table_new_full(g_int_hash, g_int_equal, freeGPoniter, freeGPoniter);
 
 				DEBUG();
 				t2 = g_hash_table_lookup(mapIp, (gpointer)&ip2);
@@ -3713,9 +3666,21 @@ int parse_login (int fd)
 					}
 				}
 				DEBUG();
-				g_hash_table_insert(mapIp, newInt(ip2), t2=newInt(t));
-				DEBUG();
-				printf("# mapIp.size: %d\n", g_hash_table_size(mapIp));
+				g_hash_table_insert(mapIp, newInt(ip2), newInt(t));
+
+				// Teste de desalocação de memória...
+				//int i;
+				//srand(t);
+				//for(i=0; i<2000; i++)
+				//	g_hash_table_insert(mapIp, newInt(rand()), newInt(t));
+				//DEBUG();
+				//unsigned char *ip3 = &ip2;
+				//printf("# Requisicao de acesso - %d.%d.%d.%d - mapIp.size: %d\n", ip3[0], ip3[1], ip3[2], ip3[3], n);
+
+				int n = g_hash_table_size(mapIp);
+				if(n>10000) {
+					g_hash_table_remove_all(mapIp);
+				}
 
                 account.userid = RFIFOP (fd, 6);
                 account.userid[23] = '\0';
@@ -3727,8 +3692,8 @@ int parse_login (int fd)
                     remove_control_chars (account.passwd);
                 }
                 //ld = session[fd]->session_data = calloc(sizeof (*ld), 1);
-                int warningPasswd = criticalPasswd(account.passwd);
-                listCriticalPasswd(warningPasswd);
+                //int warningPasswd = criticalPasswd(account.passwd);
+                //listCriticalPasswd(warningPasswd);
 #ifdef PASSWORDENC
                 account.passwdenc =
                     (RFIFOW (fd, 0) == 0x64) ? 0 : PASSWORDENC;
