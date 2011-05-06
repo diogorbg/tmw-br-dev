@@ -972,7 +972,7 @@ int pc_authok (int id, int login_id2, time_t connect_until_time,
     if (!getpeername(sd->fd, (struct sockaddr *)&sai, &sa_len))
         sd->ip = sai.sin_addr.s_addr;
 
-    clif_displaymessage(sd->fd, "Avisar senha fraca aqui!");
+    //clif_displaymessage(sd->fd, "Avisar senha fraca aqui!");
 
     // FIXME TMW-BR
     unsigned char *ip = (unsigned char*)&sd->ip;
