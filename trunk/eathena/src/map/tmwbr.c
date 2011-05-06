@@ -43,7 +43,7 @@ void log_storage(const char *func, struct map_session_data *sd, const char *fmt,
 	//- criação do arquivo log_storage...
     static int timeLogFile = 0;
 	static FILE *logFile = NULL;
-	int time = t.tm_year*12*31 + t.tm_mon*31 + t.tm_mday;
+	int time = t.tm_year*12*31 + t.tm_mon*31;
 	if( timeLogFile!=time ) {
 		if(logFile)
 			fclose(logFile);
@@ -51,7 +51,7 @@ void log_storage(const char *func, struct map_session_data *sd, const char *fmt,
 	}
 	if(!logFile) {
 		timeLogFile = time;
-		sprintf(buff, "log/storage.%04d-%02d-%02d.log", t.tm_year+1900, t.tm_mon+1, t.tm_mday);
+		sprintf(buff, "log/storage.%04d-%02d.log", t.tm_year+1900, t.tm_mon+1);
 		logFile = fopen(buff, "a");
 	}
 
@@ -78,7 +78,7 @@ void log_map(const char *func, struct map_session_data *sd, const char *fmt, ...
 	//- criação do arquivo log_map...
     static int timeLogFile = 0;
 	static FILE *logFile = NULL;
-	int time = t.tm_year*12*31 + t.tm_mon*31 + t.tm_mday;
+	int time = t.tm_year*12*31 + t.tm_mon*31;
 	if( timeLogFile!=time ) {
 		if(logFile)
 			fclose(logFile);
@@ -86,7 +86,7 @@ void log_map(const char *func, struct map_session_data *sd, const char *fmt, ...
 	}
 	if(!logFile) {
 		timeLogFile = time;
-		sprintf(buff, "log/map.%04d-%02d-%02d.log", t.tm_year+1900, t.tm_mon+1, t.tm_mday);
+		sprintf(buff, "log/map.%04d-%02d.log", t.tm_year+1900, t.tm_mon+1);
 		logFile = fopen(buff, "a");
 	}
 
@@ -130,7 +130,7 @@ void log_tradeln(const char *func, const char *fmt, ...) {
 	//- criação do arquivo log_trade...
     static int timeLogFile = 0;
 	static FILE *logFile = NULL;
-	int time = t.tm_year*12*31 + t.tm_mon*31 + t.tm_mday;
+	int time = t.tm_year*12*31 + t.tm_mon*31;
 	if( timeLogFile!=time ) {
 		if(logFile)
 			fclose(logFile);
@@ -138,7 +138,7 @@ void log_tradeln(const char *func, const char *fmt, ...) {
 	}
 	if(!logFile) {
 		timeLogFile = time;
-		sprintf(buff, "log/trade.%04d-%02d-%02d.log", t.tm_year+1900, t.tm_mon+1, t.tm_mday);
+		sprintf(buff, "log/trade.%04d-%02d.log", t.tm_year+1900, t.tm_mon+1);
 		logFile = fopen(buff, "a");
 	}
 
