@@ -3533,8 +3533,8 @@ int pc_delitem (struct map_session_data *sd, int n, int amount, int type)
  * アイテムを落す
  *------------------------------------------
  */
-int pc_dropitem (struct map_session_data *sd, int n, int amount)
-{
+int pc_dropitem (struct map_session_data *sd, int n, int amount) {
+	int type;
     nullpo_retr (1, sd);
 
     if (sd->trade_partner != 0 || sd->npc_id != 0 || sd->state.storage_flag)
@@ -3545,6 +3545,11 @@ int pc_dropitem (struct map_session_data *sd, int n, int amount)
 
     if (amount <= 0)
         return 0;
+
+    //FIXME TMW-BR - Não permite dropar itens equipáveis
+    type = itemdb_type(sd->status.inventory[n].nameid);
+    if (type>3 && type!=10)
+    	return 0;
 
     pc_unequipinvyitem (sd, n, 0);
 
