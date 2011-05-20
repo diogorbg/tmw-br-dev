@@ -1,0 +1,34 @@
+Esta é uma coleção de plug-ins para o GIMP que irão ajudar no desenvolvimento
+de sprites.
+
+O primeiro plugin é o gen-sprite-base. Ele é capaz de gerar uma sequência
+animada de um movimento qualquer do personagem. Só funciona em sprites
+originadas da sprite base do char.
+
+.:: compilação ::.
+
+Para compilar basta usar o comando make:
+
+make
+
+Mas para que funcione é preciso resolver suas dependências.
+
+.:: instalação ::.
+
+A instalação é muito simples. Copie todos os binários gerados para a pasta
+de plug-ins do gimp em '/home/seu_nome_usuario/.gimp-2.6/plug-ins'. Se você
+tiver uma versão diferente do GIM pode ser que esta pasta tenha outro nome.
+
+.:: forma de uso ::.
+
+Assim que você abrir o seu GIMP novamente irá surgir um novo menu chamado
+'TMW-BR'. A lista de plug-ins estará toda lá.
+
+.:: Como contribuir ::.
+
+Sugestões para novos plug-ins (ou mesmo a indicação de plug-ins já existentes),
+compilação para várias plataformas, instaladores ou apenas relatar bugs
+devem ser eviadas para nosso fórum: http://forums.themanaworld.com.br/
+na sessão GIMP.
+
+Espero ter ajudado.
