@@ -9,7 +9,8 @@ gen-sprite-base: gen-sprite-base.c
 	gcc -c $< -o $@ `gimptool-2.0 --cflags`
 
 clean:
-	rm *.o
+	rm -f *.o
+	rm -f gen-sprite-base
 
 install: gen-sprite-base
 	cp gen-sprite-base ~/.gimp-2.6/plug-ins/
