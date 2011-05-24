@@ -174,11 +174,11 @@ static void run(const gchar *name, gint nparams, const GimpParam *param,
 	gimp_table_attach_aligned(GTK_TABLE(table), 0, row++, "Ação:", 0.0, 0.5, combo3, 1, FALSE);
 
 	combo4 = gimp_int_combo_box_new(
-		"Abaixo",   1,
-		"Esquerda", 2,
-		"Acima",    3,
-		"Direita",  4,
-		//"Todos (lado a lado)",  4,
+		"Todos (lado a lado)", 1,
+		"Abaixo",   2,
+		"Esquerda", 3,
+		"Acima",    4,
+		"Direita",  5,
 		NULL);
 	gimp_int_combo_box_set_active(GIMP_INT_COMBO_BOX(combo4), 1);
 	gimp_table_attach_aligned(GTK_TABLE(table), 0, row++, "Direção:", 0.0, 0.5, combo4, 1, FALSE);
@@ -224,7 +224,7 @@ static void executar(gint32 idImg, gint32 idDraw, int v3, int v4){
 	if(H%8!=0) gimp_message("Quadros não tem divisão exata na altura. Devem existir 8 quadros de alturas iguais.");
 
 	int *tiles;
-	int i;
+	int i, j;
 	int offx, offy;
 	char buf[32];
 
@@ -248,17 +248,35 @@ static void executar(gint32 idImg, gint32 idDraw, int v3, int v4){
 		tiles = (int[]){ 0,500, 13,75, 14,75, 15,75, 16,75, 17,75 ,-1};
 	}
 
-	v4--;
+	v4-=2;
 	for(i=0; tiles[i]>=0; i+=2) {
-		offx = ((tiles[i]+v4*18)%9)*w;
-		offy = ((tiles[i]+v4*18)/9)*h;
-		gimp_rect_select(idImg, offx, offy, w, h, GIMP_CHANNEL_OP_REPLACE, FALSE, 0.0);
-		layer = gimp_selection_float(idImg, idDraw, -offx, -offy);
-		if( tiles[i+1] )
-			sprintf(buf, "Quadro%02d (%dms) (replace)", (i/2)+1, tiles[i+1]);
-		else
-			sprintf(buf, "Quadro%02d", (i/2)+1);
-		gimp_drawable_set_name(layer, buf);
+		if(v4>=0) {
+			offx = ((tiles[i]+v4*18)%9)*w;
+			offy = ((tiles[i]+v4*18)/9)*h;
+			gimp_rect_select(idImg, offx, offy, w, h, GIMP_CHANNEL_OP_REPLACE, FALSE, 0.0);
+			layer = gimp_selection_float(idImg, idDraw, -offx, -offy);
+			if( tiles[i+1] )
+				sprintf(buf, "Quadro%02d (%dms) (replace)", (i/2)+1, tiles[i+1]);
+			else
+				sprintf(buf, "Quadro%02d", (i/2)+1);
+			gimp_drawable_set_name(layer, buf);
+		} else {
+			for(j=0; j<4; j++) {
+				offx = ((tiles[i]+j*18)%9)*w;
+				offy = ((tiles[i]+j*18)/9)*h;
+				gimp_rect_select(idImg, offx, offy, w, h, GIMP_CHANNEL_OP_REPLACE, FALSE, 0.0);
+				layer = gimp_selection_float(idImg, idDraw, -offx+j*w, -offy);
+				if(j==0) {
+					if( tiles[i+1] )
+						sprintf(buf, "Quadro%02d (%dms) (replace)", (i/2)+1, tiles[i+1]);
+					else
+						sprintf(buf, "Quadro%02d", (i/2)+1);
+					gimp_drawable_set_name(layer, buf);
+				} else {
+					gimp_image_merge_down(idImg, layer, 0); //EXPAND_AS_NECESSARY
+				}
+			}
+		}
 	}
 	gimp_selection_none(idImg);
 
