@@ -15,9 +15,14 @@ Mas para que funcione é preciso resolver suas dependências.
 
 .:: instalação ::.
 
-A instalação é muito simples. Copie todos os binários gerados para a pasta
-de plug-ins do gimp em '/home/seu_nome_usuario/.gimp-2.6/plug-ins'. Se você
-tiver uma versão diferente do GIM pode ser que esta pasta tenha outro nome.
+Para instalar use o comando make install:
+
+make install
+
+A instalação pode não funcionar caso a versão do seu GIMP não seja a 2.6.
+Mas a instalação manual também é muito simples. Copie todos os binários
+gerados para a pasta de plug-ins do gimp (troque o x pela versão do GIMP)
+'/home/seu_nome_usuario/.gimp-x.x/plug-ins'.
 
 .:: forma de uso ::.
 
