@@ -18,10 +18,6 @@
 #include <netdb.h>
 #include <sys/wait.h>
 
-//- Estruturas de dados complexas
-//- http://developer.gnome.org/glib/unstable/glib-Hash-Tables.html
-#include <glib.h>
-
 #include "core.h"
 #include "socket.h"
 #include "timer.h"
@@ -39,9 +35,6 @@
 #endif
 
 #include "tmwbr.c"
-
-//- Mapa de todos os ips que tentaram se autenticar.
-GHashTable *mapIp = NULL;
 
 int  account_id_count = START_ACCOUNT_NUM;
 int  server_num;
@@ -3659,38 +3652,8 @@ int parse_login (int fd)
 				//}
 
 				// FIXME TMW-BR - Delay de tentativa de autenticação controlada por IP
-				unsigned int t = time(NULL);
-				unsigned int *t2;
-				unsigned int ip2 = session[fd]->client_addr.sin_addr.s_addr;
-				DEBUG();
-				if(mapIp==NULL)
-					mapIp = g_hash_table_new_full(g_int_hash, g_int_equal, freeGPoniter, freeGPoniter);
-
-				DEBUG();
-				t2 = g_hash_table_lookup(mapIp, (gpointer)&ip2);
-				DEBUG();
-				if(t2!=NULL) {
-					if(*t2+5 > t) {
-						//- Ainda não se passaram 5s da ultima tentativa de autenticação.
-						return 0;
-					}
-				}
-				DEBUG();
-				g_hash_table_insert(mapIp, newInt(ip2), newInt(t));
-
-				// Teste de desalocação de memória...
-				//int i;
-				//srand(t);
-				//for(i=0; i<2000; i++)
-				//	g_hash_table_insert(mapIp, newInt(rand()), newInt(t));
-				//DEBUG();
-				//unsigned char *ip3 = &ip2;
-				//printf("# Requisicao de acesso - %d.%d.%d.%d - mapIp.size: %d\n", ip3[0], ip3[1], ip3[2], ip3[3], n);
-
-				int n = g_hash_table_size(mapIp);
-				if(n>10000) {
-					g_hash_table_remove_all(mapIp);
-				}
+				if( delayLoginPorIp( session[fd]->client_addr.sin_addr.s_addr) )
+					return 0;
 
                 account.userid = RFIFOP (fd, 6);
                 account.userid[23] = '\0';
@@ -3711,7 +3674,6 @@ int parse_login (int fd)
                 account.passwdenc = 0;
 #endif
 
-                DEBUG();
                 if (RFIFOW (fd, 0) == 0x64)
                 {
                     login_log
@@ -3737,15 +3699,12 @@ int parse_login (int fd)
                     break;
                 }
 
-                DEBUG();
                 result = mmo_auth (&account, fd);
-                DEBUG();
                 if (result == -1)
                 {
                     int  gm_level = isGM (account.account_id);
                     if (min_level_to_connect > gm_level)
                     {
-                    	DEBUG();
                         login_log
                             ("Connection refused: the minimum GM level for connection is %d (account: %s, GM level: %d, ip: %s)."
                              RETCODE, min_level_to_connect, account.userid,
@@ -3756,7 +3715,6 @@ int parse_login (int fd)
                     }
                     else
                     {
-                    	DEBUG();
                         int  version_2 = RFIFOB (fd, 54);   // version 2
 
                         if (gm_level)
@@ -3883,7 +3841,6 @@ int parse_login (int fd)
                 }
                 else
                 {
-                	DEBUG();
                     memset (WFIFOP (fd, 0), '\0', 23);
                     WFIFOW (fd, 0) = 0x6a;
                     WFIFOB (fd, 2) = result;
