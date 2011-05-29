@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ### Recortar Sprite - Diogo_RBG - http://diogorbg.blogspot.com ###
-# Copie para "/home/usuario/.gimp-x.x/plug-ins" nomeado como "tmwbr_recortar_sprite.py".
+# Copie para "/home/usuario/.gimp-x.x/plug-ins" nomeado como "tmwbr-recortar-sprite.py".
 # Nao deixe de dar permicao de execucao e nao use acentos !!!
 
 from gimpfu import *
@@ -33,7 +33,7 @@ register(
 	"Recorta uma imagem em muitas camadas",
 	"Diogo_RBG - http://diogorbg.blogspot.com",
 	"Diogo_RBG",
-	"28/05/2011",
+	"23/01/2008",
 	"<Image>/TMW-BR/Recortar Sprite...",
 	"*",
 	[
