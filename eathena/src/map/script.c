@@ -127,6 +127,7 @@ int  buildin_pow (struct script_state *st);
 int  buildin_warp (struct script_state *st);
 int  buildin_isat (struct script_state *st);
 int  buildin_areawarp (struct script_state *st);
+int  buildin_areawarpdest (struct script_state *st);
 int  buildin_heal (struct script_state *st);
 int  buildin_itemheal (struct script_state *st);
 int  buildin_percentheal (struct script_state *st);
@@ -360,6 +361,8 @@ struct
     buildin_isat, "isat", "sii"},
     {
     buildin_areawarp, "areawarp", "siiiisii"},
+    {
+    buildin_areawarpdest, "areawarpdest", "siiiisiiii"},
     {
     buildin_setlook, "setlook", "ii"},
     {
@@ -2243,42 +2246,86 @@ int buildin_warp (struct script_state *st)
  * エリア指定ワープ
  *------------------------------------------
  */
-int buildin_areawarp_sub (struct block_list *bl, va_list ap)
-{
-    int  x, y;
-    char *map;
-    map = va_arg (ap, char *);
-    x = va_arg (ap, int);
-    y = va_arg (ap, int);
-    if (strcmp (map, "Random") == 0)
-        pc_randomwarp ((struct map_session_data *) bl, 3);
-    else
-        pc_setpos ((struct map_session_data *) bl, map, x, y, 0);
-    return 0;
+int buildin_areawarp_sub (struct block_list *bl, va_list ap) {
+	int  x, y;
+	char *map;
+	map = va_arg (ap, char *);
+	x = va_arg (ap, int);
+	y = va_arg (ap, int);
+	if (strcmp (map, "Random") == 0)
+		pc_randomwarp ((struct map_session_data *) bl, 3);
+	else
+		pc_setpos ((struct map_session_data *) bl, map, x, y, 0);
+	return 0;
 }
 
-int buildin_areawarp (struct script_state *st)
-{
-    int  x, y, m;
-    char *str;
-    char *mapname;
-    int  x0, y0, x1, y1;
+int buildin_areawarp (struct script_state *st) {
+	int  x, y, m;
+	char *str;
+	char *mapname;
+	int  x0, y0, x1, y1;
 
-    mapname = conv_str (st, &(st->stack->stack_data[st->start + 2]));
-    x0 = conv_num (st, &(st->stack->stack_data[st->start + 3]));
-    y0 = conv_num (st, &(st->stack->stack_data[st->start + 4]));
-    x1 = conv_num (st, &(st->stack->stack_data[st->start + 5]));
-    y1 = conv_num (st, &(st->stack->stack_data[st->start + 6]));
-    str = conv_str (st, &(st->stack->stack_data[st->start + 7]));
-    x = conv_num (st, &(st->stack->stack_data[st->start + 8]));
-    y = conv_num (st, &(st->stack->stack_data[st->start + 9]));
+	mapname = conv_str (st, &(st->stack->stack_data[st->start + 2]));
+	x0 = conv_num (st, &(st->stack->stack_data[st->start + 3]));
+	y0 = conv_num (st, &(st->stack->stack_data[st->start + 4]));
+	x1 = conv_num (st, &(st->stack->stack_data[st->start + 5]));
+	y1 = conv_num (st, &(st->stack->stack_data[st->start + 6]));
+	str = conv_str (st, &(st->stack->stack_data[st->start + 7]));
+	x = conv_num (st, &(st->stack->stack_data[st->start + 8]));
+	y = conv_num (st, &(st->stack->stack_data[st->start + 9]));
 
-    if ((m = map_mapname2mapid (mapname)) < 0)
-        return 0;
+	if ((m = map_mapname2mapid (mapname)) < 0)
+		return 0;
 
-    map_foreachinarea (buildin_areawarp_sub,
-                       m, x0, y0, x1, y1, BL_PC, str, x, y);
-    return 0;
+	map_foreachinarea (buildin_areawarp_sub, m, x0, y0, x1, y1, BL_PC, str, x, y);
+	return 0;
+}
+
+// FIXME TMW-BR
+int buildin_areawarp_sub2(struct block_list *bl, va_list ap) {
+	int  x, y, dest, newDest;
+	char *map;
+	struct map_session_data *sd;
+	map = va_arg (ap, char *);
+	x = va_arg (ap, int);
+	y = va_arg (ap, int);
+	dest = va_arg (ap, int);
+	newDest = va_arg (ap, int);
+
+	sd = (struct map_session_data *) bl;
+	if (pc_readglobalreg (sd, "PC_DEST") == dest) {
+		pc_setpos (sd, map, x, y, 0);
+		pc_setglobalreg (sd, "PC_DEST", newDest);
+	}
+	return 0;
+}
+
+/**
+ * Embarcar significa teleportar os jogadores com valor PC_DEST igual ao destino.
+ * Boarding means teleport players PC_DEST value equal to the destination.
+ */
+int buildin_areawarpdest(struct script_state *st) {
+	int  x, y, m, dest, newDest;
+	char *str;
+	char *mapname;
+	int  x0, y0, x1, y1;
+
+	mapname = conv_str (st, &(st->stack->stack_data[st->start + 2]));
+	x0 = conv_num (st, &(st->stack->stack_data[st->start + 3]));
+	y0 = conv_num (st, &(st->stack->stack_data[st->start + 4]));
+	x1 = conv_num (st, &(st->stack->stack_data[st->start + 5]));
+	y1 = conv_num (st, &(st->stack->stack_data[st->start + 6]));
+	str = conv_str (st, &(st->stack->stack_data[st->start + 7]));
+	x = conv_num (st, &(st->stack->stack_data[st->start + 8]));
+	y = conv_num (st, &(st->stack->stack_data[st->start + 9]));
+	dest = conv_num (st, &(st->stack->stack_data[st->start + 10]));
+	newDest = conv_num (st, &(st->stack->stack_data[st->start + 11]));
+
+	if ((m = map_mapname2mapid (mapname)) < 0)
+		return 0;
+
+	map_foreachinarea (buildin_areawarp_sub2, m, x0, y0, x1, y1, BL_PC, str, x, y, dest, newDest );
+	return 0;
 }
 
 /*==========================================
