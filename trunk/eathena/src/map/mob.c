@@ -910,10 +910,11 @@ static int mob_attack (struct mob_data *md, unsigned int tick, int data)
 
     nullpo_retr (0, md);
 
-    if ((tbl = map_id2bl (md->target_id)) == NULL)
+    if (!mob_check_attack (md))
         return 0;
 
-    if (!mob_check_attack (md))
+    //FIXME TMW-BR - Colocando esta função abaixo da mob_check_attack tudo funciona normalmente.
+    if ((tbl = map_id2bl (md->target_id)) == NULL)
         return 0;
 
     if (battle_config.monster_attack_direction_change)
