@@ -9256,6 +9256,8 @@ int skill_status_change_end (struct block_list *bl, int type, int tid)
             case SC_MELTDOWN:  /* メルトダウン */
             case SC_PHYS_SHIELD:
             case SC_HASTE:
+            case SC_FEDOR_ZUMBI:
+            	printf("fedor end\n");
                 calc_flag = 1;
                 break;
             case SC_BERSERK:   /* バーサーク */
@@ -9395,6 +9397,7 @@ int skill_status_change_end (struct block_list *bl, int type, int tid)
 
             case SC_ATKPOT:
                 *opt2 &= ~0x80;
+            case SC_FEDOR_ZUMBI:
                 opt_flag = 1;
                 break;
 
@@ -10096,7 +10099,7 @@ int skill_status_effect (struct block_list *bl, int type, int val1, int val2,
 
     if (sc_data[type].timer != -1)
     {                           /* すでに同じ異常になっている場合タイマ解除 */
-        if (sc_data[type].val1 > val1 && type != SC_COMBO && type != SC_DANCING && type != SC_DEVOTION && type != SC_SPEEDPOTION0 && type != SC_SPEEDPOTION1 && type != SC_SPEEDPOTION2 && type != SC_ATKPOT && type != SC_MATKPOT) // added atk and matk potions [Valaris]
+        if (sc_data[type].val1 > val1 && type != SC_COMBO && type != SC_DANCING && type != SC_DEVOTION && type != SC_SPEEDPOTION0 && type != SC_SPEEDPOTION1 && type != SC_SPEEDPOTION2 && type != SC_ATKPOT && type != SC_FEDOR_ZUMBI && type != SC_MATKPOT) // added atk and matk potions [Valaris]
             return 0;
         if (type >= SC_STAN && type <= SC_BLIND)
             return 0;           /* 継ぎ足しができない状態異常である時は状態異常を行わない */
@@ -10437,6 +10440,8 @@ int skill_status_effect (struct block_list *bl, int type, int val1, int val2,
         case SC_ATKPOT:
             *opt2 |= 0x80;
         case SC_MATKPOT:
+        case SC_FEDOR_ZUMBI:
+        	printf("fedor effect\n");
             calc_flag = 1;
             tick = 1000 * tick;
             break;

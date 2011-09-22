@@ -349,6 +349,9 @@ enum
     SC_PHYS_SHIELD = 199,       // `Protect' spell, reduce damage (val1: power)
 
     SC_DIVINA = SC_SILENCE,
+
+    //FIXME TMW-BR
+    SC_FEDOR_ZUMBI = 200, //- Poção que te faz ferer como um zumbi.
 };
 extern int SkillStatusChangeTable[];
 

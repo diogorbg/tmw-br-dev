@@ -849,7 +849,9 @@ static int mob_check_attack (struct mob_data *md)
 
     if (tsd)
     {
+    	printf("z:%d atk:%d\n", tsd->sc_data[SC_FEDOR_ZUMBI].timer, tsd->sc_data[SC_ATKPOT].timer);
         if (pc_isdead (tsd) || tsd->invincible_timer != -1
+            || tsd->sc_data[SC_FEDOR_ZUMBI].timer != -1
             || pc_isinvisible (tsd) || md->bl.m != tbl->m || tbl->prev == NULL
             || distance (md->bl.x, md->bl.y, tbl->x, tbl->y) >= 13)
         {
