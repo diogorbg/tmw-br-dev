@@ -10,7 +10,7 @@ public class ParserLogs {
 		ParserLog parser = new ParserLog();
 		Process users = new CountUsers();
 		try {
-			parser.loadMap("/home/diogorbg/workspace2/parseLogs/map.2011-10.log", users);
+			parser.loadMap("/home/diogorbg/workspace2/parseLogs/map.log", users);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
