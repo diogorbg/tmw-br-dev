@@ -1,9 +1,13 @@
 package parse;
 
-public interface ProcessMap extends Process {
+import bean.Header;
+import bean.Map;
+import bean.Status;
 
-	public boolean processLogin(bean.Header header, bean.Map map, bean.Status status);
+public interface ProcessMap {
 
-	public boolean processLogout(bean.Header header, bean.Map map, bean.Status status);
+	public boolean processLogin(Header header, Map map, Status status);
+
+	public boolean processLogout(Header header, Map map, Status status);
 
 }

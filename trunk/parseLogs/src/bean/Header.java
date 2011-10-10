@@ -1,5 +1,8 @@
 package bean;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Classe com informações do cabeçalho da maioria dos arquivos de log.
  * @author diogorbg
@@ -8,7 +11,7 @@ package bean;
 public class Header {
 
 	private String cmd;
-	private int timer;
+	private Date date;
 	private int idAcc;
 	private int idChr;
 	private String ip;
@@ -16,9 +19,26 @@ public class Header {
 	public Header() {
 	}
 
-	public Header(String cmd, int timer, int idAcc, int idChr, String ip) {
+	public Header(String cmd, long timer, int idAcc, int idChr, String ip) {
+		Calendar c = Calendar.getInstance();
+
 		this.cmd = cmd;
-		this.timer = timer;
+		c.setTimeInMillis(timer*1000);
+		this.date = c.getTime();
+		this.idAcc = idAcc;
+		this.idChr = idChr;
+		this.ip = ip;
+	}
+
+	/**
+	 * Seta todos os atributos.
+	 */
+	public void set(String cmd, long timer, int idAcc, int idChr, String ip) {
+		Calendar c = Calendar.getInstance();
+
+		this.cmd = cmd;
+		c.setTimeInMillis(timer*1000);
+		this.date = c.getTime();
 		this.idAcc = idAcc;
 		this.idChr = idChr;
 		this.ip = ip;
@@ -36,14 +56,14 @@ public class Header {
 	}
 
 	/**
-	 * Retorna o tempo da ocorrência.
+	 * Retorna o data da ocorrência.
 	 */
-	public int getTimer() {
-		return timer;
+	public Date getDate() {
+		return date;
 	}
 
-	public void setTimer(int timer) {
-		this.timer = timer;
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 	/**

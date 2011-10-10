@@ -15,6 +15,12 @@ public class Map {
 		this.y = y;
 	}
 
+	public void set(String map, int x, int y) {
+		this.map = map;
+		this.x = x;
+		this.y = y;
+	}
+
 	public String getMap() {
 		return map;
 	}
