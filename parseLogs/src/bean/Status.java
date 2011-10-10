@@ -15,6 +15,12 @@ public class Status {
 		this.lvlGm = lvlGm;
 	}
 
+	public void set(int lvl, int xp, int lvlGm) {
+		this.lvl = lvl;
+		this.xp = xp;
+		this.lvlGm = lvlGm;
+	}
+
 	public int getLvl() {
 		return lvl;
 	}
