@@ -33,9 +33,8 @@ public class CountUsers extends parse.Process implements ProcessMap {
 	public boolean processLogin(Header header, Map map, Status status) {
 
 		//if(status.getLvlGm()>0 || status.getLvl() < 70)
-		//	return true;
-
-		add();
+		if(header.getIdAcc()!=2005693)
+			return true;
 
 		Date d1 = (Date) header.getDate().clone();
 		d1.setSeconds(0);
@@ -51,8 +50,11 @@ public class CountUsers extends parse.Process implements ProcessMap {
 				addTab(d2);
 				d2.setTime( d2.getTime()+(TEMPO*60000) );
 			}
-			date = (Date) d1.clone();
+			add();
 			zerar();
+			date = (Date) d1.clone();
+		} else {
+			add();
 		}
 
 		//System.out.println(sdf.format(header.getDate())+ ", qtd " +getCount()+ ", login, lvl " +status.getLvl()+ ", lvlGM " +status.getLvlGm());
@@ -62,10 +64,10 @@ public class CountUsers extends parse.Process implements ProcessMap {
 
 	@SuppressWarnings("deprecation")
 	public boolean processLogout(Header header, Map map, Status status) {
-		//if(status.getLvlGm()>0 || status.getLvl() < 70)
-		//	return true;
 
-		del();
+		//if(status.getLvlGm()>0 || status.getLvl() < 70)
+		if(header.getIdAcc()!=2005693)
+			return true;
 
 		Date d1 = (Date) header.getDate().clone();
 		d1.setSeconds(0);
@@ -81,8 +83,11 @@ public class CountUsers extends parse.Process implements ProcessMap {
 				addTab(d2);
 				d2.setTime( d2.getTime()+(TEMPO*60000) );
 			}
-			date = (Date) d1.clone();
+			del();
 			zerar();
+			date = (Date) d1.clone();
+		} else {
+			del();
 		}
 
 		//System.out.println(sdf.format(header.getDate())+ ", qtd " +getCount()+ ", logout, lvl " +status.getLvl()+ ", lvlGM " +status.getLvlGm());
@@ -92,15 +97,14 @@ public class CountUsers extends parse.Process implements ProcessMap {
 
 	@SuppressWarnings("deprecation")
 	private void addTab(Date d2) {
-		String key = fmt2.format(d2);
-		if(key.equals("00:00")) {
+		int i = d2.getHours()*60/TEMPO +  d2.getMinutes()/TEMPO;
+		if(i==0) {
 			if(title.length()==0)
 				title = "hora";
 			title += (","+fmt1.format(d2));
 		}
-		int i = d2.getHours()*60/TEMPO +  d2.getMinutes()/TEMPO;
 		if(tab[i]==null) {
-			tab[i] = ""+key;
+			tab[i] = ""+fmt2.format(d2);
 		}
 		tab[i] += ","+max();
 	}
