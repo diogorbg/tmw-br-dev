@@ -1,7 +1,5 @@
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map.Entry;
 
 import parse.ProcessMap;
 import bean.Header;
@@ -10,16 +8,15 @@ import bean.Status;
 
 public class CountUsers extends parse.Process implements ProcessMap {
 
-	private static int TEMPO = 15;
+	private static int TEMPO = 30;
 	private int count=0, max=0;
 	private int nLogin=0, nLogout=0;
 	private Date date = null;
 
 	private String title = "";
 	private String[] tab = new String[24*60/TEMPO];
-	//private HashMap<String,String> tab = new HashMap<String,String>();
 
-	//private SimpleDateFormat fmt1 = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+	private SimpleDateFormat fmt1 = new SimpleDateFormat("dd/MM/yyyy");
 	private SimpleDateFormat fmt2 = new SimpleDateFormat("HH:mm");
 
 	public CountUsers() {
@@ -30,9 +27,6 @@ public class CountUsers extends parse.Process implements ProcessMap {
 		for (int i=0; i<tab.length; i++) {
 			System.out.println(tab[i]);
 		}
-		//for (Entry<String, String> obj : tab.entrySet()) {
-		//	System.out.println(obj.getKey()+","+obj.getValue());
-		//}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -40,7 +34,6 @@ public class CountUsers extends parse.Process implements ProcessMap {
 
 		//if(status.getLvlGm()>0 || status.getLvl() < 70)
 		//	return true;
-		//if (header.getIdAcc()!=2005693) return true;
 
 		add();
 
@@ -56,7 +49,6 @@ public class CountUsers extends parse.Process implements ProcessMap {
 			Date d2 = (Date) date.clone();
 			while (d1.compareTo(d2)>0) {
 				addTab(d2);
-				//System.out.println(fmt1.format(d2)+ ",qtd " +max()+ ",login");
 				d2.setTime( d2.getTime()+(TEMPO*60000) );
 			}
 			date = (Date) d1.clone();
@@ -72,7 +64,6 @@ public class CountUsers extends parse.Process implements ProcessMap {
 	public boolean processLogout(Header header, Map map, Status status) {
 		//if(status.getLvlGm()>0 || status.getLvl() < 70)
 		//	return true;
-		//if (header.getIdAcc()!=2005693) return true;
 
 		del();
 
@@ -88,7 +79,6 @@ public class CountUsers extends parse.Process implements ProcessMap {
 			Date d2 = (Date) date.clone();
 			while (d1.compareTo(d2)>0) {
 				addTab(d2);
-				//System.out.println(fmt1.format(d2)+ ",qtd " +max()+ ",logout");
 				d2.setTime( d2.getTime()+(TEMPO*60000) );
 			}
 			date = (Date) d1.clone();
@@ -106,21 +96,13 @@ public class CountUsers extends parse.Process implements ProcessMap {
 		if(key.equals("00:00")) {
 			if(title.length()==0)
 				title = "hora";
-			title += String.format(",%02d", d2.getDate());
+			title += (","+fmt1.format(d2));
 		}
 		int i = d2.getHours()*60/TEMPO +  d2.getMinutes()/TEMPO;
 		if(tab[i]==null) {
 			tab[i] = ""+key;
 		}
 		tab[i] += ","+max();
-		//String vlr = tab.get(key);
-		//if(vlr==null) {
-		//	vlr = ""+max();
-		//	tab.put(key, vlr);
-		//} else {
-		//	vlr += ","+max();
-		//}
-		//System.out.println(key+","+max());
 	}
 
 	public void add() {
