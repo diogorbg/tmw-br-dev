@@ -752,6 +752,31 @@ static int fun_is_pc (env_t * env, int args_nr, val_t * result, val_t * args)
     return 0;
 }
 
+//FIXME TMW-BR - função map_flag
+static int fun_map_flag (env_t * env, int args_nr, val_t * result, val_t * args) {
+	int m;
+	char *flag;
+
+	printf("magia map_flag\n");
+	m = ARGLOCATION(0).m;
+	flag = ARGSTR(1);
+
+	if( strcmp (flag,"nosave")==0 ) {
+		RESULTINT = map[m].flag.nosave;
+	} else if( strcmp (flag,"magic")==0 ) {
+		RESULTINT = map[m].flag.magic;
+	} else if( strcmp (flag,"pvp")==0 ) {
+		RESULTINT = map[m].flag.pvp;
+	} else if( strcmp (flag,"nowarp")==0 ) {
+		RESULTINT = map[m].flag.nowarp;
+	} else if( strcmp (flag,"nowarpto")==0 ) {
+		RESULTINT = map[m].flag.nowarpto;
+	} else {
+		RESULTINT = -1;
+	}
+    return 0;
+}
+
 static int
 fun_partner (env_t * env, int args_nr, val_t * result, val_t * args)
 {
@@ -1230,6 +1255,7 @@ static fun_t functions[] = {
     {"is_dead", "e", 'i', fun_is_dead},
     {"is_pc", "e", 'i', fun_is_pc},
     {"extract_healer_experience", "ei", 'i', fun_extract_healer_xp},
+    {"map_flag", "ls", 'i', fun_map_flag}, //FIXME TMW-BR - define função map_flag
     {NULL, NULL, '.', NULL}
 };
 
