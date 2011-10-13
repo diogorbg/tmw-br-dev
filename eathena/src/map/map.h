@@ -575,6 +575,7 @@ struct map_data
         unsigned noreturn:1;
         unsigned monster_noteleport:1;
         unsigned nosave:1;
+        unsigned magic:1;
         unsigned nobranch:1;
         unsigned nopenalty:1;
         unsigned pvp:1;
