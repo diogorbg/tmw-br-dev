@@ -5923,6 +5923,11 @@ int atcommand_mapinfo (const int fd, struct map_session_data *sd,
     sprintf (output, "No Zeny Penalty: %s",
              (map[m_id].flag.nozenypenalty) ? "True" : "False");
     clif_displaymessage (fd, output);
+	//FIXME TMW-BR - Listagem de map flags
+    clif_displaymessage (fd, "------ Map Flags BR ------");
+    sprintf (output, "Magias: %s",
+             (map[m_id].flag.magic) ? "Sim" : "Nao");
+    clif_displaymessage (fd, output);
 
     switch (list)
     {

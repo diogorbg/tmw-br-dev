@@ -2034,6 +2034,10 @@ static int npc_parse_mapflag (char *w1, char *w2, char *w3, char *w4)
     {
         map[m].flag.monster_noteleport = 1;
     }
+    else if (strcmpi (w3, "magic") == 0)
+    {
+        map[m].flag.magic = 1;
+    }
     else if (strcmpi (w3, "nobranch") == 0)
     {
         map[m].flag.nobranch = 1;
