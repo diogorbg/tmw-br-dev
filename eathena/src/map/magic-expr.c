@@ -757,7 +757,6 @@ static int fun_map_flag (env_t * env, int args_nr, val_t * result, val_t * args)
 	int m;
 	char *flag;
 
-	printf("magia map_flag\n");
 	m = ARGLOCATION(0).m;
 	flag = ARGSTR(1);
 
