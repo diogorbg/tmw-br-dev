@@ -776,6 +776,19 @@ static int fun_map_flag (env_t * env, int args_nr, val_t * result, val_t * args)
     return 0;
 }
 
+//FIXME TMW-BR - função fun_script_variable
+static int fun_script_variable (env_t * env, int args_nr, val_t * result, val_t * args) {
+	character_t *c = (ETY (0) == BL_PC) ? ARGPC (0) : NULL;
+
+	if (!c)
+		return 1;
+
+	RESULTINT = pc_readglobalreg (c, ARGSTR (1));
+
+	return 0;
+}
+
+
 static int
 fun_partner (env_t * env, int args_nr, val_t * result, val_t * args)
 {
@@ -1255,6 +1268,7 @@ static fun_t functions[] = {
     {"is_pc", "e", 'i', fun_is_pc},
     {"extract_healer_experience", "ei", 'i', fun_extract_healer_xp},
     {"map_flag", "ls", 'i', fun_map_flag}, //FIXME TMW-BR - define função map_flag
+    {"get_script_variable", "es", 'i', fun_script_variable}, //FIXME TMW-BR - definição da função fun_script_variable
     {NULL, NULL, '.', NULL}
 };
 
