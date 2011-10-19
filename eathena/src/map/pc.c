@@ -7278,6 +7278,39 @@ int pc_addeventtimer (struct map_session_data *sd, int tick, const char *name)
     return 0;
 }
 
+/**
+ * Adiciona novo evento apenas se ele não existir.
+ */
+//FIXME TMW-BR - função addeventtimer2
+int pc_addeventtimer2(struct map_session_data *sd, int tick, const char *name) {
+	int  i;
+
+	nullpo_retr (0, sd);
+
+	//- verifica a existencia de um timer de mesmo nome.
+	for (i = 0; i < MAX_EVENTTIMER; i++)
+		if (sd->eventtimer[i] != -1 && strcmp((char*) (get_timer(sd->eventtimer[i])->data), name) == 0) {
+			printf("timer já existe.\n");
+			return 0;
+		}
+
+	//- localiza a posição para inserção
+	for (i = 0; i < MAX_EVENTTIMER; i++)
+		if (sd->eventtimer[i] == -1)
+			break;
+
+	//- insere timer no vetor.
+	if (i < MAX_EVENTTIMER) {
+		char *evname = (char *) aCalloc(24, sizeof(char));
+		strncpy(evname, name, 24);
+		evname[23] = '\0';
+		sd->eventtimer[i] = add_timer( gettick()+tick, pc_eventtimer, sd->bl.id, (int)evname );
+		return 1;
+	}
+
+	return 0;
+}
+
 /*==========================================
  * イベントタイマー削除
  *------------------------------------------

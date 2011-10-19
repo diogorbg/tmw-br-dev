@@ -208,6 +208,7 @@ int  buildin_killmonsterall (struct script_state *st);
 int  buildin_doevent (struct script_state *st);
 int  buildin_donpcevent (struct script_state *st);
 int  buildin_addtimer (struct script_state *st);
+int  buildin_addtimer2 (struct script_state *st);
 int  buildin_deltimer (struct script_state *st);
 int  buildin_addtimercount (struct script_state *st);
 int  buildin_initnpctimer (struct script_state *st);
@@ -528,8 +529,10 @@ struct
     {
     buildin_donpcevent, "donpcevent", "s"},
     {
-    buildin_addtimer, "addtimer", "is"},
-    {
+	buildin_addtimer, "addtimer", "is"},
+	{
+	buildin_addtimer2, "addtimer2", "is"},
+	{
     buildin_deltimer, "deltimer", "s"},
     {
     buildin_addtimercount, "addtimercount", "si"},
@@ -4487,6 +4490,16 @@ int buildin_addtimer (struct script_state *st)
     tick = conv_num (st, &(st->stack->stack_data[st->start + 2]));
     event = conv_str (st, &(st->stack->stack_data[st->start + 3]));
     pc_addeventtimer (script_rid2sd (st), tick, event);
+    return 0;
+}
+
+//FIXME TMW-BR - função addtimer2
+int buildin_addtimer2(struct script_state *st) {
+    char *event;
+    int  tick;
+    tick = conv_num(st, &(st->stack->stack_data[st->start + 2]));
+    event = conv_str(st, &(st->stack->stack_data[st->start + 3]));
+    pc_addeventtimer2(script_rid2sd(st), tick, event);
     return 0;
 }
 
