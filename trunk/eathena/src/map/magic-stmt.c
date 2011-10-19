@@ -855,6 +855,7 @@ static op_t operations[] = {
     {"injure", "eeii", op_injure},
     {"emote", "ei", op_emote},
     {"set_script_variable", "esi", op_set_script_variable},
+    {"setvar", "esi", op_set_script_variable},
     {"set_hair_colour", "ei", op_set_hair_colour},
     {"set_hair_style", "ei", op_set_hair_style},
     {"drop_item", "l.ii", op_drop_item_for},

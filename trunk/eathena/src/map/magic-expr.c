@@ -1267,8 +1267,9 @@ static fun_t functions[] = {
     {"is_dead", "e", 'i', fun_is_dead},
     {"is_pc", "e", 'i', fun_is_pc},
     {"extract_healer_experience", "ei", 'i', fun_extract_healer_xp},
-    {"map_flag", "ls", 'i', fun_map_flag}, //FIXME TMW-BR - define função map_flag
+    {"mapflag", "ls", 'i', fun_map_flag}, //FIXME TMW-BR - define função map_flag
     {"get_script_variable", "es", 'i', fun_script_variable}, //FIXME TMW-BR - definição da função fun_script_variable
+    {"getvar", "es", 'i', fun_script_variable},
     {NULL, NULL, '.', NULL}
 };
 
