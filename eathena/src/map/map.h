@@ -45,6 +45,9 @@
 
 #define DEFAULT_AUTOSAVE_INTERVAL 60*1000
 
+//FIXME TMW-BR - Verifica se status o deixa oculto.
+#define pc_scHide(sd) ((sd)->sc_data[SC_POCAO_FEDOR].timer!=-1)
+
 // [Fate] status.option properties.  These are persistent status changes.
 // IDs that are not listed are not used in the code (to the best of my knowledge)
 #define OPTION_HIDE2		0x0002  // apparently some weaker non-GM hide
