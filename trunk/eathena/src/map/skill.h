@@ -351,7 +351,7 @@ enum
     SC_DIVINA = SC_SILENCE,
 
     //FIXME TMW-BR
-    SC_POCAO_FEDOR = 200, //- Poção que te faz ferer como um zumbi.
+    SC_BR_HIDE = 200, //- Lhe torna oculto para os monstros.
 };
 extern int SkillStatusChangeTable[];
 
