@@ -7290,7 +7290,6 @@ int pc_addeventtimer2(struct map_session_data *sd, int tick, const char *name) {
 	//- verifica a existencia de um timer de mesmo nome.
 	for (i = 0; i < MAX_EVENTTIMER; i++)
 		if (sd->eventtimer[i] != -1 && strcmp((char*) (get_timer(sd->eventtimer[i])->data), name) == 0) {
-			printf("timer já existe.\n");
 			return 0;
 		}
 
