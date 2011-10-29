@@ -96,8 +96,10 @@ int magic_message (character_t * caster, char *spell_, size_t spell_len)
         fprintf (stderr, "Found spell `%s', triggered = %d\n", spell_,
                  effects != NULL);
 #endif
-        if (caster->status.option & OPTION_HIDE)
+        if (caster->status.option & OPTION_HIDE || pc_scHide(caster) ) {
+            clif_displaymessage(caster->fd, "Magia falhou!");
             return 0;           // No spellcasting while hidden
+        }
 
         MAP_LOG_PC (caster, "CAST %s %s",
                     spell->name, effects ? "SUCCESS" : "FAILURE");

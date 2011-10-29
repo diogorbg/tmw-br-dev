@@ -7371,7 +7371,7 @@ void clif_parse_ActionRequest (int fd, struct map_session_data *sd)
         case 0x00:             // once attack
         case 0x07:             // continuous attack
             if (sd->sc_data[SC_WEDDING].timer != -1 || sd->view_class == 22
-                || sd->status.option & OPTION_HIDE)
+                || sd->status.option & OPTION_HIDE || pc_scHide(sd) )
                 return;
             if (!battle_config.sdelay_attack_enable
                 && pc_checkskill (sd, SA_FREECAST) <= 0)

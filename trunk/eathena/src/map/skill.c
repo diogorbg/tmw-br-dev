@@ -9257,7 +9257,6 @@ int skill_status_change_end (struct block_list *bl, int type, int tid)
             case SC_PHYS_SHIELD:
             case SC_HASTE:
             case SC_POCAO_FEDOR:
-            	printf("fedor end\n");
                 calc_flag = 1;
                 break;
             case SC_BERSERK:   /* バーサーク */
@@ -10441,7 +10440,6 @@ int skill_status_effect (struct block_list *bl, int type, int val1, int val2,
             *opt2 |= 0x80;
         case SC_MATKPOT:
         case SC_POCAO_FEDOR:
-        	printf("fedor effect\n");
             calc_flag = 1;
             tick = 1000 * tick;
             break;
