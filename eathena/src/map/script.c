@@ -296,6 +296,7 @@ int  buildin_inittimer (struct script_state *st);
 int  buildin_stoptimer (struct script_state *st);
 int  buildin_cmdothernpc (struct script_state *st);
 int  buildin_mobcount (struct script_state *st);
+int  buildin_lurarMob (struct script_state *st);
 int  buildin_strmobinfo (struct script_state *st);  // Script for displaying mob info [Valaris]
 int  buildin_guardian (struct script_state *st);    // Script for displaying mob info [Valaris]
 int  buildin_guardianinfo (struct script_state *st);    // Script for displaying mob info [Valaris]
@@ -729,6 +730,8 @@ struct
     buildin_hasitems, "hasitems", "*"}, // [Valaris]
     {
     buildin_mobcount, "mobcount", "ss"},
+    {
+    buildin_lurarMob, "lurarmob", "ii"}, // mob_id, raio
     {
     buildin_getlook, "getlook", "i"},
     {
@@ -6362,6 +6365,33 @@ int buildin_mobcount (struct script_state *st)  // Added by RoVeRT
     push_val (st->stack, C_INT, (c - 1));
 
     return 0;
+}
+
+// FIXME TMW-BR - lurar mob
+int buildin_lurarMob_sub (struct block_list *bl, va_list ap) {
+	struct map_session_data *sd = map_id2sd( va_arg(ap, int) );
+	int mob = va_arg(ap, int);
+
+	if( ((struct mob_data *) bl)->base_class == mob )
+		mob_target(bl, sd, battle_get_range(sd));
+	return 0;
+}
+
+int buildin_lurarMob (struct script_state *st) {
+	//char *mapname, *event;
+	int  c, mob, r = 0;
+
+	struct map_session_data *sd = map_id2sd( st->rid );
+	mob = conv_num (st, &(st->stack->stack_data[st->start + 2]));
+	r = conv_num (st, &(st->stack->stack_data[st->start + 3]));
+
+	map_foreachinarea(buildin_lurarMob_sub,
+			sd->bl.m, sd->bl.x-r, sd->bl.y-r, sd->bl.x+r, sd->bl.y+r, BL_MOB,
+			st->rid, mob);
+
+	push_val(st->stack, C_INT, (c - 1));
+
+	return 0;
 }
 
 int buildin_marriage (struct script_state *st)
