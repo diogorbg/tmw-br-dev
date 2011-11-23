@@ -14,7 +14,7 @@ import bean.Status;
 
 public class ParserLog {
 
-	private String[] info;
+	private String[] vet;
 
 	public void loadMap(String fileName, Process process) throws FileNotFoundException, IOException, Exception {
 		BufferedReader buf = null;
@@ -25,21 +25,21 @@ public class ParserLog {
 
 		buf = new BufferedReader(new FileReader( new File(fileName) ));
 		while ((linha = buf.readLine()) != null) {
-			info = linha.split(",");
-			header.set(info[0], getInt(1), getInt(2), getInt(3), info[7]);
+			vet = linha.split(",");
+			header.set(vet[0], getInt(1), getInt(2), getInt(3), vet[7]);
 
-			if (info[0].equals("login")) {
+			if (vet[0].equals("login")) {
 				if (process instanceof ProcessMap) {
-					map.set(info[4], getInt(5), getInt(6));
+					map.set(vet[4], getInt(5), getInt(6));
 					status.set(getInt(8), getInt(9), getInt(10));
 					if( ((ProcessMap)process).processLogin(header, map, status) == false )
 						return;
 				} else {
 					throw new Exception("Impossível processar função ProcessMap.processLogin()");
 				}
-			} else if (info[0].equals("logout")) {
+			} else if (vet[0].equals("logout")) {
 				if (process instanceof ProcessMap) {
-					map.set(info[4], getInt(5), getInt(6));
+					map.set(vet[4], getInt(5), getInt(6));
 					status.set(getInt(8), getInt(9), getInt(10));
 					if( ((ProcessMap)process).processLogout(header, map, status) == false )
 						return;
@@ -60,29 +60,29 @@ public class ParserLog {
 
 		buf = new BufferedReader(new FileReader( new File(fileName) ));
 		while ((linha = buf.readLine()) != null) {
-			info = linha.split(",");
-			if(info.length>3)
-				header.set(info[0], getInt(1), getInt(2), getInt(3), null);
+			vet = linha.split(",");
+			if(vet.length>3)
+				header.set(vet[0], getInt(1), getInt(2), getInt(3), null);
 			else
-				header.set(info[0], 0, 0, 0, null);
+				header.set(vet[0], 0, 0, 0, null);
 
-			if (info[0].equals("tradePC1") || info[0].equals("tradePC2")) {
+			if (vet[0].equals("tradePC1") || vet[0].equals("tradePC2")) {
 				if (process instanceof ProcessTrade) {
-					map.set(info[4], getInt(5), getInt(6));
+					map.set(vet[4], getInt(5), getInt(6));
 					if( ((ProcessTrade)process).processTradePC(header, map, getInt(7)) == false )
 						return;
 				} else {
 					throw new Exception("Impossível processar função ProcessTrade.processTrade()");
 				}
-			} else if (info[0].equals("trade")) {
+			} else if (vet[0].equals("trade")) {
 				if (process instanceof ProcessTrade) {
 					trade1.clear();
 					trade2.clear();
-					for(int i=3; i<info.length-1; i++) {
+					for(int i=3; i<vet.length-1; i++) {
 						if(getInt(i+1)>0) {
-							trade1.add(info[i]+","+info[i+1]);
+							trade1.add(vet[i]+","+vet[i+1]);
 						} else {
-							trade2.add(info[i]+","+info[i+1]);
+							trade2.add(vet[i]+","+vet[i+1]);
 						}
 						i++;
 					}
@@ -91,7 +91,7 @@ public class ParserLog {
 				} else {
 					throw new Exception("Impossível processar função ProcessTrade.processTrade()");
 				}
-			} else if (info[0].equals("tradeOk")) {
+			} else if (vet[0].equals("tradeOk")) {
 				if (process instanceof ProcessTrade) {
 					if( ((ProcessTrade)process).processTradeOk(header, getInt(1), getInt(2)) == false )
 						return;
@@ -104,9 +104,9 @@ public class ParserLog {
 
 	private int getInt(int i) {
 		try {
-			return Integer.parseInt( info[i] );
+			return Integer.parseInt( vet[i] );
 		} catch (NumberFormatException e) {
-			System.err.println("#Erro ao converter para inteiro. '"+info[i]+"'");
+			System.err.println("#Erro ao converter para inteiro. '"+vet[i]+"'");
 			return -1;
 		}
 	}
