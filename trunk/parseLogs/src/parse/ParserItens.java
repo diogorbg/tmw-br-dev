@@ -5,31 +5,26 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ParserItens {
 
-	private String[] info;
+	private String[] vet;
 
-	void loadItens(String fileName) throws FileNotFoundException, IOException {
+	public Map<Integer,String> loadItens(String fileName) throws FileNotFoundException, IOException {
 		BufferedReader buf = null;
+		Map<Integer,String> map = new HashMap<Integer,String>();
 		String linha;
 
 		buf = new BufferedReader(new FileReader( new File(fileName) ));
 		while ((linha = buf.readLine()) != null) {
-			info = linha.split(",");
-
-			if (info[0].equals("login")) {
-			}
+			vet = linha.split(",", 2);
+			try {
+				map.put( Integer.parseInt(vet[0]), vet[1] );
+			} catch (NumberFormatException e) {}
 		}
+		return map;
 	}
 	
-	private int getInt(int i) {
-		try {
-			return Integer.parseInt( info[i] );
-		} catch (NumberFormatException e) {
-			System.err.println("#Erro ao converter para inteiro. '"+info[i]+"'");
-			return -1;
-		}
-	}
-
 }
