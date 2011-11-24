@@ -12,9 +12,8 @@ import bean.Char;
 
 public class ParserChars {
 
-	private String[] vet;
-
-	Map<Integer,Char> loadChars(String fileName) throws FileNotFoundException, IOException {
+	public static Map<Integer,Char> loadChars(String fileName) throws FileNotFoundException, IOException {
+		String[] vet;
 		BufferedReader buf = null;
 		Map<Integer,Char> map = new HashMap<Integer,Char>();
 		Char chr = null;
@@ -22,22 +21,23 @@ public class ParserChars {
 
 		buf = new BufferedReader(new FileReader( new File(fileName) ));
 		while ((linha = buf.readLine()) != null) {
-			vet = linha.split("\\t", 4);
+			vet = linha.split("\\t", 5);
 			try {
+				int idAcc = Integer.parseInt( vet[1].split(",")[0] );
 				int lvl = Integer.parseInt( vet[3].split(",")[1] );
 				int zeny = Integer.parseInt( vet[4].split(",")[2] );
-				chr = new Char( getInt(0), vet[2], lvl, zeny );
-				map.put( getInt(0), chr );
+				chr = new Char( getInt(vet[0]), idAcc, vet[2], lvl, zeny );
+				map.put( getInt(vet[0]), chr );
 			} catch (NumberFormatException e) {}
 		}
 		return map;
 	}
 	
-	private int getInt(int i) {
+	private static int getInt(String str) {
 		try {
-			return Integer.parseInt( vet[i] );
+			return Integer.parseInt( str );
 		} catch (NumberFormatException e) {
-			System.err.println("#Erro ao converter para inteiro. '"+vet[i]+"'");
+			System.err.println("#Erro ao converter para inteiro. '"+str+"'");
 			return -1;
 		}
 	}

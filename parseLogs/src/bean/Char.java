@@ -3,20 +3,22 @@ package bean;
 public class Char {
 
 	private int id;
-	private String nome;
+	private int idAcc;
+	private String name;
 	private int lvl;
 	private int zeny;
 
 	public Char() {
 	}
 
-	public Char(int id, String nome, int lvl, int zeny) {
-		set(id, nome, lvl, zeny);
+	public Char(int id, int idAcc, String name, int lvl, int zeny) {
+		set(id, idAcc, name, lvl, zeny);
 	}
 
-	public void set(int id, String nome, int lvl, int zeny) {
+	public void set(int id, int idAcc, String name, int lvl, int zeny) {
 		this.id = id;
-		this.nome = nome;
+		this.idAcc = idAcc;
+		this.name = name;
 		this.lvl = lvl;
 		this.zeny = zeny;
 	}
@@ -29,12 +31,20 @@ public class Char {
 		this.id = id;
 	}
 
-	public String getNome() {
-		return nome;
+	public int getIdAcc() {
+		return idAcc;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setIdAcc(int idAcc) {
+		this.idAcc = idAcc;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public int getLvl() {
