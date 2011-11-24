@@ -10,9 +10,8 @@ import java.util.Map;
 
 public class ParserItens {
 
-	private String[] vet;
-
-	public Map<Integer,String> loadItens(String fileName) throws FileNotFoundException, IOException {
+	public static Map<Integer,String> loadItens(String fileName) throws FileNotFoundException, IOException {
+		String[] vet;
 		BufferedReader buf = null;
 		Map<Integer,String> map = new HashMap<Integer,String>();
 		String linha;
