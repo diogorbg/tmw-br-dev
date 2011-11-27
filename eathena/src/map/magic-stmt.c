@@ -763,14 +763,13 @@ static int op_emote (env_t * env, int args_nr, val_t * args)
     return 0;
 }
 
-static int op_set_script_variable (env_t * env, int args_nr, val_t * args)
-{
+static int op_set_script_variable (env_t * env, int args_nr, val_t * args) {
     character_t *c = (ETY (0) == BL_PC) ? ARGPC (0) : NULL;
 
     if (!c)
         return 1;
 
-    pc_setglobalreg (c, ARGSTR (1), ARGINT (2));
+    pc_setglobalreg (c, ARGSTR(1), ARGINT(2));
 
     return 0;
 }
