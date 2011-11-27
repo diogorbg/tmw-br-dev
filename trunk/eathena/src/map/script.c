@@ -319,6 +319,7 @@ int  buildin_shop (struct script_state *st);    // [MadCamel]
 int  buildin_isdead (struct script_state *st);  // [Jaxad0127]
 int  buildin_fakenpcname (struct script_state *st); //[Kage]
 int  buildin_unequip_by_id (struct script_state *st);   // [Freeyorp]
+int  buildin_getmap (struct script_state *st);
 int  buildin_getx (struct script_state *st);  // [Kage]
 int  buildin_gety (struct script_state *st);  // [Kage]
 
@@ -749,8 +750,10 @@ struct
     {
     buildin_unequip_by_id, "unequipbyid", "i"}, // [Freeyorp]
     {
-    buildin_getx, "getx", ""}, // [Kage]
-    {
+	buildin_getmap, "getmap", ""}, //FIXME TMW-BR - getmap
+	{
+	buildin_getx, "getx", ""}, // [Kage]
+	{
     buildin_gety, "gety", ""}, // [Kage]
         // End Additions
     {
@@ -7356,14 +7359,29 @@ int buildin_fakenpcname (struct script_state *st)
     return 0;
 }
 
+/**
+ * Retorna o mapa do jogador.
+ */
+int buildin_getmap (struct script_state *st) {
+	printf("ok\n");
+	struct map_session_data *sd = script_rid2sd (st);
+    if (!sd)
+        return 1;
+
+	printf("mapa[%d]: %s\n", sd->bl.m, map[sd->bl.m].name);
+	push_str (st->stack, C_STR, map[sd->bl.m].name);
+	return 0;
+}
+
 /*============================
  * Gets the PC's x pos
  *----------------------------
  */
 
-int buildin_getx (struct script_state *st)
-{
+int buildin_getx (struct script_state *st) {
     struct map_session_data *sd = script_rid2sd (st);
+    if (!sd)
+        return 1;
 
     push_val (st->stack, C_INT, sd->bl.x);
     return 0;
@@ -7373,9 +7391,10 @@ int buildin_getx (struct script_state *st)
  * Gets the PC's y pos
  *----------------------------
  */
-int buildin_gety (struct script_state *st)
-{
+int buildin_gety (struct script_state *st) {
     struct map_session_data *sd = script_rid2sd (st);
+    if (!sd)
+        return 1;
 
     push_val (st->stack, C_INT, sd->bl.y);
     return 0;
