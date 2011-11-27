@@ -1089,6 +1089,11 @@ static int fun_substr (env_t * env, int args_nr, val_t * result, val_t * args)
     return 0;
 }
 
+static int fun_toInt (env_t * env, int args_nr, val_t * result, val_t * args) {
+    RESULTINT = atoi( ARGSTR(0) );
+    return 0;
+}
+
 static int fun_sqrt (env_t * env, int args_nr, val_t * result, val_t * args)
 {
     RESULTINT = (int) sqrt (ARGINT (0));
@@ -1260,6 +1265,7 @@ static fun_t functions[] = {
     {"strstr", "ss", 'i', fun_strstr},
     {"strlen", "s", 'i', fun_strlen},
     {"substr", "sii", 's', fun_substr},
+    {"toint", "s", 'i', fun_toInt},
     {"sqrt", "i", 'i', fun_sqrt},
     {"map_level", "l", 'i', fun_map_level},
     {"map_nr", "l", 'i', fun_map_nr},
