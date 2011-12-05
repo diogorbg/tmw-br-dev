@@ -82,7 +82,7 @@ public class ParserLog {
 						if(getInt(i+1)>0) {
 							trade1.add(vet[i]+","+vet[i+1]);
 						} else {
-							trade2.add(vet[i]+","+vet[i+1]);
+							trade2.add(vet[i]+","+vet[i+1].replace("-", ""));
 						}
 						i++;
 					}

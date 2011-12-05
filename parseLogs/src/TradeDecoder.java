@@ -54,13 +54,13 @@ public class TradeDecoder extends parse.Process implements ProcessTrade {
 		setChars.add( chr2 );
 		Char obj1 = mapChars.get( new Integer(chr1) );
 		Char obj2 = mapChars.get( new Integer(chr2) );
-		System.out.println("Trade "+obj1.getName()+" >> "+obj2.getName()+" :");
+		if(trade1.size()>0) System.out.println("Trade "+obj1.getName()+" >> "+obj2.getName()+" :");
 		for(String s : trade1) {
 			String[] s2 = s.split(",");
 			System.out.println(" * "+s2[1]+" - " + mapItens.get( new Integer(s2[0]) ) + " ("+s2[0]+")");
 		}
 
-		System.out.println("Trade "+obj2.getName()+" >> "+obj1.getName()+" :");
+		if(trade2.size()>0) System.out.println("Trade "+obj2.getName()+" >> "+obj1.getName()+" :");
 		for(String s : trade2) {
 			String[] s2 = s.split(",");
 			System.out.println(" * "+s2[1]+" - " + mapItens.get( new Integer(s2[0]) ) + " ("+s2[0]+")");
