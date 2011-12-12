@@ -31,6 +31,15 @@
 #include "storage.h"
 #include "trade.h"
 
+int countItem(struct map_session_data *sd, int nameid) {
+	int i, count=0;
+	for (i=0; i<MAX_INVENTORY; i++) {
+		if (sd->status.inventory[i].nameid == nameid)
+			count += sd->status.inventory[i].amount;
+	}
+	return count;
+}
+
 void log_storage(const char *func, struct map_session_data *sd, const char *fmt, ...) {
 	char buff[512];
 

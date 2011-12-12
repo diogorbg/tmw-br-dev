@@ -1078,8 +1078,17 @@ int npc_buylist (struct map_session_data *sd, int n,
         w += itemdb_weight (item_list[i * 2 + 1]) * item_list[i * 2];
     }
 
-    if (z > (double) sd->status.zeny)
-        return 1;               // zeny不足
+    if (nd->idItemTrade>0) {
+    	if (countItem(sd, nd->idItemTrade)<z) {
+			char buf[128];
+			sprintf(buf, ":( Não tenho %d %s para esta compra!", (int)z, itemdb_search(nd->idItemTrade)->jname);
+			clif_displaymessage(sd->fd, buf);
+			return 1;
+    	}
+    } else {
+		if (z > (double) sd->status.zeny)
+			return 1;               // zeny不足
+    }
     if (w + sd->weight > sd->max_weight)
         return 2;               // 重量超過
     if (pc_inventoryblank (sd) < new)
@@ -1087,7 +1096,12 @@ int npc_buylist (struct map_session_data *sd, int n,
     if (sd->trade_partner != 0)
         return 4;               // cant buy while trading
 
-    pc_payzeny (sd, (int) z);
+    //FIXME TMW-BR - npc_buylist(). Comprando itens com mercadoria de troca.
+    if (nd->idItemTrade>0) {
+    	// retirar itens
+    } else {
+    	pc_payzeny (sd, (int) z);
+    }
 
     for (i = 0; i < n; i++)
     {
@@ -1382,7 +1396,7 @@ static int npc_parse_shop (char *w1, char *w2, char *w3, char *w4, int flagTrade
                                       sizeof (nd->u.shop_item[0]) * (max +
                                                                      1));
     p = strchr (w4, ',');
-    //FIXME TMW-BR - Definição do item mercadoria de troca.
+    //FIXME TMW-BR - npc_parse_shop(). Definição do item mercadoria de troca.
     if (flagTrade==1) {
     	p++;
     	nd->idItemTrade = atoi(p);
@@ -2394,6 +2408,7 @@ int do_init_npc (void)
             {
                 npc_parse_shop (w1, w2, w3, w4, 0);
             }
+            //FIXME TMW-BR - shopTrade. Um shop que não vende em dinheiro, troca por mercadoria.
             else if (strcmpi (w2, "shoptrade") == 0 && count > 3)
             {
                 npc_parse_shop (w1, w2, w3, w4, 1);
