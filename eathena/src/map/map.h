@@ -417,10 +417,12 @@ struct npc_label_list
     char name[24];
     int  pos;
 };
-struct npc_item_list
-{
-    int  nameid, value;
+
+struct npc_item_list {
+	int  nameid, value;
+	//int cont;      //- Quantidade de itens disponíveis para compra/venda.
 };
+
 struct npc_data
 {
     struct block_list bl;
@@ -432,6 +434,7 @@ struct npc_data
     int  chat_id;
     short opt1, opt2, opt3, option;
     short flag;
+    int idItemTrade; //FIXME TMW-BR - Id do item mercadoria de troca. se 0 ou menor, será trocado por zeny.
     union
     {
         struct

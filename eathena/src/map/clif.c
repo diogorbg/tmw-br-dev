@@ -1630,21 +1630,29 @@ int clif_buylist (struct map_session_data *sd, struct npc_data *nd)
 
     fd = sd->fd;
     WFIFOW (fd, 0) = 0xc6;
+    //printf(">buy %d\n", 0xc6);
     for (i = 0; nd->u.shop_item[i].nameid > 0; i++)
     {
         id = itemdb_search (nd->u.shop_item[i].nameid);
         val = nd->u.shop_item[i].value;
         WFIFOL (fd, 4 + i * 11) = val;
+        //printf("%d,", val);
         if (!id->flag.value_notdc)
             val = pc_modifybuyvalue (sd, val);
         WFIFOL (fd, 8 + i * 11) = val;
+        //printf("%d,", val);
         WFIFOB (fd, 12 + i * 11) = id->type;
-        if (id->view_id > 0)
+        //printf("%d,", id->type);
+        if (id->view_id > 0) {
             WFIFOW (fd, 13 + i * 11) = id->view_id;
-        else
+            //printf("%d\n", id->view_id);
+        } else {
             WFIFOW (fd, 13 + i * 11) = nd->u.shop_item[i].nameid;
+            //printf("%d\n", nd->u.shop_item[i].nameid);
+        }
     }
     WFIFOW (fd, 2) = i * 11 + 4;
+    //printf("%d\n", i*11 + 4);
     WFIFOSET (fd, WFIFOW (fd, 2));
 
     return 0;
@@ -1662,6 +1670,7 @@ int clif_selllist (struct map_session_data *sd)
 
     fd = sd->fd;
     WFIFOW (fd, 0) = 0xc7;
+    //printf(">sell %d\n", 0xc7);
     for (i = 0; i < MAX_INVENTORY; i++)
     {
         if (sd->status.inventory[i].nameid > 0 && sd->inventory_data[i])
@@ -1670,14 +1679,18 @@ int clif_selllist (struct map_session_data *sd)
             if (val < 0)
                 continue;
             WFIFOW (fd, 4 + c * 10) = i + 2;
+            //printf("%d,", i+2);
             WFIFOL (fd, 6 + c * 10) = val;
+            //printf("%d,", val);
             if (!sd->inventory_data[i]->flag.value_notoc)
                 val = pc_modifysellvalue (sd, val);
             WFIFOL (fd, 10 + c * 10) = val;
+            //printf("%d\n", val);
             c++;
         }
     }
     WFIFOW (fd, 2) = c * 10 + 4;
+    //printf("%d\n", c*10+4);
     WFIFOSET (fd, WFIFOW (fd, 2));
 
     return 0;
