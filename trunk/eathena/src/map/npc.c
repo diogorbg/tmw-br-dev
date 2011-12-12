@@ -1361,7 +1361,7 @@ int npc_parse_warp (char *w1, char *w2, char *w3, char *w4)
  * shop行解析
  *------------------------------------------
  */
-static int npc_parse_shop (char *w1, char *w2, char *w3, char *w4)
+static int npc_parse_shop (char *w1, char *w2, char *w3, char *w4, int flagTrade)
 {
     char *p;
     int  x, y, dir, m;
@@ -1382,6 +1382,15 @@ static int npc_parse_shop (char *w1, char *w2, char *w3, char *w4)
                                       sizeof (nd->u.shop_item[0]) * (max +
                                                                      1));
     p = strchr (w4, ',');
+    //FIXME TMW-BR - Definição do item mercadoria de troca.
+    if (flagTrade==1) {
+    	p++;
+    	nd->idItemTrade = atoi(p);
+    	//printf("\nitemTrade: %d\n", nd->idItemTrade);
+        p = strchr (p, ',');
+    } else {
+    	nd->idItemTrade = 0;
+    }
 
     while (p && pos < max)
     {
@@ -1391,6 +1400,7 @@ static int npc_parse_shop (char *w1, char *w2, char *w3, char *w4)
         p++;
         if (sscanf (p, "%d:%d", &nameid, &value) == 2)
         {
+        	//if (flagTrade==1) printf("item: %d %d(%d)\n", nameid, value, nd->idItemTrade);
         }
         else if (sscanf (p, "%s :%d", name, &value) == 2)
         {
@@ -2382,7 +2392,11 @@ int do_init_npc (void)
             }
             else if (strcmpi (w2, "shop") == 0 && count > 3)
             {
-                npc_parse_shop (w1, w2, w3, w4);
+                npc_parse_shop (w1, w2, w3, w4, 0);
+            }
+            else if (strcmpi (w2, "shoptrade") == 0 && count > 3)
+            {
+                npc_parse_shop (w1, w2, w3, w4, 1);
             }
             else if (strcmpi (w2, "script") == 0 && count > 3)
             {
