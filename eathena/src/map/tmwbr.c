@@ -31,6 +31,16 @@
 #include "storage.h"
 #include "trade.h"
 
+void displayMessage (const int fd, char *format, ...) {
+	char buffer[256];
+	va_list args;
+
+	va_start(args, format);
+	vsprintf(buffer, format, args);
+	clif_displaymessage(fd, buffer);
+	va_end(args);
+}
+
 /**
  * Retorna o valor corrigido do item para a cotação do item 'mercadoria de troca' ou valor definido no NPC.
  */
@@ -48,6 +58,14 @@ int getValueTrade (int nameid, int val, struct npc_data *nd) {
     	break;
     }
 	return val;
+}
+
+/**
+ * Remove itens do inventário pelo id do item.
+ * @return Retorn 0 em caso de sucesso.
+ */
+int delitem(struct map_session_data *sd, int id, int count) {
+	return pc_delitem(sd, pc_search_inventory(sd, id), count, 0);
 }
 
 /**

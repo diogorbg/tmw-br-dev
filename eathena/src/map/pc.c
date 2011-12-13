@@ -3548,8 +3548,10 @@ int pc_dropitem (struct map_session_data *sd, int n, int amount) {
 
     //FIXME TMW-BR - Não permite dropar itens equipáveis
     type = itemdb_type(sd->status.inventory[n].nameid);
-    if (type>3 && type!=10)
+    if (type>3 && type!=10) {
+		displayMessage(sd->fd, ":( Não posso dropar este equipamento!");
     	return 0;
+    }
 
     pc_unequipinvyitem (sd, n, 0);
 
