@@ -1080,9 +1080,7 @@ int npc_buylist (struct map_session_data *sd, int n,
 
     if (nd->idItemTrade>0) {
     	if (countItem(sd, nd->idItemTrade)<z) {
-			char buf[128];
-			sprintf(buf, ":( Não tenho %d %s para esta compra!", (int)z, itemdb_search(nd->idItemTrade)->jname);
-			clif_displaymessage(sd->fd, buf);
+    		displayMessage(sd->fd, ":( Não tenho %d %s para esta compra!", (int)z, itemdb_search(nd->idItemTrade)->jname);
 			return 1;
     	}
     } else {
@@ -1098,7 +1096,8 @@ int npc_buylist (struct map_session_data *sd, int n,
 
     //FIXME TMW-BR - npc_buylist(). Comprando itens com mercadoria de troca.
     if (nd->idItemTrade>0) {
-    	// retirar itens
+    	if (delitem(sd, nd->idItemTrade, (int)z) != 0)
+    		return 1;
     } else {
     	pc_payzeny (sd, (int) z);
     }
