@@ -31,6 +31,28 @@
 #include "storage.h"
 #include "trade.h"
 
+/**
+ * Retorna o valor corrigido do item para a cotação do item 'mercadoria de troca' ou valor definido no NPC.
+ */
+int getValueTrade (int nameid, int val, struct npc_data *nd) {
+	int i;
+
+    if (nd->idItemTrade>0) {
+    	val /= nd->valueTrade;
+    }
+    for (i=0; nd->u.shop_item[i].nameid || nd->u.shop_item[i].nameidpaid; i++) {
+    	if (nd->u.shop_item[i].nameidpaid != nameid)
+    		continue;
+    	//printf("item: %d %d$\n", nd->u.shop_item[i].nameidpaid, nd->u.shop_item[i].value);
+    	val = nd->u.shop_item[i].value;
+    	break;
+    }
+	return val;
+}
+
+/**
+ * Conta quantidade de um item no inventário.
+ */
 int countItem(struct map_session_data *sd, int nameid) {
 	int i, count=0;
 	for (i=0; i<MAX_INVENTORY; i++) {

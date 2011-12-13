@@ -1665,9 +1665,11 @@ int clif_buylist (struct map_session_data *sd, struct npc_data *nd)
 int clif_selllist (struct map_session_data *sd)
 {
     int  fd, i, c = 0, val;
+    struct npc_data *nd;
 
     nullpo_retr (0, sd);
 
+    nd = (struct npc_data *) map_id2bl (sd->npc_shopid);
     fd = sd->fd;
     WFIFOW (fd, 0) = 0xc7;
     //printf(">sell %d\n", 0xc7);
@@ -1676,7 +1678,8 @@ int clif_selllist (struct map_session_data *sd)
         if (sd->status.inventory[i].nameid > 0 && sd->inventory_data[i])
         {
             val = sd->inventory_data[i]->value_sell;
-            if (val < 0)
+            val = getValueTrade(sd->status.inventory[i].nameid, val, nd); //- corrige o valor para a cotação mercadoria de troca.
+            if (val <= 0)
                 continue;
             WFIFOW (fd, 4 + c * 10) = i + 2;
             //printf("%d,", i+2);

@@ -1399,55 +1399,64 @@ static int npc_parse_shop (char *w1, char *w2, char *w3, char *w4, int flagTrade
     //FIXME TMW-BR - npc_parse_shop(). Definição do item mercadoria de troca.
     if (flagTrade==1) {
     	p++;
-    	nd->idItemTrade = atoi(p);
-    	//printf("\nitemTrade: %d\n", nd->idItemTrade);
+    	if (sscanf (p, "%d*%d", &nd->idItemTrade, &nd->valueTrade) != 2)
+    		printf("#erro - Id item mercadoria de troca e cotação não identificados.\n");
         p = strchr (p, ',');
     } else {
     	nd->idItemTrade = 0;
     }
 
-    while (p && pos < max)
-    {
-        int  nameid, value;
-        char name[24];
-        struct item_data *id = NULL;
-        p++;
-        if (sscanf (p, "%d:%d", &nameid, &value) == 2)
-        {
-        	//if (flagTrade==1) printf("item: %d %d(%d)\n", nameid, value, nd->idItemTrade);
-        }
-        else if (sscanf (p, "%s :%d", name, &value) == 2)
-        {
-            id = itemdb_searchname (name);
-            if (id == NULL)
-                nameid = -1;
-            else
-                nameid = id->nameid;
-        }
-        else
-            break;
+    while (p && pos < max) {
+		int nameid, nameidpaid, value;
+		char name[24];
+		struct item_data *id = NULL;
+		p++;
+		if (sscanf(p, "%d:%d", &nameid, &value) == 2) {
+			nameidpaid = 0;
+			//if (flagTrade==1) printf("item: %d %d(%d)\n", nameid, value, nd->idItemTrade);
+		} else if (sscanf(p, "%s :%d", name, &value) == 2) {
+			nameidpaid = 0;
+			id = itemdb_searchname(name);
+			if (id == NULL)
+				nameid = -1;
+			else
+				nameid = id->nameid;
+		} else if (sscanf(p, "%d.%d", &nameidpaid, &value) == 2) {
+			nameid = 0;
+			//printf("item: %d %d(%d)\n", nameidsell, value, nd->idItemTrade);
+		} else
+			break;
 
-        if (nameid > 0)
-        {
-            nd->u.shop_item[pos].nameid = nameid;
-            if (value < 0)
-            {
-                if (id == NULL)
-                    id = itemdb_search (nameid);
-                value = id->value_buy * abs (value);
-
-            }
-            nd->u.shop_item[pos].value = value;
-            pos++;
-        }
-        p = strchr (p, ',');
-    }
-    if (pos == 0)
-    {
+		if (nameid > 0) {
+			nd->u.shop_item[pos].nameid = nameid;
+			nd->u.shop_item[pos].nameidpaid = 0;
+			if (value < 0) {
+				if (id == NULL)
+					id = itemdb_search(nameid);
+				value = id->value_buy * abs(value);
+			}
+			nd->u.shop_item[pos].value = value;
+			//if (flagTrade==1) printf("venda: %d %d(%d)\n", nameid, value, nd->idItemTrade);
+			pos++;
+		} else if (nameidpaid > 0) {
+			nd->u.shop_item[pos].nameid = 0;
+			nd->u.shop_item[pos].nameidpaid = nameidpaid;
+			if (value < 0) {
+				printf("#erro - Valor pago pelo NPC deve ser maior que 0.\n");
+				value = 1;
+			}
+			nd->u.shop_item[pos].value = value;
+			//if (flagTrade==1) printf("compra: %d %d(%d)\n", nameidpaid, value, nd->idItemTrade);
+			pos++;
+		}
+		p = strchr(p, ',');
+	}
+    if (pos == 0) {
         free (nd);
         return 1;
     }
     nd->u.shop_item[pos++].nameid = 0;
+    nd->u.shop_item[pos++].nameidpaid = 0;
 
     nd->bl.prev = nd->bl.next = NULL;
     nd->bl.m = m;
