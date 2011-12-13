@@ -419,7 +419,9 @@ struct npc_label_list
 };
 
 struct npc_item_list {
-	int  nameid, value;
+	int nameid;
+	int nameidpaid; //- Id do item que será comprado pelo NPC. 'value' contem o valor a ser pago por este NPC.
+	int value;
 	//int cont;      //- Quantidade de itens disponíveis para compra/venda.
 };
 
@@ -435,6 +437,7 @@ struct npc_data
     short opt1, opt2, opt3, option;
     short flag;
     int idItemTrade; //FIXME TMW-BR - Id do item mercadoria de troca. se 0 ou menor, será trocado por zeny.
+    int valueTrade;  //- Cotação do item.
     union
     {
         struct
