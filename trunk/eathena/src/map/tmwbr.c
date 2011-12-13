@@ -31,6 +31,9 @@
 #include "storage.h"
 #include "trade.h"
 
+/**
+ * Envia uma mensagem que será exibida na tela de chat do jogador.
+ */
 void displayMessage (const int fd, char *format, ...) {
 	char buffer[256];
 	va_list args;
@@ -44,7 +47,7 @@ void displayMessage (const int fd, char *format, ...) {
 /**
  * Retorna o valor corrigido do item para a cotação do item 'mercadoria de troca' ou valor definido no NPC.
  */
-int getValueTrade (int nameid, int val, struct npc_data *nd) {
+int getValueTrade (struct npc_data *nd, int nameid, int val) {
 	int i;
 
     if (nd->idItemTrade>0) {
@@ -61,23 +64,31 @@ int getValueTrade (int nameid, int val, struct npc_data *nd) {
 }
 
 /**
- * Remove itens do inventário pelo id do item.
+ * Adiciona item no inventário por id e quantidade.
  * @return Retorn 0 em caso de sucesso.
  */
-int delitem(struct map_session_data *sd, int id, int count) {
-	return pc_delitem(sd, pc_search_inventory(sd, id), count, 0);
+int addItem(struct map_session_data *sd, int idItem, int count) {
+    struct item_data *id;
+
+    printf("id:%d\n", idItem);
+    id = itemdb_search(idItem);
+    printf("id:%d>%d\n", idItem, id->nameid);
+	return pc_additem(sd, id, count);
+}
+
+/**
+ * Remove item do inventário por id e quantidade.
+ * @return Retorn 0 em caso de sucesso.
+ */
+int delitem(struct map_session_data *sd, int idItem, int count) {
+	return pc_delitem(sd, pc_search_inventory(sd, idItem), count, 0);
 }
 
 /**
  * Conta quantidade de um item no inventário.
  */
-int countItem(struct map_session_data *sd, int nameid) {
-	int i, count=0;
-	for (i=0; i<MAX_INVENTORY; i++) {
-		if (sd->status.inventory[i].nameid == nameid)
-			count += sd->status.inventory[i].amount;
-	}
-	return count;
+int countItem(struct map_session_data *sd, int idItem) {
+	return pc_count_all_items(sd, idItem);
 }
 
 void log_storage(const char *func, struct map_session_data *sd, const char *fmt, ...) {
@@ -217,4 +228,3 @@ char *trocaAspa(char *name) {
 
 	return (char*)&buf;
 }
-
