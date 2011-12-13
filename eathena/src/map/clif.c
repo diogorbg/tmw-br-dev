@@ -1678,7 +1678,7 @@ int clif_selllist (struct map_session_data *sd)
         if (sd->status.inventory[i].nameid > 0 && sd->inventory_data[i])
         {
             val = sd->inventory_data[i]->value_sell;
-            val = getValueTrade(sd->status.inventory[i].nameid, val, nd); //- corrige o valor para a cotação mercadoria de troca.
+            val = getValueTrade(nd, sd->status.inventory[i].nameid, val); //- corrige o valor para a cotação mercadoria de troca.
             if (val <= 0)
                 continue;
             WFIFOW (fd, 4 + c * 10) = i + 2;
