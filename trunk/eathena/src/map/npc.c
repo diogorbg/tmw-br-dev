@@ -1181,11 +1181,10 @@ int npc_selllist (struct map_session_data *sd, int n,
         if (sd->trade_partner != 0)
             return 2;           // cant sell while trading
         if (itemdb_value_notoc (nameid))
-            z += (double) getValueTrade(nd, nameid, itemdb_value_sell(nameid) * item_list[i * 2 + 1]);
+            z += (double) getValueTrade(nd, nameid, itemdb_value_sell(nameid)) * item_list[i * 2 + 1];
         else
-            z += (double) getValueTrade(nd, nameid, pc_modifysellvalue (sd,
-                                              itemdb_value_sell(nameid)) *
-                item_list[i * 2 + 1]);
+            z += (double) getValueTrade(nd, nameid, pc_modifysellvalue (sd, itemdb_value_sell(nameid))) *
+                item_list[i * 2 + 1];
         itemamount += item_list[i * 2 + 1];
     }
 
@@ -1193,7 +1192,6 @@ int npc_selllist (struct map_session_data *sd, int n,
         z = MAX_ZENY;
     //FIXME TMW-BR - npc_selllist(). Pagando itens vendidos em 'mercadoria de troca'.
     if (nd->idItemTrade>0) {
-        printf("z.%d\n", (int)z);
     	if (addItem(sd, nd->idItemTrade, (int)z) != 0) {
     		//displayMessage(sd->fd, ":( Não posso receber %d %s.", nd->idItemTrade, (int)z);
     		return 1;
