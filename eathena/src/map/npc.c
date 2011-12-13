@@ -1195,7 +1195,7 @@ int npc_selllist (struct map_session_data *sd, int n,
     if (nd->idItemTrade>0) {
         printf("z.%d\n", (int)z);
     	if (addItem(sd, nd->idItemTrade, (int)z) != 0) {
-    		displayMessage(sd->fd, ":( Não posso receber %d %s.", nd->idItemTrade, (int)z);
+    		//displayMessage(sd->fd, ":( Não posso receber %d %s.", nd->idItemTrade, (int)z);
     		return 1;
     	}
     } else {
