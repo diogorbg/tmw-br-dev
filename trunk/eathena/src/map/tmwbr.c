@@ -68,12 +68,15 @@ int getValueTrade (struct npc_data *nd, int nameid, int val) {
  * @return Retorn 0 em caso de sucesso.
  */
 int addItem(struct map_session_data *sd, int idItem, int count) {
-    struct item_data *id;
+	struct item item_tmp;
+	int flag;
 
-    printf("id:%d\n", idItem);
-    id = itemdb_search(idItem);
-    printf("id:%d>%d\n", idItem, id->nameid);
-	return pc_additem(sd, id, count);
+	memset(&item_tmp, 0, sizeof(item_tmp));
+	item_tmp.nameid = idItem;
+	item_tmp.identify = 1;
+	if ( (flag = pc_additem((struct map_session_data *) sd, &item_tmp, count)) )
+		clif_additem((struct map_session_data *) sd, 0, 0, flag);
+	return flag;
 }
 
 /**
