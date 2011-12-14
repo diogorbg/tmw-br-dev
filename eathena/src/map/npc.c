@@ -1422,16 +1422,16 @@ static int npc_parse_shop (char *w1, char *w2, char *w3, char *w4, int flagTrade
 		if (sscanf(p, "%d:%d", &nameid, &value) == 2) {
 			nameidpaid = 0;
 			//if (flagTrade==1) printf("item: %d %d(%d)\n", nameid, value, nd->idItemTrade);
-		} else if (sscanf(p, "%s :%d", name, &value) == 2) {
+		} else if (sscanf(p, "%d=%d", &nameidpaid, &value) == 2) {
+			nameid = 0;
+			//printf("item: %d %d(%d)\n", nameidsell, value, nd->idItemTrade);
+		} else if (sscanf(p, "%s :%d", name, &value) == 2) { //- << Esta linha calsa algum tipo de bug ¬¬
 			nameidpaid = 0;
 			id = itemdb_searchname(name);
 			if (id == NULL)
 				nameid = -1;
 			else
 				nameid = id->nameid;
-		} else if (sscanf(p, "%d.%d", &nameidpaid, &value) == 2) {
-			nameid = 0;
-			//printf("item: %d %d(%d)\n", nameidsell, value, nd->idItemTrade);
 		} else
 			break;
 
