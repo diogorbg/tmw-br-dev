@@ -1080,7 +1080,7 @@ int npc_buylist (struct map_session_data *sd, int n,
 
     if (nd->idItemTrade>0) {
     	if (countItem(sd, nd->idItemTrade)<z) {
-    		displayMessage(sd->fd, ":( Não tenho %d %s para esta compra!", (int)z, itemdb_search(nd->idItemTrade)->jname);
+    		displayMessage(sd->fd, ":( Não tenho %d %s para trocar!", (int)z, itemdb_search(nd->idItemTrade)->jname);
 			return 1;
     	}
     } else {
