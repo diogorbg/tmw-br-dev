@@ -164,6 +164,11 @@ struct quick_regeneration
 struct map_session_data
 {
     struct block_list bl;
+    // FIXME TMW-BR - AFK DETECT. Não resolve, mas já ajuda bastante.
+    struct {
+    	unsigned int tick;
+    	unsigned int posxy;
+    } afkDetect;
     struct
     {
         unsigned auth:1;
