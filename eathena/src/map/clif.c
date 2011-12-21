@@ -7389,12 +7389,9 @@ void clif_parse_ActionRequest (int fd, struct map_session_data *sd)
         case 0x07:             // continuous attack
         	//printf("%d %d %d %d\n",map[sd->bl.m].xs,map[sd->bl.m].ys,map[sd->bl.m].bxs,map[sd->bl.m].bys);
         	posxy = map[sd->bl.m].xs*sd->bl.y + sd->bl.x;
-    		printf("*%d > %d ?\n",tick,sd->afkDetect.tick+30);
-        	if (posxy==sd->afkDetect.posxy && tick > (sd->afkDetect.tick+30) ) {
-        		printf("*\n");
+        	if (posxy==sd->afkDetect.posxy && tick > (sd->afkDetect.tick+120000) ) {
         		return;
-        	} else if (posxy=!sd->afkDetect.posxy) {
-        		printf(">%d\n",tick);
+        	} else if (posxy!=sd->afkDetect.posxy) {
         		sd->afkDetect.tick = tick;
             	sd->afkDetect.posxy = posxy;
         	}
