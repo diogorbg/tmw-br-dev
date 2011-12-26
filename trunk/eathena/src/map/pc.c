@@ -5256,6 +5256,7 @@ int pc_gainexp_reason (struct map_session_data *sd, int base_exp, int job_exp,
     }
 
     sd->status.base_exp += base_exp;
+    //FIXME TMW-BR pc_gainexp(). XP dobrado!
 
     // [Fate] Adjust experience points that healers can extract from this character
     if (reason != PC_GAINEXP_REASON_HEALING)
