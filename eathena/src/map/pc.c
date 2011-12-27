@@ -5259,10 +5259,12 @@ int pc_gainexp_reason (struct map_session_data *sd, int base_exp, int job_exp,
 
     //FIXME TMW-BR - pc_gainexp(). Evento onGainExp.
     char *scr;
+    argrec_t arg[1];
     if (reason==PC_GAINEXP_REASON_KILLING) {
-		pc_setreg(sd, add_str("@xp"), base_exp);
+        arg[0].name = "@xp";
+        arg[0].v.i = base_exp;
 		if ((scr = strdb_search (script_get_userfunc_db (), "onGainExp"))) {
-			run_script(scr, 0, sd->bl.id, 0);
+			run_script_l(scr, 0, sd->bl.id, 0, 1, arg);
 		} else {
 			printf("#erro. Função onGainExp não encontrada.\n");
 		}
