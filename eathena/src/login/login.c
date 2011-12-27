@@ -3640,14 +3640,10 @@ int parse_login (int fd)
 				if (RFIFOREST (fd) < ((RFIFOW (fd, 0) == 0x64) ? 55 : 47))
 					return 0;
 
-				// FIXME TMW-BR - Bloqueio do IP: 189.112.140.14
-				unsigned char *ip3 = &session[fd]->client_addr.sin_addr.s_addr;
-				if(ip3[0]==189 && ip3[1]==112 &&ip3[2]==140 && ip3[3]==14) {
-					printf("* IP 189.112.140.14 bloqueado!\n");
-					return 0;
-				}
-				//if(ip3[0]==127 && ip3[1]==0 &&ip3[2]==0 && ip3[3]==1) {
-				//	printf("* IP 127.0.0.1 bloqueado!\n");
+				// FIXME TMW-BR - Bloqueio do IP: 189.112.140.14 (comentado)
+				//unsigned char *ip3 = &session[fd]->client_addr.sin_addr.s_addr;
+				//if(ip3[0]==189 && ip3[1]==112 &&ip3[2]==140 && ip3[3]==14) {
+				//	printf("* IP 189.112.140.14 bloqueado!\n");
 				//	return 0;
 				//}
 
