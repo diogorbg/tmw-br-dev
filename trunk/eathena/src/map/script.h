@@ -39,7 +39,6 @@ typedef struct argrec
 } argrec_t;
 int  run_script_l (unsigned char *, int, int, int, int, argrec_t * args);
 int  run_script (unsigned char *, int, int, int);
-int add_str (const unsigned char *p);
 
 struct dbt *script_get_label_db ();
 struct dbt *script_get_userfunc_db ();
