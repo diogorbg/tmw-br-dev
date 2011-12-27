@@ -811,7 +811,7 @@ static int search_str (const unsigned char *p)
  *------------------------------------------
  */
 // 既存のであれば番号、無ければ登録して新規番号
-static int add_str (const unsigned char *p)
+int add_str (const unsigned char *p)
 {
     int  i;
     char *lowcase;

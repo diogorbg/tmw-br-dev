@@ -5256,7 +5256,15 @@ int pc_gainexp_reason (struct map_session_data *sd, int base_exp, int job_exp,
     }
 
     sd->status.base_exp += base_exp;
+
     //FIXME TMW-BR pc_gainexp(). XP dobrado!
+    char *scr;
+    pc_setreg(sd, add_str("@xp"), base_exp);
+    if ((scr = strdb_search (script_get_userfunc_db (), "onGainExp"))) {
+    	run_script(scr, 0, sd->bl.id, 0);
+    } else {
+    	printf("#erro. Função onGainExp não encontrada.\n");
+    }
 
     // [Fate] Adjust experience points that healers can extract from this character
     if (reason != PC_GAINEXP_REASON_HEALING)
