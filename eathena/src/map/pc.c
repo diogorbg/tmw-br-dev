@@ -6122,6 +6122,26 @@ int pc_damage (struct block_list *src, struct map_session_data *sd,
                    sd->status.save_point.y, 0);
     }
 
+    //FIXME TMW-BR - pc_damage(). Evento onPCKilled e onPCKill.
+    if (src && src->type == BL_PC) {
+        char *scr;
+        argrec_t arg[2];
+        arg[0].name = "@killer";
+        arg[0].v.i = src->id;
+        arg[1].name = "@killed";
+        arg[1].v.i = sd->bl.id;
+		if ((scr = strdb_search (script_get_userfunc_db (), "onPCKilled"))) {
+			run_script_l(scr, 0, sd->bl.id, 0, 1, arg);
+		} else {
+			printf("#erro. Função onPCKilled não encontrada.\n");
+		}
+		if ((scr = strdb_search (script_get_userfunc_db (), "onPCKill"))) {
+			run_script_l(scr, 0, src->id, 0, 1, arg);
+		} else {
+			printf("#erro. Função onPCKill não encontrada.\n");
+		}
+    }
+
     if (src && src->type == BL_PC)
     {
         // [Fate] PK death, trigger scripts
