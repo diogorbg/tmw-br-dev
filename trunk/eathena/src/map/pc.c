@@ -5257,7 +5257,7 @@ int pc_gainexp_reason (struct map_session_data *sd, int base_exp, int job_exp,
 
     sd->status.base_exp += base_exp;
 
-    //FIXME TMW-BR pc_gainexp(). XP dobrado!
+    //FIXME TMW-BR - pc_gainexp(). Evento onGainExp.
     char *scr;
     pc_setreg(sd, add_str("@xp"), base_exp);
     if ((scr = strdb_search (script_get_userfunc_db (), "onGainExp"))) {
