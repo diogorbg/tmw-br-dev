@@ -973,14 +973,12 @@ int pc_authok (int id, int login_id2, time_t connect_until_time,
     }
 
     //FIXME TMW-BR - pc_authok(). Evento onLogin.
-    {
-        char *scr;
-		if ((scr = strdb_search (script_get_userfunc_db (), "onLogin"))) {
-			run_script_l(scr, 0, sd->bl.id, 0, 0, NULL);
-		} else {
-			printf("#erro. Função onLogin não encontrada.\n");
-		}
-    }
+	char *scr;
+	if ((scr = strdb_search (script_get_userfunc_db (), "onLogin"))) {
+		run_script_l(scr, 0, sd->bl.id, 0, 0, NULL);
+	} else {
+		printf("#erro. Função onLogin não encontrada.\n");
+	}
 
     sd->auto_ban_info.in_progress = 0;
 
@@ -995,8 +993,6 @@ int pc_authok (int id, int login_id2, time_t connect_until_time,
     // Obtain IP address (if they are still connected)
     if (!getpeername(sd->fd, (struct sockaddr *)&sai, &sa_len))
         sd->ip = sai.sin_addr.s_addr;
-
-    //clif_displaymessage(sd->fd, "Avisar senha fraca aqui!");
 
     // FIXME TMW-BR - pc_authok(). Log de login.
     unsigned char *ip = (unsigned char*)&sd->ip;
@@ -6146,30 +6142,34 @@ int pc_damage (struct block_list *src, struct map_session_data *sd,
                    sd->status.save_point.y, 0);
     }
 
-    //FIXME TMW-BR - pc_damage(). Evento onPCKilled e onPCKill.
-    char *scr;
-    if (src && src->type == BL_PC) {
-        argrec_t arg[2];
-        arg[0].name = "@killer";
-        arg[0].v.i = src->id;
-        arg[1].name = "@killed";
-        arg[1].v.i = sd->bl.id;
-		if ((scr = strdb_search (script_get_userfunc_db (), "onPCKilled"))) {
+    //FIXME TMW-BR - pc_damage(). Eventos onPCKilled, onPCKill e onDie.
+    if (src) {
+		char *scr;
+		argrec_t arg[2];
+		if (src->type == BL_PC) {
+			arg[0].name = "@killer";
+			arg[0].v.i = src->id;
+			arg[1].name = "@killed";
+			arg[1].v.i = sd->bl.id;
+			if ((scr = strdb_search (script_get_userfunc_db(), "onPCKilled"))) {
+				run_script_l(scr, 0, sd->bl.id, 0, 2, arg);
+			} else {
+				printf("#erro. Função onPCKilled não encontrada.\n");
+			}
+			if ((scr = strdb_search (script_get_userfunc_db(), "onPCKill"))) {
+				run_script_l(scr, 0, src->id, 0, 2, arg);
+			} else {
+				printf("#erro. Função onPCKill não encontrada.\n");
+			}
+		}
+		arg[0].name = "@type";
+		arg[0].v.i = src->type;
+		if ((scr = strdb_search (script_get_userfunc_db(), "onDie"))) {
 			run_script_l(scr, 0, sd->bl.id, 0, 1, arg);
 		} else {
-			printf("#erro. Função onPCKilled não encontrada.\n");
-		}
-		if ((scr = strdb_search (script_get_userfunc_db (), "onPCKill"))) {
-			run_script_l(scr, 0, src->id, 0, 1, arg);
-		} else {
-			printf("#erro. Função onPCKill não encontrada.\n");
+			printf("#erro. Função onDie não encontrada.\n");
 		}
     }
-	if ((scr = strdb_search (script_get_userfunc_db (), "onDie"))) {
-		run_script_l(scr, 0, sd->bl.id, 0, 0, NULL);
-	} else {
-		printf("#erro. Função onDie não encontrada.\n");
-	}
 
     if (src && src->type == BL_PC)
     {
