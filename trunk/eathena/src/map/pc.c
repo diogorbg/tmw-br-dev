@@ -315,11 +315,14 @@ int pc_delspiritball (struct map_session_data *sd, int count, int type)
 }
 
 //FIXME TMW-BR - pc_onRestart(). Evento onRestart.
-void pc_onRestart (struct map_session_data *sd) {
+void pc_onRestart (struct map_session_data *sd, int flagOn) {
 	char *scr;
+    argrec_t arg[1];
+    arg[0].name = "@on";
+    arg[0].v.i = flagOn;
 	if ((scr = strdb_search (script_get_userfunc_db (), "onRestart"))) {
 		//printf("run: onRestart sit:%d\n", sd->state.dead_sit);
-		run_script_l(scr, 0, sd->bl.id, 0, 0, NULL);
+		run_script_l(scr, 0, sd->bl.id, 0, 1, arg);
 	} else {
 		printf("#erro. Função onRestart não encontrada.\n");
 	}

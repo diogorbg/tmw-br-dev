@@ -1151,7 +1151,7 @@ int map_quit (struct map_session_data *sd)
 
     if (pc_isdead (sd)) {
         pc_setrestartvalue (sd, 2);
-        pc_onRestart(sd);
+        pc_onRestart(sd, 0);
     }
     pc_makesavestatus (sd);
     //クローンスキルで覚えたスキルは消す
