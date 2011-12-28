@@ -33,6 +33,7 @@ int  pc_getrefinebonus (int lv, int type);
 void pc_invisibility (struct map_session_data *sd, int enabled);    // [Fate]
 int  pc_counttargeted (struct map_session_data *sd, struct block_list *src,
                        int target_lv);
+void pc_onRestart (struct map_session_data *sd);
 int  pc_setrestartvalue (struct map_session_data *sd, int type);
 int  pc_makesavestatus (struct map_session_data *);
 int  pc_setnewpc (struct map_session_data *, int, int, int, int, int, int);

@@ -7445,6 +7445,7 @@ void clif_parse_Restart (int fd, struct map_session_data *sd)
             {
                 pc_setstand (sd);
                 pc_setrestartvalue (sd, 3);
+                pc_onRestart(sd);
                 pc_setpos (sd, sd->status.save_point.map,
                            sd->status.save_point.x, sd->status.save_point.y,
                            2);
