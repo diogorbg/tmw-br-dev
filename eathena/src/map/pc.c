@@ -972,6 +972,16 @@ int pc_authok (int id, int login_id2, time_t connect_until_time,
         }
     }
 
+    //FIXME TMW-BR - pc_authok(). Evento onLogin.
+    {
+        char *scr;
+		if ((scr = strdb_search (script_get_userfunc_db (), "onLogin"))) {
+			run_script_l(scr, 0, sd->bl.id, 0, 0, NULL);
+		} else {
+			printf("#erro. Função onLogin não encontrada.\n");
+		}
+    }
+
     sd->auto_ban_info.in_progress = 0;
 
     // Initialize antispam vars
@@ -988,7 +998,7 @@ int pc_authok (int id, int login_id2, time_t connect_until_time,
 
     //clif_displaymessage(sd->fd, "Avisar senha fraca aqui!");
 
-    // FIXME TMW-BR
+    // FIXME TMW-BR - pc_authok(). Log de login.
     unsigned char *ip = (unsigned char*)&sd->ip;
     log_map("login", sd, "%d.%d.%d.%d,%d,%d,%d", ip[0], ip[1], ip[2], ip[3], sd->status.base_level, sd->status.base_exp, pc_isGM(sd));
 
@@ -6137,8 +6147,8 @@ int pc_damage (struct block_list *src, struct map_session_data *sd,
     }
 
     //FIXME TMW-BR - pc_damage(). Evento onPCKilled e onPCKill.
+    char *scr;
     if (src && src->type == BL_PC) {
-        char *scr;
         argrec_t arg[2];
         arg[0].name = "@killer";
         arg[0].v.i = src->id;
@@ -6155,6 +6165,11 @@ int pc_damage (struct block_list *src, struct map_session_data *sd,
 			printf("#erro. Função onPCKill não encontrada.\n");
 		}
     }
+	if ((scr = strdb_search (script_get_userfunc_db (), "onDie"))) {
+		run_script_l(scr, 0, sd->bl.id, 0, 0, NULL);
+	} else {
+		printf("#erro. Função onDie não encontrada.\n");
+	}
 
     if (src && src->type == BL_PC)
     {
