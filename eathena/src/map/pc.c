@@ -314,6 +314,17 @@ int pc_delspiritball (struct map_session_data *sd, int count, int type)
     return 0;
 }
 
+//FIXME TMW-BR - pc_onRestart(). Evento onRestart.
+void pc_onRestart (struct map_session_data *sd) {
+	char *scr;
+	if ((scr = strdb_search (script_get_userfunc_db (), "onRestart"))) {
+		//printf("run: onRestart sit:%d\n", sd->state.dead_sit);
+		run_script_l(scr, 0, sd->bl.id, 0, 0, NULL);
+	} else {
+		printf("#erro. Função onRestart não encontrada.\n");
+	}
+}
+
 int pc_setrestartvalue (struct map_session_data *sd, int type)
 {
     //転生や養子の場合の元の職業を算出する
@@ -5258,9 +5269,9 @@ int pc_gainexp_reason (struct map_session_data *sd, int base_exp, int job_exp,
     sd->status.base_exp += base_exp;
 
     //FIXME TMW-BR - pc_gainexp(). Evento onGainExp.
-    char *scr;
-    argrec_t arg[1];
     if (reason==PC_GAINEXP_REASON_KILLING) {
+        char *scr;
+        argrec_t arg[1];
         arg[0].name = "@xp";
         arg[0].v.i = base_exp;
 		if ((scr = strdb_search (script_get_userfunc_db (), "onGainExp"))) {
