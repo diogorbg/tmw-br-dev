@@ -966,9 +966,6 @@ int pc_authok (int id, int login_id2, time_t connect_until_time,
         }
     }
 
-    //FIXME TMW-BR - pc_authok(). Evento OnLoginEvent.
-    npc_event_doall_l ("OnLoginEvent", sd->bl.id, 0, NULL);
-
     sd->auto_ban_info.in_progress = 0;
 
     // Initialize antispam vars
@@ -996,6 +993,9 @@ int pc_authok (int id, int login_id2, time_t connect_until_time,
                           strlen (tmpstr) + 1);
     }
     pc_calcstatus (sd, 1);
+
+    //FIXME TMW-BR - pc_authok(). Evento OnLoginEvent.
+    npc_event_doall_l ("OnLoginEvent", sd->bl.id, 0, NULL);
 
     return 0;
 }
