@@ -15,6 +15,7 @@
 #include "intif.h"
 #include "pc.h"
 #include "mob.h"
+#include "script.h"
 #include "guild.h"
 #include "itemdb.h"
 #include "skill.h"
@@ -2838,6 +2839,14 @@ int mob_damage (struct block_list *src, struct mob_data *md, int damage,
     }
 
     MAP_LOG ("MOB%d DEAD", md->bl.id);
+
+    //FIXME TMW-BR - mob_damage(). Evento OnMobKillEvent.
+    argrec_t arg[2];
+    arg[0].name = "@mobClass";
+    arg[0].v.i = md->base_class;
+    arg[1].name = "@mobEvent$";
+    arg[1].v.s = md->npc_event;
+    npc_event_doall_l ("OnMobKillEvent", sd->bl.id, 2, arg);
 
     // ----- ここから死亡処理 -----
 
