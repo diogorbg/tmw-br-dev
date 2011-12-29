@@ -36,7 +36,7 @@ obj/npc.o: npc.c map.h npc.h clif.h pc.h script.h mob.h itemdb.h battle.h ../com
 obj/chat.o: chat.c map.h clif.h pc.h chat.h ../common/db.h ../common/mmo.h
 obj/path.o: path.c map.h battle.h ../common/mmo.h
 obj/itemdb.o: itemdb.c map.h battle.h itemdb.h ../common/db.h ../common/grfio.h ../common/mmo.h
-obj/mob.o: mob.c map.h clif.h intif.h pc.h mob.h skill.h battle.h npc.h itemdb.h ../common/timer.h ../common/socket.h ../common/mmo.h
+obj/mob.o: mob.c map.h clif.h intif.h pc.h mob.h script.h skill.h battle.h npc.h itemdb.h ../common/timer.h ../common/socket.h ../common/mmo.h
 obj/script.o: script.c itemdb.h map.h pc.h mob.h clif.h intif.h npc.h script.h storage.h skill.h battle.h ../common/timer.h ../common/socket.h ../common/db.h ../common/mmo.h ../common/lock.h
 obj/storage.o: storage.c itemdb.h pc.h clif.h intif.h storage.h guild.h ../common/mmo.h ../common/db.h
 obj/skill.o: skill.c skill.h map.h clif.h pc.h mob.h battle.h itemdb.h script.h ../common/timer.h ../common/mmo.h
