@@ -314,18 +314,12 @@ int pc_delspiritball (struct map_session_data *sd, int count, int type)
     return 0;
 }
 
-//FIXME TMW-BR - pc_onRestart(). Evento onRestart.
+//FIXME TMW-BR - pc_onRestart(). Evento OnRestartEvent.
 void pc_onRestart (struct map_session_data *sd, int flagOn) {
-	char *scr;
     argrec_t arg[1];
     arg[0].name = "@on";
     arg[0].v.i = flagOn;
-	if ((scr = strdb_search (script_get_userfunc_db (), "onRestart"))) {
-		//printf("run: onRestart sit:%d\n", sd->state.dead_sit);
-		run_script_l(scr, 0, sd->bl.id, 0, 1, arg);
-	} else {
-		printf("#erro. Função onRestart não encontrada.\n");
-	}
+    npc_event_doall_l ("OnRestartEvent", sd->bl.id, 1, arg);
 }
 
 int pc_setrestartvalue (struct map_session_data *sd, int type)
@@ -972,13 +966,8 @@ int pc_authok (int id, int login_id2, time_t connect_until_time,
         }
     }
 
-    //FIXME TMW-BR - pc_authok(). Evento onLogin.
-	char *scr;
-	if ((scr = strdb_search (script_get_userfunc_db (), "onLogin"))) {
-		run_script_l(scr, 0, sd->bl.id, 0, 0, NULL);
-	} else {
-		printf("#erro. Função onLogin não encontrada.\n");
-	}
+    //FIXME TMW-BR - pc_authok(). Evento OnLoginEvent.
+    npc_event_doall_l ("OnLoginEvent", sd->bl.id, 0, NULL);
 
     sd->auto_ban_info.in_progress = 0;
 
@@ -5161,6 +5150,10 @@ int pc_checkbaselevelup (struct map_session_data *sd)
         //レベルアップしたのでパーティー情報を更新する
         //(公平範囲チェック)
         party_send_movemap (sd);
+
+        //FIXME TMW-BR - pc_checkbaselevelup(). Evento OnLvlUpEvent.
+        npc_event_doall_l ("OnLvlUpEvent", sd->bl.id, 0, NULL);
+
         MAP_LOG_XP (sd, "LEVELUP") return 1;
     }
 
@@ -5277,17 +5270,12 @@ int pc_gainexp_reason (struct map_session_data *sd, int base_exp, int job_exp,
 
     sd->status.base_exp += base_exp;
 
-    //FIXME TMW-BR - pc_gainexp(). Evento onGainExp.
+    //FIXME TMW-BR - pc_gainexp(). Evento OnGainExpEvent.
     if (reason==PC_GAINEXP_REASON_KILLING) {
-        char *scr;
         argrec_t arg[1];
         arg[0].name = "@xp";
         arg[0].v.i = base_exp;
-		if ((scr = strdb_search (script_get_userfunc_db (), "onGainExp"))) {
-			run_script_l(scr, 0, sd->bl.id, 0, 1, arg);
-		} else {
-			printf("#erro. Função onGainExp não encontrada.\n");
-		}
+		npc_event_doall_l ("OnGainExpEvent", sd->bl.id, 1, arg);
     }
 
     // [Fate] Adjust experience points that healers can extract from this character
@@ -6144,7 +6132,6 @@ int pc_damage (struct block_list *src, struct map_session_data *sd,
 
     //FIXME TMW-BR - pc_damage(). Eventos onPCKilledEvent, onPCKillEvent e onDieEvent.
     if (src) {
-		char *scr;
 		argrec_t arg[2];
 		if (src->type == BL_PC) {
 			arg[0].name = "@killerRid";
