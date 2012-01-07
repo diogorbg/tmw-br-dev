@@ -6134,9 +6134,9 @@ int pc_damage (struct block_list *src, struct map_session_data *sd,
     if (src) {
 		argrec_t arg[2];
 		if (src->type == BL_PC) {
-			arg[0].name = "@killerRid";
+			arg[0].name = "@killerrid";
 			arg[0].v.i = src->id;
-			arg[1].name = "@killedRid";
+			arg[1].name = "@killedrid";
 			arg[1].v.i = sd->bl.id;
 	        npc_event_doall_l ("OnPCKilledEvent", sd->bl.id, 2, arg);
 	        npc_event_doall_l ("OnPCKillEvent", src->id, 2, arg);
