@@ -2842,9 +2842,9 @@ int mob_damage (struct block_list *src, struct mob_data *md, int damage,
 
     //FIXME TMW-BR - mob_damage(). Evento OnMobKillEvent.
     argrec_t arg[1];
-    arg[0].name = "@mobClass";
+    arg[0].name = "@mobclass";
     arg[0].v.i = md->base_class;
-    //arg[1].name = "@mobEvent$";
+    //arg[1].name = "@mobevent$";
     //arg[1].v.s = md->npc_event; //- suspeito de causar bugs quando nulo.
     npc_event_doall_l ("OnMobKillEvent", sd->bl.id, 1, arg);
 
