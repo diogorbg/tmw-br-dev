@@ -1110,8 +1110,8 @@ int map_quit (struct map_session_data *sd)
 {
     nullpo_retr (0, sd);
 
-    //FIXME TMW-BR - map_quit(). Evento OnLogoutEvent.
-    npc_event_doall_l ("OnLogoutEvent", sd->bl.id, 0, NULL);
+    //FIXME TMW-BR [DESATIVADO] - map_quit(). Evento OnLogoutEvent.
+//    npc_event_doall_l ("OnLogoutEvent", sd->bl.id, 0, NULL);
 
     if (sd->chatID)             // チャットから出る
         chat_leavechat (sd);

@@ -5270,13 +5270,13 @@ int pc_gainexp_reason (struct map_session_data *sd, int base_exp, int job_exp,
 
     sd->status.base_exp += base_exp;
 
-    //FIXME TMW-BR - pc_gainexp(). Evento OnGainExpEvent.
-    if (reason==PC_GAINEXP_REASON_KILLING) {
-        argrec_t arg[1];
-        arg[0].name = "@xp";
-        arg[0].v.i = base_exp;
-		npc_event_doall_l ("OnGainExpEvent", sd->bl.id, 1, arg);
-    }
+    //FIXME TMW-BR [DESATIVADO] - pc_gainexp(). Evento OnGainExpEvent.
+//    if (reason==PC_GAINEXP_REASON_KILLING) {
+//        argrec_t arg[1];
+//        arg[0].name = "@xp";
+//        arg[0].v.i = base_exp;
+//		npc_event_doall_l ("OnGainExpEvent", sd->bl.id, 1, arg);
+//    }
 
     // [Fate] Adjust experience points that healers can extract from this character
     if (reason != PC_GAINEXP_REASON_HEALING)
