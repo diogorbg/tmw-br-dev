@@ -15,7 +15,10 @@ else
 MAKE = make
 endif
 
+#otimizado
 OPT = -pipe -g -fno-strict-aliasing -O2 -Wall
+#debug
+#OPT = -pipe -g3 -fno-strict-aliasing -Wall
 
 ifeq ($(findstring CYGWIN,$(PLATFORM)), CYGWIN)
 OS_TYPE = -DCYGWIN
