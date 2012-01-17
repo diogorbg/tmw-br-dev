@@ -750,11 +750,11 @@ struct
     {
     buildin_unequip_by_id, "unequipbyid", "i"}, // [Freeyorp]
     {
-	buildin_getmap, "getmap", ""}, //FIXME TMW-BR - getmap
+	buildin_getmap, "getmap", "i"}, //FIXME TMW-BR - getmap
 	{
-	buildin_getx, "getx", ""}, // [Kage]
+	buildin_getx, "getx", "*"}, // [Kage]
 	{
-    buildin_gety, "gety", ""}, // [Kage]
+    buildin_gety, "gety", "*"}, // [Kage]
         // End Additions
     {
 NULL, NULL, NULL},};
@@ -7363,13 +7363,22 @@ int buildin_fakenpcname (struct script_state *st)
  * Retorna o mapa do jogador.
  */
 int buildin_getmap (struct script_state *st) {
-	printf("ok\n");
 	struct map_session_data *sd = script_rid2sd (st);
     if (!sd)
         return 1;
 
-	printf("mapa[%d]: %s\n", sd->bl.m, map[sd->bl.m].name);
-	push_str (st->stack, C_STR, map[sd->bl.m].name);
+    int type = conv_num (st, &(st->stack->stack_data[st->start + 2]));
+
+    int n;
+    char *buf;
+
+    for(n=0; map[sd->bl.m].name[n]; n++);
+    if(type==1)
+    	n -= 4;
+    buf = (char *) aCalloc (n+1, sizeof (char));
+    strncpy (buf, map[sd->bl.m].name, n);
+    push_str (st->stack, C_STR, buf);
+
 	return 0;
 }
 
@@ -7383,7 +7392,8 @@ int buildin_getx (struct script_state *st) {
     if (!sd)
         return 1;
 
-    push_val (st->stack, C_INT, sd->bl.x);
+    int x = sd->bl.x;
+    push_val (st->stack, C_INT, x);
     return 0;
 }
 
@@ -7396,7 +7406,8 @@ int buildin_gety (struct script_state *st) {
     if (!sd)
         return 1;
 
-    push_val (st->stack, C_INT, sd->bl.y);
+    int y = sd->bl.y;
+    push_val (st->stack, C_INT, y);
     return 0;
 }
 
