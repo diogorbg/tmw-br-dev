@@ -322,6 +322,7 @@ int  buildin_unequip_by_id (struct script_state *st);   // [Freeyorp]
 int  buildin_getmap (struct script_state *st);
 int  buildin_getx (struct script_state *st);  // [Kage]
 int  buildin_gety (struct script_state *st);  // [Kage]
+int  buildin_switch (struct script_state *st);
 
 void push_val (struct script_stack *stack, int type, int val);
 int  run_func (struct script_state *st);
@@ -755,6 +756,8 @@ struct
 	buildin_getx, "getx", "*"}, // [Kage]
 	{
     buildin_gety, "gety", "*"}, // [Kage]
+    {
+    buildin_switch, "switch", "il*"},
         // End Additions
     {
 NULL, NULL, NULL},};
@@ -7411,6 +7414,32 @@ int buildin_gety (struct script_state *st) {
     return 0;
 }
 
+/**
+ * Move para um label.
+ */
+int buildin_switch (struct script_state *st) {
+    int  pos, i, j=-1;
+    int val = conv_num (st, &(st->stack->stack_data[st->start + 2]));
+
+    for (i=st->start+3; i<st->end; i++) {
+		j++;
+		if (st->stack->stack_data[st->start + 3+j].type != C_POS) {
+			printf ("#script: switch: label %d not label !\n", j);
+			st->state = END;
+			return 0;
+		}
+		if(j!=val) continue;
+
+		pos = conv_num (st, &(st->stack->stack_data[st->start + 3+j]));
+		st->pos = pos;
+		st->state = GOTO;
+		return 0;
+    }
+	j++;
+	printf ("#script: switch: don't have label for parameter %d !\n", j);
+
+    return 0;
+}
 //
 // 実行部main
 //
