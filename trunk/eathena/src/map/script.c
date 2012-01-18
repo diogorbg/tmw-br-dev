@@ -7415,7 +7415,14 @@ int buildin_gety (struct script_state *st) {
 }
 
 /**
- * Move para um label.
+ * Função switch - Move para um label de acordo com o parâmetro.
+
+switch @var,
+  _label0,
+  _label1,
+  _label2;
+
+ * Se @var possui valor 3... script encerra normal. Mas avisa que não encontrou o label.
  */
 int buildin_switch (struct script_state *st) {
     int  pos, i, j=-1;
