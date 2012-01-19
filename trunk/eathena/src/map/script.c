@@ -1147,6 +1147,19 @@ unsigned char *parse_simpleexpr (unsigned char *p)
         }
         add_scriptb (0);
         p++;                    //'"'
+    } else if (*p== '[') {
+    	p++;
+    	for(i=0; p[i]!=']'; i++);
+    	p[i] = 0;
+    	struct item_data *item = itemdb_searchname(p);
+    	if(item==NULL) {
+    		printf("### erro ### Item '%s' não existe no arquivo item_db.txt.\n", p);
+            disp_error_message ("### erro ### ", p);
+            exit (1);
+    	}
+    	printf("item:%s id:%d \n" ,p, item->nameid);
+		add_scripti( item->nameid );
+    	p += i+1;
     }
     else
     {
@@ -1340,7 +1353,7 @@ unsigned char *parse_expr (unsigned char *p)
         case ')':
         case ';':
         case ':':
-        case '[':
+        //case '[':
         case ']':
         case '}':
             disp_error_message ("unexpected char", p);
