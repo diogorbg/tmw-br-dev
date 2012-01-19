@@ -1147,7 +1147,9 @@ unsigned char *parse_simpleexpr (unsigned char *p)
         }
         add_scriptb (0);
         p++;                    //'"'
-    } else if (*p== '[') {
+    }
+    //FIXME TMW-BR - Busca itens pelo nome e checa existência no arquivo item_db.txt.
+    else if (*p== '[') {
     	p++;
     	for(i=0; p[i]!=']'; i++);
     	p[i] = 0;
@@ -1157,7 +1159,7 @@ unsigned char *parse_simpleexpr (unsigned char *p)
             disp_error_message ("### erro ### ", p);
             exit (1);
     	}
-    	printf("item:%s id:%d \n" ,p, item->nameid);
+    	//printf("item:%s id:%d \n" ,p, item->nameid);
 		add_scripti( item->nameid );
     	p += i+1;
     }
