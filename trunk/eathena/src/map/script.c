@@ -1209,6 +1209,15 @@ unsigned char *parse_simpleexpr (unsigned char *p)
             }
             add_scriptc (C_FUNC);
         }
+// FIXME TMW-BR - Suporte para objetos... em construção.
+//        else if (*p=='.') {
+//        	for(i=0; p[i]!=';'; i++);
+//        	p[i] = 0;
+//        	printf("obj: %s\n", p);
+//        	p[i] = ';'; //< importante para o debug
+//        	p += i;
+//            add_scriptl (l);
+//        }
         else
             add_scriptl (l);
 
