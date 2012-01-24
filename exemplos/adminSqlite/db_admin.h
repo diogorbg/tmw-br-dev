@@ -43,6 +43,14 @@ void delADMJogadorCargo(ADMJogadorCargo **obj);
  */
 int db_buscaJogadorCargo(ADMJogadorCargo **dados, int *adms, int *gms, int *devs);
 
+/**
+ * Obtem todos os dados de um ADMJogador.
+ * @param idConta Id da conta.
+ * @param idChar Id do char.
+ * @return Retorna um único objeto caso o localize na base de dados.
+ */
+ADMJogador *db_getJogador_idsJogador(int idConta, int idChar);
+
 int db_insereJogador(ADMJogador *obj, int *key);
 
 /**
@@ -52,8 +60,8 @@ int db_insereJogador(ADMJogador *obj, int *key);
  */
 int db_buscaTodosJogadores(ADMJogador **dados);
 
-ADMJogador *db_buscaJogadorPorIds(int idConta, int idChar);
-
+char *newText(const char *text);
+void copynText(char *dest, const char *orig, int n);
 const char *checkText(const char *text, int len);
 
 #endif // DB_ADMIN_H

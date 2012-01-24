@@ -13,6 +13,7 @@ sqlite3 *admin_db = NULL;
 
 #include "exception.h"
 #include "db_admin.h"
+#include "db_cargoHistorico.h"
 
 void listarCargos() {
 	int adms=0, gms=0, devs=0;
@@ -80,7 +81,7 @@ void buscarJogadorPoIds() {
 	printf("idConta: "); scanf("%d", &idConta);
 	printf("idChar: "); scanf("%d", &idChar);
 	try();
-	if (obj=db_buscaJogadorPorIds(idConta, idChar)) {
+	if (obj=db_getJogador_idsJogador(idConta, idChar)) {
 		printf(".:: Jogador Localizado ::.\n");
 		printf("* %02d|%d|%s|%d|%s\n", obj->id, obj->idConta, obj->nomeConta, obj->idChar, obj->nomeChar);
 	}
@@ -88,6 +89,25 @@ void buscarJogadorPoIds() {
 		printStack();
 	}
 	delADMJogador(&obj);
+}
+
+void setarJogadorCargo() {
+	int idConta, idChar, status;
+	char cargo[4];
+	ADMCargoHist *obj;
+	printf("idConta: "); scanf("%d", &idConta);
+	printf("idChar: "); scanf("%d", &idChar);
+	printf("cargo[3]: "); scanf("%s", cargo);
+	try();
+	if (obj=db_getCargo_idsJogadorECargo(idConta, idChar, cargo, &status)) {
+		printf(".:: Setar Jogador Cargo ::.\n");
+		printf("* %d(%s) %d|%s|%d|%d\n", obj->jog_id, (status?"ativo":"inativo"),
+			obj->id, obj->cargo, obj->dataInicio, obj->dataVigencia);
+	}
+	catch {
+		printStack();
+	}
+	delADMCargoHist(&obj);
 }
 
 //======================================================================
@@ -107,6 +127,7 @@ int main() {
 		printf("* Listar Jogador...... [j]\n");
 		printf("* Burcar Jogador...... [b]\n");
 		printf("* Inserir Jogador..... [1]\n");
+		printf("* Setar Jogador Cargo. [2]\n");
 		scanf("%c", &op);
 		scanf("%c", &x);
 
@@ -120,6 +141,9 @@ int main() {
 			scanf("%c", &x);
 		} else if (op=='1') {
 			inserirJogador();
+			scanf("%c", &x);
+		} else if (op=='2') {
+			setarJogadorCargo();
 			scanf("%c", &x);
 		} else {
 			break;

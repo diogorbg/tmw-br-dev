@@ -11,7 +11,6 @@
 #include "exception.h"
 #include "db_admin.h"
 
-char *newText(const char *text);
 const char *checkText(const char *text, int len);
 
 /**
@@ -152,7 +151,13 @@ int db_buscaTodosJogadores(ADMJogador **dados) {
 	return lin;
 }
 
-ADMJogador *db_buscaJogadorPorIds(int idConta, int idChar) {
+/**
+ * Obtem todos os dados de um ADMJogador.
+ * @param idConta Id da conta.
+ * @param idChar Id do char.
+ * @return Retorna um único objeto caso o localize na base de dados.
+ */
+ADMJogador *db_getJogador_idsJogador(int idConta, int idChar) {
 	int ret, lin=0, col;
 	sqlite3_stmt *stmt;
 	char *query;
@@ -169,7 +174,7 @@ ADMJogador *db_buscaJogadorPorIds(int idConta, int idChar) {
 	if (sqlite3_prepare_v2(admin_db,query,-1,&stmt,NULL) != SQLITE_OK) {
 		printf("sql: '%s'\n", query);
 		sqlite3_free(query);
-		throw(1, "db_buscaTodosJogadores::Falha ao executar SQL.");
+		throw(1, "db_getJogador_idsJogador::Falha ao executar SQL.");
 		return NULL;
 	}
 	sqlite3_free(query);
@@ -189,14 +194,14 @@ ADMJogador *db_buscaJogadorPorIds(int idConta, int idChar) {
 				obj->status = sqlite3_column_int(stmt, 5);
 			catch {
 				sqlite3_finalize(stmt);
-				throw(2, "db_buscaTodosJogadores::Falha ao alocar memória.");
+				throw(2, "db_getJogador_idsJogador::Falha ao alocar memória.");
 				return NULL;
 			}
 		} else if(ret==SQLITE_DONE) {
 			break;
 		} else {
 			sqlite3_finalize(stmt);
-			throw(3, "db_buscaTodosJogadores::Falha ao processar linhas.");
+			throw(3, "db_getJogador_idsJogador::Falha ao processar linhas.");
 			return NULL;
 		}
 	}
@@ -245,6 +250,14 @@ char *newText(const char *text) {
 	}
 	strcpy(ret, text);
 	return ret;
+}
+
+void copynText(char *dest, const char *orig, int n) {
+	if(orig==NULL) {
+		dest[0] = 0;
+		return;
+	}
+	strncpy(dest, orig, n);
 }
 
 const char *checkText(const char *text, int len) {

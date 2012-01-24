@@ -1,4 +1,4 @@
 # Makefile
 
 all:
-	gcc main.c db_admin.c exception.c -o admin -lsqlite3
+	gcc main.c db_admin.c db_cargoHistorico.c exception.c -o admin -lsqlite3
