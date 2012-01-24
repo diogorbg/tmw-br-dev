@@ -22,7 +22,7 @@ const char *checkText(const char *text, int len);
  * @param devs Conta quantidade de DEVs.
  * @return quantidade de registros encontrados.
  */
-int db_buscaJogadorCargo(DBJogadorCargo **dados, int *adms, int *gms, int *devs) {
+int db_buscaJogadorCargo(ADMJogadorCargo **dados, int *adms, int *gms, int *devs) {
 	int ret, lin=0, col;
 	sqlite3_stmt *stmt;
 	char *query;
@@ -38,18 +38,18 @@ int db_buscaJogadorCargo(DBJogadorCargo **dados, int *adms, int *gms, int *devs)
 	}
 	sqlite3_free(query);
 
-	DBJogadorCargo *obj = NULL;
+	ADMJogadorCargo *obj = NULL;
 	while(1) {
 		if ((ret=sqlite3_step(stmt))==SQLITE_ROW) {
 			lin++;
 			if (obj==NULL) {
-				obj = malloc( sizeof(DBJogadorCargo) );
+				obj = malloc( sizeof(ADMJogadorCargo) );
 				*dados = obj;
 			} else {
-				obj->next = malloc( sizeof(DBJogadorCargo) );
+				obj->next = malloc( sizeof(ADMJogadorCargo) );
 				obj = obj->next;
 			}
-			memset(obj, 0, sizeof(DBJogadorCargo));
+			memset(obj, 0, sizeof(ADMJogadorCargo));
 			try();
 				obj->nomeChar = newText( sqlite3_column_text(stmt,0) );
 				obj->cargo = newText( sqlite3_column_text(stmt,1) );
@@ -72,7 +72,7 @@ int db_buscaJogadorCargo(DBJogadorCargo **dados, int *adms, int *gms, int *devs)
 	return lin;
 }
 
-int db_insereJogador(DBJogador *obj, int *key) {
+int db_insereJogador(ADMJogador *obj, int *key) {
 	int ret;
 	sqlite3_stmt *stmt;
 	char *query;
@@ -97,7 +97,7 @@ int db_insereJogador(DBJogador *obj, int *key) {
  * @param dados Referencia para armazenar os dados em forma de lista.
  * @return quantidade de registros encontrados.
  */
-int db_buscaTodosJogadores(DBJogador **dados) {
+int db_buscaTodosJogadores(ADMJogador **dados) {
 	int ret, lin=0, col;
 	sqlite3_stmt *stmt;
 	char *query;
@@ -117,18 +117,18 @@ int db_buscaTodosJogadores(DBJogador **dados) {
 	}
 	sqlite3_free(query);
 
-	DBJogador *obj = NULL;
+	ADMJogador *obj = NULL;
 	while(1) {
 		if ((ret=sqlite3_step(stmt))==SQLITE_ROW) {
 			lin++;
 			if (obj==NULL) {
-				obj = malloc( sizeof(DBJogador) );
+				obj = malloc( sizeof(ADMJogador) );
 				*dados = obj;
 			} else {
-				obj->next = malloc( sizeof(DBJogador) );
+				obj->next = malloc( sizeof(ADMJogador) );
 				obj = obj->next;
 			}
-			memset(obj, 0, sizeof(DBJogador));
+			memset(obj, 0, sizeof(ADMJogador));
 			try();
 				obj->id = sqlite3_column_int(stmt, 0);
 				obj->idConta = sqlite3_column_int(stmt, 1);
@@ -152,7 +152,7 @@ int db_buscaTodosJogadores(DBJogador **dados) {
 	return lin;
 }
 
-DBJogador *db_buscaJogadorPorIds(int idConta, int idChar) {
+ADMJogador *db_buscaJogadorPorIds(int idConta, int idChar) {
 	int ret, lin=0, col;
 	sqlite3_stmt *stmt;
 	char *query;
@@ -174,12 +174,12 @@ DBJogador *db_buscaJogadorPorIds(int idConta, int idChar) {
 	}
 	sqlite3_free(query);
 
-	DBJogador *obj = NULL;
+	ADMJogador *obj = NULL;
 	while(1) {
 		if ((ret=sqlite3_step(stmt))==SQLITE_ROW) {
 			lin++;
-			obj = malloc( sizeof(DBJogador) );
-			memset(obj, 0, sizeof(DBJogador));
+			obj = malloc( sizeof(ADMJogador) );
+			memset(obj, 0, sizeof(ADMJogador));
 			try();
 				obj->id = sqlite3_column_int(stmt, 0);
 				obj->idConta = sqlite3_column_int(stmt, 1);
@@ -208,9 +208,9 @@ DBJogador *db_buscaJogadorPorIds(int idConta, int idChar) {
 //======================================================================
 #define pObj (*obj)
 
-void delDBJogador(DBJogador **obj) {
+void delADMJogador(ADMJogador **obj) {
 	if (pObj) {
-		if (pObj->next) delDBJogador(&pObj->next);
+		if (pObj->next) delADMJogador(&pObj->next);
 
 		//printf("~%s\n", pObj->nomeChar);
 		free(pObj->nomeConta);
@@ -220,9 +220,9 @@ void delDBJogador(DBJogador **obj) {
 	}
 }
 
-void delDBJogadorCargo(DBJogadorCargo **obj) {
+void delADMJogadorCargo(ADMJogadorCargo **obj) {
 	if (pObj) {
-		if (pObj->next) delDBJogadorCargo(&pObj->next);
+		if (pObj->next) delADMJogadorCargo(&pObj->next);
 
 		//printf("~%s\n", pObj->nomeChar);
 		free(pObj->nomeChar);
