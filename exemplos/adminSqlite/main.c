@@ -16,7 +16,7 @@ sqlite3 *admin_db = NULL;
 
 void listarCargos() {
 	int adms=0, gms=0, devs=0;
-	DBJogadorCargo *obj, *it;
+	ADMJogadorCargo *obj, *it;
 	if (db_buscaJogadorCargo(&obj, &adms, &gms, &devs)>=0) {
 		if (adms) {
 			printf(".:: Lista de ADMs ::.\n");
@@ -42,11 +42,11 @@ void listarCargos() {
 	} else {
 		printStack();
 	}
-	delDBJogadorCargo(&obj);
+	delADMJogadorCargo(&obj);
 }
 
 void inserirJogador() {
-	DBJogador obj;
+	ADMJogador obj;
 	char nomeConta[32], nomeChar[32];
 	printf("idConta: "); scanf("%d", &obj.idConta);
 	printf("idChar: "); scanf("%d", &obj.idChar);
@@ -62,7 +62,7 @@ void inserirJogador() {
 }
 
 void listarTodosJogadores() {
-	DBJogador *obj, *it;
+	ADMJogador *obj, *it;
 	if (db_buscaTodosJogadores(&obj)>=0) {
 		printf(".:: Lista de Jogadores ::.\n");
 		for (it=obj; it; it=it->next) {
@@ -71,12 +71,12 @@ void listarTodosJogadores() {
 	} else {
 		printStack();
 	}
-	delDBJogador(&obj);
+	delADMJogador(&obj);
 }
 
 void buscarJogadorPoIds() {
 	int idConta, idChar;
-	DBJogador *obj;
+	ADMJogador *obj;
 	printf("idConta: "); scanf("%d", &idConta);
 	printf("idChar: "); scanf("%d", &idChar);
 	try();
@@ -87,7 +87,7 @@ void buscarJogadorPoIds() {
 	catch {
 		printStack();
 	}
-	delDBJogador(&obj);
+	delADMJogador(&obj);
 }
 
 //======================================================================
