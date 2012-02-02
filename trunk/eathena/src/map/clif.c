@@ -7222,7 +7222,7 @@ void clif_parse_GlobalMessage (int fd, struct map_session_data *sd)
             return;
         }
 
-        checkUrl(sd, NULL, buf);
+        checkUrl(sd, NULL, message);
 
         /* It's not a spell/magic message, so send the message to others. */
         WBUFW (buf, 0) = 0x8d;
@@ -7559,7 +7559,7 @@ void clif_parse_Wis (int fd, struct map_session_data *sd)
                 /* The player is not being ignored. */
                 if (i == end)
                 {
-                	checkUrl(sd, dstsd->status.name, buf);
+                	checkUrl(sd, dstsd->status.name, message);
                     clif_wis_message (dstsd->fd, sd->status.name, message,
                                       RFIFOW (fd, 2) - 28);
                     /* The whisper was sent successfully. */
