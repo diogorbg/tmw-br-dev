@@ -31,6 +31,12 @@
 #include "storage.h"
 #include "trade.h"
 
+int op_spyLog = 0;
+
+void setOpSpyLog(int op) {
+	op_spyLog = op;
+}
+
 /**
  * Envia uma mensagem que será exibida na tela de chat do jogador.
  */
@@ -94,9 +100,11 @@ int countItem(struct map_session_data *sd, int idItem) {
 	return pc_count_all_items(sd, idItem);
 }
 
-void checkUrl(struct map_session_data *sd, char *wis, const char *buf) {
+void checkUrl(struct map_session_data *sd, char *wis, unsigned char *buf) {
+	if (op_spyLog==0) return;
+
 	char detected[512];
-	int i, p=0, pp=0, b=0;
+	int i=0, p=0, pp=0, b=0;
 
 	for(i=0; p<512; i++,p++) {
 		if (buf[i]<=' ') {
