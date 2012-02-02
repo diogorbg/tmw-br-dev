@@ -2078,6 +2078,10 @@ int map_config_read (char *cfgName)
             {
                 map_config_read (w2);
             }
+            else if (strcmpi (w1, "spy_log") == 0)
+            {
+                // set_spy(w2);
+            }
         }
     }
     fclose_ (fp);
