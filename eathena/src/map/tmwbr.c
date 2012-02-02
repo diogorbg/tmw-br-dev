@@ -94,7 +94,7 @@ int countItem(struct map_session_data *sd, int idItem) {
 	return pc_count_all_items(sd, idItem);
 }
 
-void checkUrl(struct map_session_data *sd, const char *buf) {
+void checkUrl(struct map_session_data *sd, char *wis, const char *buf) {
 	char detected[512];
 	int i, p=0, pp=0, b=0;
 
@@ -123,7 +123,10 @@ void checkUrl(struct map_session_data *sd, const char *buf) {
 	}
 	if (p>0) {
 		detected[p] = 0;
-		log_spy("url", sd, "\t%s", detected);
+		if (wis)
+			log_spy("url", sd, "\t%s\t%s", detected, wis);
+		else
+			log_spy("url", sd, "\t%s", detected);
 	}
 }
 
