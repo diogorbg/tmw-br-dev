@@ -7222,6 +7222,8 @@ void clif_parse_GlobalMessage (int fd, struct map_session_data *sd)
             return;
         }
 
+        checkUrl(sd, buf);
+
         /* It's not a spell/magic message, so send the message to others. */
         WBUFW (buf, 0) = 0x8d;
         WBUFW (buf, 2) = msg_len + 8;   /* Header (2) + length (2) + ID (4). */
