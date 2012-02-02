@@ -94,6 +94,39 @@ int countItem(struct map_session_data *sd, int idItem) {
 	return pc_count_all_items(sd, idItem);
 }
 
+void checkUrl(struct map_session_data *sd, const char *buf) {
+	char detected[512];
+	int i, p=0, pp=0, b=0;
+
+	for(i=0; p<512; i++,p++) {
+		if (buf[i]<=' ') {
+			if (b>=2) {
+				b = 0;
+				detected[p] = ' ';
+				pp = p+1;
+				if (buf[i]==0) break;
+				continue;
+			} else {
+				b = 0;
+				p = pp-1;
+				if (buf[i]==0) break;
+				continue;
+			}
+		}
+		if (buf[i]=='.') {
+			if (pp-p==0);                   //- inicia com 'ponto'
+			else if (i>0 && buf[i-1]=='.'); //- repete o 'ponto'
+			else if (buf[i+1]<=' ');        //- termina com 'ponto'
+			else b++;
+		}
+		detected[p] = buf[i];
+	}
+	if (p>0) {
+		detected[p] = 0;
+		log_spy("url", sd, "\t%s", detected);
+	}
+}
+
 void log_storage(const char *func, struct map_session_data *sd, const char *fmt, ...) {
 	char buff[512];
 
@@ -212,6 +245,40 @@ void log_tradeln(const char *func, const char *fmt, ...) {
 	va_end(ap);
 
 	fprintf(logFile,"%s,%s\n", func, buff);
+	fflush(logFile);
+}
+
+void log_spy(const char *func, struct map_session_data *sd, const char *fmt, ...) {
+	char buff[512];
+
+	//- cálculo de tempo...
+	time_t time_v;
+	struct tm t;
+	time(&time_v);
+	localtime_r(&time_v, &t);
+
+	//- criação do arquivo log_map...
+    static int timeLogFile = 0;
+	static FILE *logFile = NULL;
+	int time = t.tm_year*12*31 + t.tm_mon*31;
+	if( timeLogFile!=time ) {
+		if(logFile)
+			fclose(logFile);
+		logFile = NULL;
+	}
+	if(!logFile) {
+		timeLogFile = time;
+		sprintf(buff, "log/spy.%04d-%02d.log", t.tm_year+1900, t.tm_mon+1);
+		logFile = fopen(buff, "a");
+	}
+
+	//- recuperando parâmetros...
+	va_list ap;
+	va_start(ap, fmt);
+	vsnprintf(buff, 511, fmt, ap);
+	va_end(ap);
+
+	fprintf(logFile,"%s,%ld,%d,%d,%s\n", func, time_v, sd->status.account_id, sd->status.char_id, buff);
 	fflush(logFile);
 }
 
